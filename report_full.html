@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BELVET — Полный аналитический отчёт</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--brd:#2a2d3a;--txt:#e4e4e7;--dim:#9ca3af;--acc:#6366f1;--pur:#8b5cf6;--cyn:#06b6d4;--grn:#22c55e;--amb:#f59e0b;--red:#ef4444;--pnk:#ec4899}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.6}
+.c{max-width:1440px;margin:0 auto;padding:20px}
+.hdr{background:linear-gradient(135deg,#1e1b4b,#312e81,#1e1b4b);border:1px solid var(--brd);border-radius:16px;padding:40px;margin-bottom:24px;text-align:center}
+.hdr h1{font-size:2.2em;font-weight:700;background:linear-gradient(135deg,#c7d2fe,#e0e7ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr .sub{color:#a5b4fc;margin-top:6px}.hdr .meta{color:var(--dim);margin-top:10px;font-size:.88em}
+.kr{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;margin-bottom:20px}
+.k{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:16px;text-align:center;transition:transform .2s}
+.k:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.k .v{font-size:1.8em;font-weight:700;margin-bottom:2px}.k .l{color:var(--dim);font-size:.78em;text-transform:uppercase;letter-spacing:.4px}
+.k.p .v{color:#a78bfa}.k.b .v{color:#67e8f9}.k.a .v{color:#fcd34d}.k.r .v{color:#fca5a5}.k.g .v{color:#86efac}.k.pk .v{color:#f9a8d4}.k.w .v{color:#e4e4e7}
+.s{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:22px;margin-bottom:20px}
+.s h2{font-size:1.25em;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:10px}
+.s h2 .n{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.82em;flex-shrink:0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px}
+@media(max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.cb{background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;padding:16px}
+.cb h3{font-size:.88em;color:var(--dim);margin-bottom:10px;text-align:center}
+.cb canvas{max-height:360px}
+.tb{width:100%;border-collapse:collapse;font-size:.85em}
+.tb th{background:rgba(99,102,241,.12);color:#a5b4fc;padding:8px 10px;text-align:left;font-weight:600;font-size:.8em;text-transform:uppercase;letter-spacing:.4px}
+.tb td{padding:8px 10px;border-bottom:1px solid var(--brd)}.tb tr:hover td{background:rgba(99,102,241,.04)}
+.badge{display:inline-block;padding:2px 7px;border-radius:5px;font-size:.76em;font-weight:600}
+.br{background:rgba(239,68,68,.15);color:#fca5a5}.bg{background:rgba(34,197,94,.15);color:#86efac}
+.ba{background:rgba(245,158,11,.15);color:#fcd34d}.bb{background:rgba(6,182,212,.15);color:#67e8f9}
+.bp{background:rgba(139,92,246,.15);color:#c4b5fd}
+.al{padding:13px 16px;border-radius:9px;margin:12px 0;font-size:.86em}
+.al-w{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);color:#fcd34d}
+.al-i{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.25);color:#67e8f9}
+.al-r{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);color:#fca5a5}
+.ft{text-align:center;color:var(--dim);font-size:.76em;padding:20px;border-top:1px solid var(--brd);margin-top:20px}
+.focus-card{padding:16px;background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;margin-top:12px;font-size:.86em}
+.focus-card h4{margin-bottom:8px}
+.focus-card ul{padding-left:18px;line-height:1.9;color:var(--dim)}
+</style>
+</head>
+<body>
+<div class="c">
+
+<div class="hdr">
+  <h1>BELVET — Полный аналитический отчёт</h1>
+  <div class="sub">Ветеринарная клиника, Баку, Азербайджан</div>
+  <div class="meta">Источник: dataV1.xlsx &bull; Дата анализа: 16.03.2026</div>
+</div>
+
+<div class="s"><h2><span class="n">1</span> Executive Dashboard</h2>
+<div class="kr">
+  <div class="k p"><div class="v">8,756</div><div class="l">Клиентов</div></div>
+  <div class="k b"><div class="v">11,186</div><div class="l">Животных</div></div>
+  <div class="k g"><div class="v">468,796</div><div class="l">Выручка</div></div>
+  <div class="k a"><div class="v">36.3</div><div class="l">Средний чек</div></div>
+  <div class="k pk"><div class="v">50</div><div class="l">Медиана LTV</div></div>
+  <div class="k p"><div class="v">92</div><div class="l">Среднее LTV</div></div>
+  <div class="k g"><div class="v">100%</div><div class="l">Маржа услуг</div></div>
+  <div class="k r"><div class="v">23.1%</div><div class="l">% отмен</div></div>
+</div>
+<div class="g2">
+  <div class="cb"><h3>Выручка помесячно (последние 18 мес.)</h3><canvas id="c1"></canvas></div>
+  <div class="cb"><h3>Выручка: собаки vs кошки</h3><canvas id="c2"></canvas></div>
+</div>
+</div>
+
+<div class="s"><h2><span class="n">2</span> Клиенты</h2>
+<div class="kr">
+  <div class="k g"><div class="v">38.4%</div><div class="l">Retention (2+ визита)</div></div>
+  <div class="k r"><div class="v">95.0%</div><div class="l">Churn (когорта 22-23)</div></div>
+  <div class="k b"><div class="v">20д</div><div class="l">Медиана между визитами</div></div>
+  <div class="k a"><div class="v">146 vs 41</div><div class="l">LTV мульти vs сингл</div></div>
+  <div class="k r"><div class="v">833</div><div class="l">Задолженность</div></div>
+  <div class="k pk"><div class="v">3861</div><div class="l">Потери на скидках</div></div>
+</div>
+<div class="g3">
+  <div class="cb"><h3>Сегменты LTV</h3><canvas id="c3"></canvas></div>
+  <div class="cb"><h3>Регистрации по годам</h3><canvas id="c4"></canvas></div>
+  <div class="cb"><h3>Мультипитомцы: кол-во животных у клиента</h3><canvas id="c5"></canvas></div>
+</div>
+<div class="al al-i"><strong>Инсайт:</strong> Клиенты с 2+ животными приносят в среднем <strong>146</strong> vs <strong>41</strong> у клиентов с 1 питомцем (3.6x). Неоплачено: <strong>876</strong> записей на <strong>7162</strong>.</div>
+</div>
+
+<div class="s"><h2><span class="n">3</span> Животные</h2>
+<div class="kr">
+  <div class="k b"><div class="v">3,440</div><div class="l">Собак</div></div>
+  <div class="k pk"><div class="v">7,746</div><div class="l">Кошек</div></div>
+  <div class="k g"><div class="v">200</div><div class="l">Стерил. собак</div></div>
+  <div class="k a"><div class="v">1036</div><div class="l">Стерил. кошек</div></div>
+  <div class="k r"><div class="v">130</div><div class="l">Умерших</div></div>
+</div>
+<div class="g3">
+  <div class="cb"><h3>Кошки vs Собаки</h3><canvas id="c6"></canvas></div>
+  <div class="cb"><h3>Пол — Собаки</h3><canvas id="c7"></canvas></div>
+  <div class="cb"><h3>Пол — Кошки</h3><canvas id="c8"></canvas></div>
+</div>
+<div class="g2" style="margin-top:14px">
+  <div class="cb"><h3>Возраст — Собаки</h3><canvas id="c9"></canvas></div>
+  <div class="cb"><h3>Возраст — Кошки</h3><canvas id="c10"></canvas></div>
+</div>
+<div class="g2" style="margin-top:14px">
+  <div class="cb" style="height:480px;position:relative"><h3>Топ пород — Собаки</h3><canvas id="c11"></canvas></div>
+  <div class="cb" style="height:420px;position:relative"><h3>Топ пород — Кошки</h3><canvas id="c12"></canvas></div>
+</div>
+</div>
+
+<div class="s"><h2><span class="n">4</span> Операционка</h2>
+<div class="g2">
+  <div class="cb"><h3>Пиковые часы (записи)</h3><canvas id="c13"></canvas></div>
+  <div class="cb"><h3>Нагрузка по дням недели</h3><canvas id="c14"></canvas></div>
+</div>
+<div style="margin-top:14px"><h3 style="color:var(--dim);margin-bottom:10px">Врачи: нагрузка и конверсия</h3>
+<table class="tb"><thead><tr><th>Врач</th><th>Мед. записей</th><th>Выручка</th><th>Записей</th><th>Конверсия</th></tr></thead><tbody>
+<tr><td><strong>Кузьмин Василий</strong></td><td>4899</td><td>199,532</td><td>7348</td><td><span class='badge ba'>71%</span></td></tr>
+<tr><td><strong>Родько Екатерина Ивановна</strong></td><td>3941</td><td>126,365</td><td>7796</td><td><span class='badge ba'>68%</span></td></tr>
+<tr><td><strong>Рустамов Рахман</strong></td><td>3578</td><td>123,690</td><td>6782</td><td><span class='badge ba'>71%</span></td></tr>
+<tr><td><strong>Абдуллазаде Сакиба</strong></td><td>490</td><td>18,260</td><td>1623</td><td><span class='badge ba'>60%</span></td></tr>
+<tr><td><strong>Muhamedova Samira</strong></td><td>13</td><td>947</td><td>32</td><td><span class='badge br'>59%</span></td></tr>
+</tbody></table></div></div>
+<div class="s"><h2><span class="n">5</span> Записи и неявки</h2>
+<div class="kr">
+  <div class="k g"><div class="v">16,380</div><div class="l">Пришли</div></div>
+  <div class="k r"><div class="v">5,459</div><div class="l">Отменены</div></div>
+  <div class="k a"><div class="v">1,746</div><div class="l">В ожидании</div></div>
+</div>
+<div class="g3">
+  <div class="cb"><h3>Все записи</h3><canvas id="c15"></canvas></div>
+  <div class="cb"><h3>Собаки</h3><canvas id="c16"></canvas></div>
+  <div class="cb"><h3>Кошки</h3><canvas id="c17"></canvas></div>
+</div>
+<div class="g2" style="margin-top:14px">
+  <div class="cb"><h3>% отмен по породе — Собаки</h3><canvas id="c18"></canvas></div>
+  <div class="cb"><h3>% отмен по породе — Кошки</h3><canvas id="c19"></canvas></div>
+</div>
+</div>
+
+<div class="s"><h2><span class="n">6</span> Медицина</h2>
+<div class="kr">
+  <div class="k b"><div class="v">38.7&deg;C</div><div class="l">Ср. темп. собак</div></div>
+  <div class="k pk"><div class="v">38.7&deg;C</div><div class="l">Ср. темп. кошек</div></div>
+  <div class="k w"><div class="v">3767</div><div class="l">Животных с весом</div></div>
+</div>
+<div class="g2">
+  <div class="cb"><h3>Категории обращений — Собаки</h3><canvas id="c20"></canvas></div>
+  <div class="cb"><h3>Категории обращений — Кошки</h3><canvas id="c21"></canvas></div>
+</div>
+</div>
+
+<div class="s"><h2><span class="n">7</span> Финансы и товары</h2>
+<div class="kr">
+  <div class="k g"><div class="v">444,482</div><div class="l">Выручка услуг</div></div>
+  <div class="k p"><div class="v">24,610</div><div class="l">Выручка товаров</div></div>
+  <div class="k a"><div class="v">100%</div><div class="l">Маржа услуг</div></div>
+  <div class="k r"><div class="v">7,162</div><div class="l">Неоплачено</div></div>
+</div>
+<div class="g2">
+  <div class="cb"><h3>Маржинальность: услуги vs товары</h3><canvas id="c22"></canvas></div>
+  <div class="cb"><h3>ABC-анализ (68A / 219B / 732C)</h3><canvas id="c23"></canvas></div>
+</div>
+<div class="g2" style="margin-top:14px">
+  <div class="cb"><h3>Топ-10 по выручке</h3><canvas id="c24"></canvas></div>
+  <div class="cb"><h3>Топ-10 по прибыли</h3><canvas id="c25"></canvas></div>
+</div>
+</div>
+<div class="s"><h2><span class="n">8</span> Фокус: топ-породы</h2>
+<div class="al al-i">Выбраны самые популярные конкретные породы (без Mixed/Unknown).</div>
+<div class="g2">
+<div>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+    <span style="background:#6366f133;color:#a5b4fc;padding:4px 12px;border-radius:6px;font-weight:600">Siberian Husky</span>
+    <span style="color:var(--dim);font-size:.86em">Собака &bull; 189 питомцев &bull; 583 записей &bull; 24% отмен</span>
+  </div>
+  <div class="cb"><h3>Обращения</h3><canvas id="c26"></canvas></div>
+</div>
+<div>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+    <span style="background:#6366f133;color:#a5b4fc;padding:4px 12px;border-radius:6px;font-weight:600">Norfolk Terrier</span>
+    <span style="color:var(--dim);font-size:.86em">Собака &bull; 177 питомцев &bull; 561 записей &bull; 19% отмен</span>
+  </div>
+  <div class="cb"><h3>Обращения</h3><canvas id="c27"></canvas></div>
+</div>
+<div>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+    <span style="background:#ec489933;color:#f9a8d4;padding:4px 12px;border-radius:6px;font-weight:600">Russian Blue</span>
+    <span style="color:var(--dim);font-size:.86em">Кошка &bull; 34 питомцев &bull; 97 записей &bull; 23% отмен</span>
+  </div>
+  <div class="cb"><h3>Обращения</h3><canvas id="c28"></canvas></div>
+</div>
+<div>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+    <span style="background:#ec489933;color:#f9a8d4;padding:4px 12px;border-radius:6px;font-weight:600">Turkish Van</span>
+    <span style="color:var(--dim);font-size:.86em">Кошка &bull; 21 питомцев &bull; 47 записей &bull; 32% отмен</span>
+  </div>
+  <div class="cb"><h3>Обращения</h3><canvas id="c29"></canvas></div>
+</div>
+</div></div>
+
+<div class="ft">Veterinary Neuroanalyst Agent &bull; BELVET &bull; 16.03.2026<br>Источник: dataV1.xlsx &bull; 8 секций, полная картина клиники</div>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+if (typeof Chart === 'undefined') return;
+Chart.defaults.color='#9ca3af';Chart.defaults.borderColor='rgba(255,255,255,0.06)';Chart.defaults.font.family="'Segoe UI',system-ui,sans-serif";
+var P=['#6366f1','#8b5cf6','#06b6d4','#22c55e','#f59e0b','#ef4444','#ec4899','#14b8a6','#f97316','#a855f7','#3b82f6','#84cc16'];
+var hb={indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}};
+var hb2={indexAxis:'y',responsive:true,plugins:{legend:{display:false}}};
+function donut(id,labels,data,colors){new Chart(document.getElementById(id),{type:'doughnut',data:{labels:labels,datasets:[{data:data,backgroundColor:colors,borderWidth:0,hoverOffset:8}]},options:{responsive:true,plugins:{legend:{position:'bottom'}}}});}
+function bar(id,labels,data,color,opts){new Chart(document.getElementById(id),{type:'bar',data:{labels:labels,datasets:[{data:data,backgroundColor:color,borderRadius:4}]},options:Object.assign({responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}},opts||{})});}
+function hbar(id,labels,data,color,opts){new Chart(document.getElementById(id),{type:'bar',data:{labels:labels,datasets:[{data:data,backgroundColor:color,borderRadius:4}]},options:Object.assign({},hb2,opts||{})});}
+
+new Chart(document.getElementById('c1'),{type:'line',data:{labels:["2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02"],datasets:[{label:'Выручка',data:[5981, 4459, 3699, 5694, 6630, 3988, 4727, 4087, 5399, 6667, 6252, 4489, 6157, 15114, 13048, 6016, 4574, 83],borderColor:'#6366f1',backgroundColor:'rgba(99,102,241,0.1)',fill:true,tension:0.3,pointRadius:3,pointBackgroundColor:'#6366f1'}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
+donut('c2',['Собаки (175,869)','Кошки (292,926)'],[175869,292926],['#6366f1','#ec4899']);
+bar('c3',["0", "1-50", "51-100", "101-200", "201-500", "501+"],[569, 2131, 1144, 748, 383, 94],P.slice(0,6));
+bar('c4',["2012", "2013", "2021", "2022", "2023", "2024", "2025", "2026"],[2, 1, 1026, 2396, 2158, 1686, 1373, 114],'rgba(34,197,94,0.6)');
+bar('c5',["1 пит.", "2 пит.", "3 пит.", "4 пит.", "5 пит.", "6 пит."],[7063, 774, 221, 88, 54, 29],'rgba(139,92,246,0.6)');
+donut('c6',['Собаки (3440)','Кошки (7746)'],[3440,7746],['#6366f1','#ec4899']);
+donut('c7',["Самец", "Самка", "Н/Д"],[1421, 1141, 878],['#ec4899','#6366f1','#4b5563']);
+donut('c8',["Самка", "Самец", "Н/Д"],[2451, 2626, 2669],['#ec4899','#6366f1','#4b5563']);
+bar('c9',["0-1", "2-3", "4-6", "7-10", "11+", "Н/Д"],[103, 539, 1033, 550, 384, 831],'rgba(99,102,241,0.65)');
+bar('c10',["0-1", "2-3", "4-6", "7-10", "11+", "Н/Д"],[449, 1804, 1796, 524, 348, 2825],'rgba(236,72,153,0.6)');
+new Chart(document.getElementById('c11'),{type:'bar',data:{labels:["Medium Mixed Breed", "Siberian Husky", "Norfolk Terrier", "Pomeranian", "Chien Francais Blanc et Orange", "Newfoundland", "Pyrenean Mastiff", "Saluki", "Russian Toy", "Field Spaniel", "Stabyhoun", "Greenland Dog"],datasets:[{data:[2215, 189, 177, 98, 82, 81, 47, 42, 38, 36, 30, 30],backgroundColor:'rgba(99,102,241,0.65)',borderRadius:4}]},options:hb});
+new Chart(document.getElementById('c12'),{type:'bar',data:{labels:["Mixed Breed", "Russian Blue", "Turkish Van", "Abyssinian", "Bengal", "Chartreux", "American Curl", "Somali", "Snowshoe", "Munchkin"],datasets:[{data:[7458, 34, 21, 10, 5, 2, 2, 1, 1, 1],backgroundColor:'rgba(236,72,153,0.6)',borderRadius:4}]},options:hb});
+bar('c13',["5:00", "6:00", "7:00", "8:00", "9:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"],[154, 2478, 2599, 3161, 3007, 2798, 2851, 2519, 2089, 1404, 513, 9, 1, 0, 1, 1, 0],'rgba(6,182,212,0.6)');
+bar('c14',["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],[2669, 3872, 3268, 3203, 3224, 4209, 3140],'rgba(99,102,241,0.6)');
+donut('c15',['Пришли','Отменены','Ожидание'],[16380,5459,1746],['#22c55e','#ef4444','#f59e0b']);
+donut('c16',['Пришли','Отменены','Ожидание'],[5927,2003,569],['#22c55e','#ef4444','#f59e0b']);
+donut('c17',['Пришли','Отменены','Ожидание'],[10453,3456,1177],['#22c55e','#ef4444','#f59e0b']);
+new Chart(document.getElementById('c18'),{type:'bar',data:{labels:["Whippet (78)", "Russian Toy (107)", "Chien Francais Blanc et Orange (197)", "Medium Mixed Breed (5324)", "Stabyhoun (70)", "Pomeranian (279)", "Siberian Husky (583)", "Greenland Dog (74)", "Pyrenean Mastiff (103)", "Norfolk Terrier (561)", "Newfoundland (177)", "Field Spaniel (86)"],datasets:[{data:[29.5, 27.1, 24.9, 24.3, 24.3, 24.0, 23.7, 23.0, 19.4, 19.1, 18.6, 18.6],backgroundColor:["rgba(245,158,11,0.6)", "rgba(245,158,11,0.6)", "rgba(99,102,241,0.5)", "rgba(99,102,241,0.5)", "rgba(99,102,241,0.5)", "rgba(99,102,241,0.5)", "rgba(99,102,241,0.5)", "rgba(99,102,241,0.5)", "rgba(99,102,241,0.5)", "rgba(99,102,241,0.5)", "rgba(99,102,241,0.5)", "rgba(99,102,241,0.5)"],borderRadius:4}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,title:{display:true,text:'%'}}}}});
+new Chart(document.getElementById('c19'),{type:'bar',data:{labels:["Turkish Van (47)", "Russian Blue (97)", "Mixed Breed (14648)", "Abyssinian (22)"],datasets:[{data:[31.9, 22.7, 22.5, 18.2],backgroundColor:["rgba(239,68,68,0.7)", "rgba(99,102,241,0.5)", "rgba(99,102,241,0.5)", "rgba(99,102,241,0.5)"],borderRadius:4}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,title:{display:true,text:'%'}}}}});
+hbar('c20',["Приём/осмотр", "Инъекции/инфузии", "Рентген", "УЗИ (другое)", "Лаб. анализы", "УЗИ брюшной", "Хирургия", "Чистка ушей", "Параанальные железы", "Груминг"],[1956, 1089, 652, 504, 349, 166, 129, 100, 89, 84],'rgba(99,102,241,0.6)');
+hbar('c21',["Приём/осмотр", "Инъекции/инфузии", "Рентген", "УЗИ (другое)", "Лаб. анализы", "Обработка ран", "УЗИ брюшной", "Стерилизация", "Груминг", "Дача препаратов"],[3181, 2547, 1146, 827, 430, 230, 224, 219, 191, 168],'rgba(236,72,153,0.6)');
+new Chart(document.getElementById('c22'),{type:'bar',data:{labels:['Услуги','Товары'],datasets:[{label:'Выручка',data:[444482,24610],backgroundColor:'rgba(99,102,241,0.6)',borderRadius:4},{label:'Прибыль',data:[444482,8910],backgroundColor:'rgba(34,197,94,0.6)',borderRadius:4}]},options:{responsive:true,plugins:{legend:{position:'bottom'}},scales:{y:{beginAtZero:true}}}});
+donut('c23',['A — 80% выручки (68 шт)','B — 15% (219 шт)','C — 5% (732 шт)'],[68,219,732],['#22c55e','#f59e0b','#ef4444']);
+hbar('c24',["ProCyte Dx®, Reagent Kit Набор Реаг", "Вакцина Nobivac Tricat", "Краситель ProCyte Dx®, Stain Pack", "Вакцина Nobivac DHPPİ", "Вакцина Nobivac Lepto", "Catalyst® CREA (Креатинин)", "Вакцина Nobivac Rabies", "Catalyst® BUN (Мочевина)", "Catalyst® ALT (АЛТ)", "Catalyst® AST (АСТ)"],[56555, 36275, 14802, 13881, 12018, 10976, 10815, 10749, 10047, 10023],'rgba(6,182,212,0.6)');
+hbar('c25',["ProCyte Dx®, Reagent Kit Набор Реаг", "Вакцина Nobivac Tricat", "Вакцина Nobivac Lepto", "Вакцина Nobivac DHPPİ", "Catalyst® CREA (Креатинин)", "Catalyst® BUN (Мочевина)", "Catalyst® AST (АСТ)", "Catalyst® ALT (АЛТ)", "Краситель ProCyte Dx®, Stain Pack", "Вакцина Nobivac Rabies"],[25086, 23886, 8397, 7389, 6540, 6377, 6252, 6124, 5414, 5258],'rgba(34,197,94,0.6)');
+hbar('c26',["Приём/осмотр", "Инъекции/инфузии", "УЗИ (другое)", "Рентген", "Лаб. анализы", "УЗИ брюшной", "Параанальные железы", "Хирургия"],[149, 84, 47, 37, 24, 13, 11, 8],'rgba(99,102,241,0.7)');
+hbar('c27',["Приём/осмотр", "Инъекции/инфузии", "Рентген", "Лаб. анализы", "УЗИ (другое)", "УЗИ брюшной", "Удаление зубов", "Параанальные железы"],[135, 71, 41, 29, 29, 17, 10, 10],'rgba(99,102,241,0.7)');
+hbar('c28',["Инъекции/инфузии", "Приём/осмотр", "Рентген", "УЗИ (другое)", "УЗИ беременность", "Обработка ран", "Стерилизация", "Груминг"],[22, 14, 5, 3, 2, 2, 2, 2],'rgba(236,72,153,0.7)');
+hbar('c29',["Инъекции/инфузии", "Приём/осмотр", "Рентген", "Наркоз", "Обработка ран", "Диагн. лишая", "Груминг", "Лаб. анализы"],[8, 7, 3, 2, 2, 1, 1, 1],'rgba(236,72,153,0.7)');
+}); // DOMContentLoaded
+</script>
+</body>
+</html>

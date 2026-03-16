@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BELVET — Инсайты и рекомендации</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--brd:#2a2d3a;--txt:#e4e4e7;--dim:#9ca3af}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.7}
+.c{max-width:1300px;margin:0 auto;padding:20px}
+.hdr{background:linear-gradient(135deg,#1a0a2e,#2d1854,#1a0a2e);border:1px solid var(--brd);border-radius:16px;padding:44px;margin-bottom:28px;text-align:center}
+.hdr h1{font-size:2.4em;font-weight:700;background:linear-gradient(135deg,#f0abfc,#c084fc,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr .sub{color:#c4b5fd;margin-top:8px;font-size:1.05em}.hdr .meta{color:var(--dim);margin-top:12px;font-size:.88em}
+.sec{background:var(--card);border:1px solid var(--brd);border-radius:14px;padding:28px;margin-bottom:24px}
+.sec h2{font-size:1.35em;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:10px}
+.sec h2 .n{background:linear-gradient(135deg,#c084fc,#818cf8);color:#fff;min-width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.82em;flex-shrink:0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+@media(max-width:900px){.g2,.g3{grid-template-columns:1fr}}
+.cb{background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;padding:16px}
+.cb h3{font-size:.88em;color:var(--dim);margin-bottom:10px;text-align:center}
+.cb canvas{max-height:350px}
+.ins{padding:20px;border-radius:12px;margin:14px 0;font-size:.92em;line-height:1.8}
+.ins-money{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2)}
+.ins-warn{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2)}
+.ins-danger{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2)}
+.ins-info{background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.2)}
+.ins h3{margin-bottom:8px;font-size:1em}
+.ins .num{font-size:1.6em;font-weight:700;display:block;margin:6px 0}
+.ins ul{padding-left:20px;margin-top:6px}
+.metric{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.metric .label{color:var(--dim);font-size:.9em}.metric .val{font-weight:700;font-size:1.1em}
+.metric .val.green{color:#86efac}.metric .val.red{color:#fca5a5}.metric .val.amber{color:#fcd34d}.metric .val.purple{color:#c4b5fd}
+.action{padding:16px 20px;margin:8px 0;border-radius:10px;font-size:.9em;display:flex;gap:14px;align-items:flex-start}
+.action .icon{font-size:1.4em;flex-shrink:0;margin-top:2px}
+.action.green{background:rgba(34,197,94,.06);border-left:4px solid #22c55e}
+.action.amber{background:rgba(245,158,11,.06);border-left:4px solid #f59e0b}
+.action.red{background:rgba(239,68,68,.06);border-left:4px solid #ef4444}
+.action.blue{background:rgba(99,102,241,.06);border-left:4px solid #6366f1}
+.tb{width:100%;border-collapse:collapse;font-size:.86em}
+.tb th{background:rgba(99,102,241,.1);color:#a5b4fc;padding:8px 10px;text-align:left;font-weight:600;font-size:.8em;text-transform:uppercase}
+.tb td{padding:8px 10px;border-bottom:1px solid var(--brd)}
+.badge{display:inline-block;padding:2px 8px;border-radius:5px;font-size:.78em;font-weight:600}
+.br{background:rgba(239,68,68,.15);color:#fca5a5}.bg{background:rgba(34,197,94,.15);color:#86efac}.ba{background:rgba(245,158,11,.15);color:#fcd34d}.bb{background:rgba(6,182,212,.15);color:#67e8f9}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin:16px 0}
+.summary-card{padding:20px;border-radius:12px;border:1px solid var(--brd)}
+.summary-card h4{margin-bottom:10px;font-size:.95em}
+.ft{text-align:center;color:var(--dim);font-size:.76em;padding:20px;border-top:1px solid var(--brd);margin-top:24px}
+</style>
+</head>
+<body>
+<div class="c">
+
+<div class="hdr">
+  <h1>Инсайты и рекомендации</h1>
+  <div class="sub">BELVET — что говорят данные и что с этим делать</div>
+  <div class="meta">На основе 8,756 клиентов &bull; 11,186 животных &bull; 12,921 мед. записей &bull; 23,585 записей на приём</div>
+</div>
+
+<!-- ===================== INSIGHT 1: REVENUE ===================== -->
+<div class="sec">
+  <h2><span class="n">1</span> Деньги: где вы сейчас</h2>
+  <div class="g3">
+    <div>
+      <div class="metric"><span class="label">Общая выручка</span><span class="val green">468,796</span></div>
+      <div class="metric"><span class="label">Средний чек</span><span class="val purple">36.3</span></div>
+      <div class="metric"><span class="label">Медиана LTV</span><span class="val purple">50</span></div>
+      <div class="metric"><span class="label">Среднее LTV</span><span class="val purple">92</span></div>
+      <div class="metric"><span class="label">Маржа услуг</span><span class="val green">100%</span></div>
+      <div class="metric"><span class="label">Маржа товаров</span><span class="val amber">36%</span></div>
+    </div>
+    <div class="cb"><h3>Выручка по годам</h3><canvas id="c1"></canvas></div>
+    <div class="cb"><h3>Сезонность (среднее по месяцам)</h3><canvas id="c2"></canvas></div>
+  </div>
+
+  <div class="ins ins-warn">
+    <h3>Инсайт: рост остановился</h3>
+    Выручка выросла с <strong>52K (2021)</strong> до <strong>138K (2023)</strong> — рост 2.6x за 2 года.<br>
+    Затем стабилизировалась на уровне <strong>~82-83K</strong> в 2024-2025 (данные неполные, но тренд плоский).<br>
+    Новых клиентов регистрируется меньше, а существующие не удерживаются. Рост нужно искать в удержании и среднем чеке.
+  </div>
+
+  <div class="ins ins-money">
+    <h3>Инсайт: концентрация Парето</h3>
+    <strong>Топ 2% клиентов</strong> (101 чел.) принесли <strong>99,419</strong> — это <strong>21%</strong> всей выручки.<br>
+    <strong>Нижние 50%</strong> (2534 чел.) принесли всего <strong>59,470</strong> (13%).<br>
+    <em>Рекомендация:</em> VIP-программа для топ-100 клиентов: приоритетная запись, персональный менеджер, годовые пакеты.
+  </div>
+</div>
+
+<!-- ===================== INSIGHT 2: RETENTION ===================== -->
+<div class="sec">
+  <h2><span class="n">2</span> Клиенты: удержание — главная проблема</h2>
+  <div class="g2">
+    <div>
+      <div class="metric"><span class="label">Retention (2+ визита)</span><span class="val red">38.4%</span></div>
+      <div class="metric"><span class="label">Одноразовые клиенты</span><span class="val red">3121 (62%)</span></div>
+      <div class="metric"><span class="label">Возвращающиеся</span><span class="val green">1948</span></div>
+      <div class="metric"><span class="label">Churn (когорта 22-23)</span><span class="val red">95%</span></div>
+      <div class="metric"><span class="label">Интервал между визитами</span><span class="val amber">20 дней</span></div>
+      <div class="metric"><span class="label">Клиенты без визитов</span><span class="val red">3687</span></div>
+    </div>
+    <div class="cb"><h3>Сегменты LTV клиентов</h3><canvas id="c3"></canvas></div>
+  </div>
+
+  <div class="ins ins-danger">
+    <h3>Инсайт: 54% клиентов приходят один раз и исчезают</h3>
+    Из 5069 клиентов с визитами, <strong>3121</strong> были только один раз.<br>
+    При среднем LTV возвращающегося клиента ~139 vs ~50 у одноразового, каждый удержанный клиент — это <strong>+89</strong> выручки.
+    <ul>
+      <li>Если удержать хотя бы <strong>10%</strong> одноразовых — это <strong>+27691</strong> годовой выручки</li>
+    </ul>
+  </div>
+
+  <div class="ins ins-money">
+    <h3>Инсайт: мультипитомцы = золотые клиенты</h3>
+    <div class="g2" style="margin-top:8px">
+      <div>
+        <span class="val green" style="font-size:1.4em">146</span><br>
+        <span style="color:var(--dim)">Средний LTV клиента с 2+ питомцами (1235 чел.)</span>
+      </div>
+      <div>
+        <span class="val amber" style="font-size:1.4em">41</span><br>
+        <span style="color:var(--dim)">Средний LTV клиента с 1 питомцем (7063 чел.)</span>
+      </div>
+    </div>
+    <p style="margin-top:10px"><strong>Разница 3.6x.</strong> Программа лояльности для мультипитомцев (скидка на 2-го, пакет на семью) удержит самый ценный сегмент.</p>
+  </div>
+</div>
+
+<!-- ===================== INSIGHT 3: CANCELLATIONS ===================== -->
+<div class="sec">
+  <h2><span class="n">3</span> Отмены: 23% записей не конвертируются</h2>
+  <div class="g2">
+    <div>
+      <div class="metric"><span class="label">Всего записей</span><span class="val purple">23,585</span></div>
+      <div class="metric"><span class="label">Пришли</span><span class="val green">16,380</span></div>
+      <div class="metric"><span class="label">Отменены</span><span class="val red">5,459</span></div>
+      <div class="metric"><span class="label">% отмен</span><span class="val red">23.1%</span></div>
+      <div class="metric"><span class="label">Упущенная выручка (оценка)</span><span class="val red">~198,062</span></div>
+    </div>
+    <div class="cb"><h3>% отмен по породам (топ-12)</h3><canvas id="c4"></canvas></div>
+  </div>
+
+  <div class="ins ins-danger">
+    <h3>Инсайт: 5,459 отменённых записей = ~198,062 упущенной выручки</h3>
+    При среднем чеке <strong>36</strong> и 5,459 отменах, клиника теряет около <strong>198,062</strong>.<br>
+    Если сократить отмены на 30% (с 23% до 16%):
+    <span class="num" style="color:#86efac">+59,418 / год</span>
+  </div>
+
+  <div class="ins ins-info">
+    <h3>Инсайт: крупные породы отменяют чаще</h3>
+    German Shepherd (50%), French Bulldog (33%), Pitbull (27%), Siberian Husky (24%).<br>
+    Возможные причины: сложность транспортировки, агрессия/стресс животного, стоимость.<br>
+    <em>Рекомендация:</em> SMS-подтверждение за 24ч + напоминание за 2ч. Для крупных пород — предложение выездного осмотра.
+  </div>
+</div>
+
+<!-- ===================== INSIGHT 4: DOCTORS ===================== -->
+<div class="sec">
+  <h2><span class="n">4</span> Врачи: разброс конверсии</h2>
+  <table class="tb">
+    <thead><tr><th>Врач</th><th>Мед. записей</th><th>Выручка</th><th>Записей на приём</th><th>Конверсия</th></tr></thead>
+    <tbody>
+    <tr><td><strong>Родько Екатерина Ивановна</strong></td><td>3941</td><td>126,365</td><td>7796</td><td><span class='badge ba'>68%</span></td></tr>
+    <tr><td><strong>Кузьмин Василий</strong></td><td>4899</td><td>199,532</td><td>7348</td><td><span class='badge ba'>71%</span></td></tr>
+    <tr><td><strong>Рустамов Рахман</strong></td><td>3578</td><td>123,690</td><td>6782</td><td><span class='badge ba'>71%</span></td></tr>
+    <tr><td><strong>Абдуллазаде Сакиба</strong></td><td>490</td><td>18,260</td><td>1623</td><td><span class='badge ba'>60%</span></td></tr>
+    <tr><td><strong>Muhamedova Samira</strong></td><td>13</td><td>947</td><td>32</td><td><span class='badge br'>59%</span></td></tr>
+    </tbody>
+  </table>
+  <div class="ins ins-warn">
+    <h3>Инсайт: конверсия записей различается между врачами</h3>
+    Разброс конверсии записей в приход — от <strong>59%</strong> до <strong>71%</strong>.<br>
+    Врачи с низкой конверсией могут терять записи из-за: неудобного расписания, специализации (сложные случаи), или клиенты записываются «к любому» и отменяют.<br>
+    <em>Рекомендация:</em> Выяснить причину отмен у врачей с конверсией ниже 70%. Возможно, нужно перераспределить нагрузку.
+  </div>
+</div>
+
+<!-- ===================== INSIGHT 5: MONEY LEAKS ===================== -->
+<div class="sec">
+  <h2><span class="n">5</span> Утечки денег</h2>
+  <div class="summary-grid">
+    <div class="summary-card" style="border-color:rgba(239,68,68,.3)">
+      <h4 style="color:#fca5a5">Неоплаченные записи</h4>
+      <span style="font-size:1.5em;font-weight:700;color:#fca5a5">876</span> записей<br>
+      на сумму <strong>7,162</strong>
+    </div>
+    <div class="summary-card" style="border-color:rgba(245,158,11,.3)">
+      <h4 style="color:#fcd34d">Потери на скидках</h4>
+      <span style="font-size:1.5em;font-weight:700;color:#fcd34d">3,861</span><br>
+      из 187 записей со скидками
+    </div>
+    <div class="summary-card" style="border-color:rgba(239,68,68,.3)">
+      <h4 style="color:#fca5a5">Задолженность клиентов</h4>
+      <span style="font-size:1.5em;font-weight:700;color:#fca5a5">833</span><br>
+      у 20 клиентов
+    </div>
+    <div class="summary-card" style="border-color:rgba(239,68,68,.3)">
+      <h4 style="color:#fca5a5">Упущено от отмен</h4>
+      <span style="font-size:1.5em;font-weight:700;color:#fca5a5">~198,062</span><br>
+      5459 отменённых записей
+    </div>
+  </div>
+  <div class="ins ins-danger">
+    <h3>Суммарные утечки</h3>
+    <span class="num" style="color:#fca5a5">~209,917</span>
+    Это <strong>45%</strong> от общей выручки. Не все утечки можно закрыть на 100%, но даже 30% возврата — это <strong>+62,975</strong>.
+  </div>
+</div>
+
+<!-- ===================== INSIGHT 6: DATA QUALITY ===================== -->
+<div class="sec">
+  <h2><span class="n">6</span> Качество данных: слепые пятна</h2>
+  <div class="g2">
+    <div>
+      <div class="metric"><span class="label">Возраст не указан — собаки</span><span class="val red">831/3440 (24%)</span></div>
+      <div class="metric"><span class="label">Возраст не указан — кошки</span><span class="val red">2825/7746 (36%)</span></div>
+      <div class="metric"><span class="label">Стерилизация записана — собаки</span><span class="val red">200/3440 (6%)</span></div>
+      <div class="metric"><span class="label">Стерилизация записана — кошки</span><span class="val amber">1036/7746 (13%)</span></div>
+      <div class="metric"><span class="label">Жалоба (Complaint) заполнена</span><span class="val red">0/12921 (0%)</span></div>
+    </div>
+    <div class="cb"><h3>Что не заполняется</h3><canvas id="c5"></canvas></div>
+  </div>
+  <div class="ins ins-warn">
+    <h3>Инсайт: без данных нет аналитики</h3>
+    <ul>
+      <li><strong>Поле «Жалоба»</strong> пустое в 100% записей — невозможно анализировать причины обращений</li>
+      <li><strong>Возраст</strong> не указан у 24% собак и 36% кошек — невозможны возрастные напоминания (вакцинация, чекапы)</li>
+      <li><strong>Стерилизация</strong> задокументирована у 6% собак — упущенная выручка на стерилизации</li>
+    </ul>
+    <em>Рекомендация:</em> Обязательные поля при регистрации: дата рождения, стерилизация. Обязательное поле при визите: жалоба.
+  </div>
+</div>
+
+<!-- ===================== INSIGHT 7: OPPORTUNITIES ===================== -->
+<div class="sec">
+  <h2><span class="n">7</span> Возможности роста: сводка</h2>
+
+  <div class="action green">
+    <div class="icon">1</div>
+    <div>
+      <strong>Программа реактивации клиентов</strong><br>
+      SMS/WhatsApp через 30 дней после визита: «Пора на профосмотр». Через 90 дней: «Мы скучаем».<br>
+      <strong>Потенциал:</strong> +10% retention = <strong>+9,376/год</strong>
+    </div>
+  </div>
+
+  <div class="action green">
+    <div class="icon">2</div>
+    <div>
+      <strong>Снижение отмен</strong><br>
+      Подтверждение за 24ч, напоминание за 2ч, waitlist для быстрого замещения слотов.<br>
+      <strong>Потенциал:</strong> -30% отмен = <strong>+59,418/год</strong>
+    </div>
+  </div>
+
+  <div class="action green">
+    <div class="icon">3</div>
+    <div>
+      <strong>Пакеты профилактики по породам</strong><br>
+      Norfolk Terrier: стоматологический пакет. Husky: чекап параанальных + кожа. Пудель: глаза + уши.<br>
+      <strong>Потенциал:</strong> +15-20% среднего чека для целевых пород
+    </div>
+  </div>
+
+  <div class="action amber">
+    <div class="icon">4</div>
+    <div>
+      <strong>Программа мультипитомцев</strong><br>
+      Скидка 10% на 2-го питомца, семейная карта, бандл-вакцинация.<br>
+      <strong>Потенциал:</strong> удержание сегмента с LTV 146 (в 3.6x выше среднего)
+    </div>
+  </div>
+
+  <div class="action amber">
+    <div class="icon">5</div>
+    <div>
+      <strong>Стерилизация как услуга-драйвер</strong><br>
+      3240 собак и 6710 кошек без записи о стерилизации.<br>
+      <strong>Потенциал:</strong> при 10% конверсии = <strong>~66,180</strong> выручки + повторные визиты
+    </div>
+  </div>
+
+  <div class="action blue">
+    <div class="icon">6</div>
+    <div>
+      <strong>Закрытие дебиторки</strong><br>
+      876 неоплаченных записей (7,162) + задолженность клиентов (833).<br>
+      <strong>Потенциал:</strong> разовый возврат <strong>7,994</strong>
+    </div>
+  </div>
+
+  <div class="action blue">
+    <div class="icon">7</div>
+    <div>
+      <strong>Заполнение данных</strong><br>
+      Обязательные поля: дата рождения, стерилизация, жалоба. Это откроет:<br>
+      — Автонапоминания о вакцинации по возрасту<br>
+      — Аналитику по причинам обращений<br>
+      — Предиктивные модели (ожирение, хронические заболевания)
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SUMMARY ===================== -->
+<div class="sec" style="background:linear-gradient(135deg,rgba(34,197,94,.05),rgba(99,102,241,.05))">
+  <h2><span class="n" style="background:linear-gradient(135deg,#22c55e,#06b6d4)">$</span> Итого: потенциал роста</h2>
+  <div class="g3">
+    <div style="text-align:center;padding:20px">
+      <div style="font-size:2em;font-weight:700;color:#86efac">134,974</div>
+      <div style="color:var(--dim);margin-top:4px">Доп. выручка / год<br>(retention + отмены + стерилизация)</div>
+    </div>
+    <div style="text-align:center;padding:20px">
+      <div style="font-size:2em;font-weight:700;color:#fcd34d">7,994</div>
+      <div style="color:var(--dim);margin-top:4px">Возврат дебиторки<br>(разово)</div>
+    </div>
+    <div style="text-align:center;padding:20px">
+      <div style="font-size:2em;font-weight:700;color:#c4b5fd">29%</div>
+      <div style="color:var(--dim);margin-top:4px">Потенциальный рост<br>выручки</div>
+    </div>
+  </div>
+</div>
+
+<div class="ft">Veterinary Neuroanalyst Agent &bull; BELVET &bull; 16.03.2026<br>Данные: dataV1.xlsx &bull; Инсайты и рекомендации основаны на наблюдаемых паттернах</div>
+
+</div>
+
+<script>
+
+window.addEventListener('DOMContentLoaded', function() {
+if (typeof Chart === 'undefined') return;
+Chart.defaults.color='#9ca3af';Chart.defaults.borderColor='rgba(255,255,255,0.06)';Chart.defaults.font.family="'Segoe UI',system-ui,sans-serif";
+var D = {"yr_labels": ["2021", "2022", "2023", "2024", "2025", "2026"], "yr_vals": [52242, 109197, 137830, 82293, 82575, 4657], "season_labels": ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"], "season_vals": [6532, 5346, 8242, 7680, 8097, 6922, 10862, 8400, 7777, 9156, 9922, 9627], "season_colors": ["rgba(99,102,241,0.4)", "rgba(99,102,241,0.4)", "rgba(245,158,11,0.5)", "rgba(245,158,11,0.5)", "rgba(245,158,11,0.5)", "rgba(99,102,241,0.4)", "rgba(34,197,94,0.6)", "rgba(245,158,11,0.5)", "rgba(245,158,11,0.5)", "rgba(245,158,11,0.5)", "rgba(34,197,94,0.6)", "rgba(34,197,94,0.6)"], "ltv_labels": ["0", "1-50", "51-100", "101-200", "201-500", "501+"], "ltv_vals": [569, 2131, 1144, 748, 383, 94], "cancel_labels": ["Turkish Van (CAT)", "Whippet (DOG)", "Russian Toy (DOG)", "Chien Francais Blanc et Orange (DOG)", "Medium Mixed Breed (DOG)", "Stabyhoun (DOG)", "Pomeranian (DOG)", "Siberian Husky (DOG)", "Greenland Dog (DOG)", "Russian Blue (CAT)", "Mixed Breed (CAT)", "Pyrenean Mastiff (DOG)"], "cancel_vals": [31.9, 29.5, 27.1, 24.9, 24.3, 24.3, 24.0, 23.7, 23.0, 22.7, 22.5, 19.4], "cancel_colors": ["rgba(239,68,68,0.7)", "rgba(245,158,11,0.6)", "rgba(245,158,11,0.6)", "rgba(99,102,241,0.5)", "rgba(99,102,241,0.5)", "rgba(99,102,241,0.5)", "rgba(99,102,241,0.5)", "rgba(99,102,241,0.5)", "rgba(99,102,241,0.5)", "rgba(99,102,241,0.5)", "rgba(99,102,241,0.5)", "rgba(99,102,241,0.5)"], "dq_vals": [76, 64, 6, 13, 0]};
+
+new Chart(document.getElementById('c1'),{type:'bar',data:{labels:D.yr_labels,datasets:[{data:D.yr_vals,backgroundColor:'rgba(99,102,241,0.65)',borderRadius:5}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
+
+new Chart(document.getElementById('c2'),{type:'bar',data:{labels:D.season_labels,datasets:[{data:D.season_vals,backgroundColor:D.season_colors,borderRadius:4}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
+
+new Chart(document.getElementById('c3'),{type:'bar',data:{labels:D.ltv_labels,datasets:[{data:D.ltv_vals,backgroundColor:['#4b5563','#6366f1','#8b5cf6','#06b6d4','#22c55e','#f59e0b'],borderRadius:4}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
+
+new Chart(document.getElementById('c4'),{type:'bar',data:{labels:D.cancel_labels,datasets:[{data:D.cancel_vals,backgroundColor:D.cancel_colors,borderRadius:4}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,title:{display:true,text:'%'}}}}});
+
+new Chart(document.getElementById('c5'),{type:'radar',data:{labels:['Возраст собак','Возраст кошек','Стерил. собак','Стерил. кошек','Жалобы'],datasets:[{label:'Заполнено %',data:D.dq_vals,backgroundColor:'rgba(239,68,68,0.15)',borderColor:'#ef4444',pointBackgroundColor:'#ef4444'}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{r:{min:0,max:100,ticks:{stepSize:25,color:'#6b7280'},grid:{color:'rgba(255,255,255,0.06)'}}}}});
+
+});
+</script>
+</body>
+</html>
