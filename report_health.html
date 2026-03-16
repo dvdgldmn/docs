@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BELVET — Здоровье по породам</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--brd:#2a2d3a;--txt:#e4e4e7;--dim:#9ca3af}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.7}
+.c{max-width:1440px;margin:0 auto;padding:20px}
+.hdr{background:linear-gradient(135deg,#1a2e0a,#1e4a1e,#1a2e0a);border:1px solid var(--brd);border-radius:16px;padding:44px;margin-bottom:28px;text-align:center}
+.hdr h1{font-size:2.3em;font-weight:700;background:linear-gradient(135deg,#86efac,#4ade80,#22c55e);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr .sub{color:#86efac;margin-top:6px}.hdr .meta{color:var(--dim);margin-top:10px;font-size:.88em}
+.sec{background:var(--card);border:1px solid var(--brd);border-radius:14px;padding:28px;margin-bottom:24px}
+.sec h2{font-size:1.3em;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:10px}
+.sec h2 .n{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;min-width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.82em;flex-shrink:0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+@media(max-width:900px){.g2,.g3{grid-template-columns:1fr}}
+.cb{background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;padding:16px}
+.cb h3{font-size:.88em;color:var(--dim);margin-bottom:10px;text-align:center}
+.cb canvas{max-height:380px}
+.tb{width:100%;border-collapse:collapse;font-size:.84em}
+.tb th{background:rgba(34,197,94,.1);color:#86efac;padding:7px 8px;text-align:left;font-weight:600;font-size:.78em;text-transform:uppercase}
+.tb td{padding:7px 8px;border-bottom:1px solid var(--brd);font-size:.86em}
+.tb tr:hover td{background:rgba(34,197,94,.03)}
+.badge{display:inline-block;padding:2px 7px;border-radius:5px;font-size:.76em;font-weight:600}
+.br{background:rgba(239,68,68,.15);color:#fca5a5}.bg{background:rgba(34,197,94,.15);color:#86efac}
+.ba{background:rgba(245,158,11,.15);color:#fcd34d}.bb{background:rgba(6,182,212,.15);color:#67e8f9}
+.bp{background:rgba(139,92,246,.15);color:#c4b5fd}
+.ins{padding:18px;border-radius:11px;margin:14px 0;font-size:.9em;line-height:1.8}
+.ins-g{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2)}
+.ins-w{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2)}
+.ins-r{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2)}
+.ins-i{background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.2)}
+.heat-grid{display:grid;gap:2px;font-size:.72em}
+.heat-cell{padding:4px 3px;text-align:center;border-radius:3px;font-weight:600}
+.ft{text-align:center;color:var(--dim);font-size:.76em;padding:20px;border-top:1px solid var(--brd);margin-top:24px}
+</style>
+</head>
+<body>
+<div class="c">
+
+<div class="hdr">
+  <h1>Здоровье по породам</h1>
+  <div class="sub">Породные предрасположенности, корреляции веса и возраста с заболеваниями</div>
+  <div class="meta">3,440 собак &bull; 1,344 мед. записей с диагнозами &bull; 10 анализируемых пород</div>
+</div>
+<div class="sec"><h2><span class="n">1</span> Категории заболеваний — общий профиль</h2>
+<div class="g2">
+  <div class="cb"><h3>Частота категорий (все собаки)</h3><canvas id="c1"></canvas></div>
+  <div class="cb"><h3>Топ-15 конкретных диагнозов</h3><canvas id="c2"></canvas></div>
+</div></div>
+<div class="sec"><h2><span class="n">2</span> Тепловая карта: порода &times; категория болезни</h2>
+<div class="ins ins-i">Значения — частота диагнозов на 100 собак породы. Чем ярче зелёный — тем выше частота.</div>
+<div style="overflow-x:auto">
+<table class="tb"><thead><tr><th>Порода (n)</th><th style='writing-mode:vertical-lr;text-align:center;padding:4px 2px;font-size:.7em'>Кардиоло</th><th style='writing-mode:vertical-lr;text-align:center;padding:4px 2px;font-size:.7em'>ЖКТ</th><th style='writing-mode:vertical-lr;text-align:center;padding:4px 2px;font-size:.7em'>Дерматол</th><th style='writing-mode:vertical-lr;text-align:center;padding:4px 2px;font-size:.7em'>Ортопеди</th><th style='writing-mode:vertical-lr;text-align:center;padding:4px 2px;font-size:.7em'>Офтальмо</th><th style='writing-mode:vertical-lr;text-align:center;padding:4px 2px;font-size:.7em'>ЛОР/Респ</th><th style='writing-mode:vertical-lr;text-align:center;padding:4px 2px;font-size:.7em'>Урология</th><th style='writing-mode:vertical-lr;text-align:center;padding:4px 2px;font-size:.7em'>Невролог</th><th style='writing-mode:vertical-lr;text-align:center;padding:4px 2px;font-size:.7em'>Стоматол</th><th style='writing-mode:vertical-lr;text-align:center;padding:4px 2px;font-size:.7em'>Аллергол</th><th style='writing-mode:vertical-lr;text-align:center;padding:4px 2px;font-size:.7em'>Инфекции</th><th style='writing-mode:vertical-lr;text-align:center;padding:4px 2px;font-size:.7em'>Эндокрин</th><th style='writing-mode:vertical-lr;text-align:center;padding:4px 2px;font-size:.7em'>Репродук</th><th style='writing-mode:vertical-lr;text-align:center;padding:4px 2px;font-size:.7em'>Ожирение</th><th style='writing-mode:vertical-lr;text-align:center;padding:4px 2px;font-size:.7em'>Травмы</th><th style='writing-mode:vertical-lr;text-align:center;padding:4px 2px;font-size:.7em'>Онкологи</th></tr></thead><tbody>
+<tr><td><strong>б/п</strong> (408)</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.0</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>3.7</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>2.2</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>2.9</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>3.7</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.0</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>0.5</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>0.5</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>3.2</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>2.9</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.2</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>0.5</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.0</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.2</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.0</td></tr>
+<tr><td><strong>Шпиц</strong> (328)</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>4.6</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>7.9</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>8.5</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>5.5</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.8</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>4.0</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>2.4</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>0.3</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>5.5</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>5.2</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>0.6</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>0.9</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>0.9</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td></tr>
+<tr><td><strong>Пудель</strong> (317)</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>0.6</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>7.3</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>2.2</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>4.1</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>4.7</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>4.1</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.6</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>3.2</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>3.5</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>2.8</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>0.3</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.9</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.3</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>0.3</td></tr>
+<tr><td><strong>Пекинес</strong> (189)</td><td style='background:rgba(239,68,68,.25);color:#fca5a5;text-align:center;font-weight:600;font-size:.8em'>12.7</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>7.9</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>7.4</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>0.5</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>9.5</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>2.1</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>5.3</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>4.2</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>0.5</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>2.1</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.1</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>0.5</td></tr>
+<tr><td><strong>Йоркширский терьер</strong> (177)</td><td style='background:rgba(239,68,68,.25);color:#fca5a5;text-align:center;font-weight:600;font-size:.8em'>13.0</td><td style='background:rgba(239,68,68,.25);color:#fca5a5;text-align:center;font-weight:600;font-size:.8em'>15.3</td><td style='background:rgba(239,68,68,.25);color:#fca5a5;text-align:center;font-weight:600;font-size:.8em'>10.2</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>2.3</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>2.8</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.1</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>5.6</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(239,68,68,.25);color:#fca5a5;text-align:center;font-weight:600;font-size:.8em'>10.2</td><td style='background:rgba(239,68,68,.25);color:#fca5a5;text-align:center;font-weight:600;font-size:.8em'>11.3</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.1</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.7</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>0.6</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>0.6</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.1</td></tr>
+<tr><td><strong>Овчарка</strong> (161)</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.2</td><td style='background:rgba(239,68,68,.25);color:#fca5a5;text-align:center;font-weight:600;font-size:.8em'>10.6</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>5.6</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.9</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>2.5</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>3.7</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>8.1</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>4.3</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>5.6</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.2</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.2</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.2</td></tr>
+<tr><td><strong>Метис</strong> (149)</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>2.0</td><td style='background:rgba(239,68,68,.25);color:#fca5a5;text-align:center;font-weight:600;font-size:.8em'>12.8</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>4.0</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>4.0</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>4.0</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>0.7</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>2.0</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>2.0</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>6.7</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>0.7</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.3</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>0.7</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>0.7</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>2.0</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>2.7</td></tr>
+<tr><td><strong>Кокер-спаниель</strong> (98)</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>3.1</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>5.1</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>9.2</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>2.0</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>5.1</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>9.2</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>2.0</td><td style='background:rgba(239,68,68,.25);color:#fca5a5;text-align:center;font-weight:600;font-size:.8em'>14.3</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>4.1</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>5.1</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.0</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.0</td></tr>
+<tr><td><strong>Хаски</strong> (90)</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>2.2</td><td style='background:rgba(239,68,68,.25);color:#fca5a5;text-align:center;font-weight:600;font-size:.8em'>10.0</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>5.6</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>2.2</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.1</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.1</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.1</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>3.3</td><td style='background:rgba(239,68,68,.25);color:#fca5a5;text-align:center;font-weight:600;font-size:.8em'>10.0</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.1</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>3.3</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>2.2</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>3.3</td></tr>
+<tr><td><strong>Чихуахуа</strong> (82)</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>2.4</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>7.3</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.2</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.2</td><td style='background:rgba(34,197,94,.1);color:#86efac;text-align:center;font-weight:600;font-size:.8em'>1.2</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>4.9</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>7.3</td><td style='background:rgba(245,158,11,.25);color:#fcd34d;text-align:center;font-weight:600;font-size:.8em'>9.8</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(34,197,94,.25);color:#4ade80;text-align:center;font-weight:600;font-size:.8em'>3.7</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td><td style='background:rgba(255,255,255,.02);color:#4b5563;text-align:center;font-weight:600;font-size:.8em'>0.0</td></tr>
+</tbody></table></div></div>
+<div class="sec"><h2><span class="n">3</span> Породные предрасположенности</h2>
+<div class="ins ins-w">Показаны диагнозы, которые встречаются у породы в <strong>&ge;1.5x чаще</strong> чем в среднем по популяции.</div>
+<div class="g2">
+<div style="padding:14px;background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;margin-bottom:12px">
+<h4 style="color:#86efac;margin-bottom:8px">б/п <span style="color:var(--dim);font-weight:400">(408 собак)</span></h4>
+<table class="tb"><thead><tr><th>Диагноз</th><th>У породы</th><th>В среднем</th><th>Во сколько раз чаще</th></tr></thead><tbody>
+<tr><td>Эрлихиоз</td><td>2.9%</td><td>1.34%</td><td><span class='badge ba'>2.2x</span></td></tr>
+</tbody></table></div>
+<div style="padding:14px;background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;margin-bottom:12px">
+<h4 style="color:#86efac;margin-bottom:8px">Шпиц <span style="color:var(--dim);font-weight:400">(328 собак)</span></h4>
+<table class="tb"><thead><tr><th>Диагноз</th><th>У породы</th><th>В среднем</th><th>Во сколько раз чаще</th></tr></thead><tbody>
+<tr><td>Х-алопеция</td><td>2.4%</td><td>0.23%</td><td><span class='badge br'>10.5x</span></td></tr>
+<tr><td>Луксация пателлы</td><td>1.2%</td><td>0.15%</td><td><span class='badge br'>8.4x</span></td></tr>
+<tr><td>Вывих конечности</td><td>1.5%</td><td>0.23%</td><td><span class='badge br'>6.6x</span></td></tr>
+<tr><td>Кардиомиопатия</td><td>2.4%</td><td>1.13%</td><td><span class='badge ba'>2.2x</span></td></tr>
+<tr><td>гастрит</td><td>2.1%</td><td>1.08%</td><td><span class='badge ba'>2.0x</span></td></tr>
+<tr><td>Пищевая непереносимость</td><td>1.5%</td><td>0.9%</td><td><span class='badge bg'>1.7x</span></td></tr>
+</tbody></table></div>
+<div style="padding:14px;background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;margin-bottom:12px">
+<h4 style="color:#86efac;margin-bottom:8px">Пудель <span style="color:var(--dim);font-weight:400">(317 собак)</span></h4>
+<table class="tb"><thead><tr><th>Диагноз</th><th>У породы</th><th>В среднем</th><th>Во сколько раз чаще</th></tr></thead><tbody>
+<tr><td>Отит наружный</td><td>1.3%</td><td>0.23%</td><td><span class='badge br'>5.4x</span></td></tr>
+<tr><td>Катаракта</td><td>1.6%</td><td>0.52%</td><td><span class='badge br'>3.0x</span></td></tr>
+<tr><td>Перелом конечности</td><td>1.3%</td><td>0.44%</td><td><span class='badge ba'>2.9x</span></td></tr>
+<tr><td>Пищевая аллергия (не подтвержден)</td><td>1.3%</td><td>0.55%</td><td><span class='badge ba'>2.3x</span></td></tr>
+</tbody></table></div>
+<div style="padding:14px;background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;margin-bottom:12px">
+<h4 style="color:#86efac;margin-bottom:8px">Пекинес <span style="color:var(--dim);font-weight:400">(189 собак)</span></h4>
+<table class="tb"><thead><tr><th>Диагноз</th><th>У породы</th><th>В среднем</th><th>Во сколько раз чаще</th></tr></thead><tbody>
+<tr><td>Перфорация роговицы</td><td>1.1%</td><td>0.06%</td><td><span class='badge br'>18.2x</span></td></tr>
+<tr><td>Дискоспондилит</td><td>1.1%</td><td>0.15%</td><td><span class='badge br'>7.3x</span></td></tr>
+<tr><td>язва роговицы</td><td>2.1%</td><td>0.35%</td><td><span class='badge br'>6.1x</span></td></tr>
+<tr><td>болезнь диска</td><td>1.1%</td><td>0.17%</td><td><span class='badge br'>6.1x</span></td></tr>
+<tr><td>холангиогепатит</td><td>1.1%</td><td>0.2%</td><td><span class='badge br'>5.2x</span></td></tr>
+<tr><td>Абсцесс</td><td>1.1%</td><td>0.23%</td><td><span class='badge br'>4.6x</span></td></tr>
+<tr><td>Сердечная недостаточность</td><td>1.1%</td><td>0.32%</td><td><span class='badge br'>3.3x</span></td></tr>
+<tr><td>Кератит</td><td>1.1%</td><td>0.35%</td><td><span class='badge br'>3.0x</span></td></tr>
+</tbody></table></div>
+<div style="padding:14px;background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;margin-bottom:12px">
+<h4 style="color:#86efac;margin-bottom:8px">Йоркширский терьер <span style="color:var(--dim);font-weight:400">(177 собак)</span></h4>
+<table class="tb"><thead><tr><th>Диагноз</th><th>У породы</th><th>В среднем</th><th>Во сколько раз чаще</th></tr></thead><tbody>
+<tr><td>нефролитиаз</td><td>1.1%</td><td>0.06%</td><td><span class='badge br'>19.4x</span></td></tr>
+<tr><td>холецистит</td><td>2.3%</td><td>0.2%</td><td><span class='badge br'>11.1x</span></td></tr>
+<tr><td>Сенильная катаракта</td><td>1.1%</td><td>0.12%</td><td><span class='badge br'>9.7x</span></td></tr>
+<tr><td>Дермоид слезного мясце</td><td>1.1%</td><td>0.12%</td><td><span class='badge br'>9.7x</span></td></tr>
+<tr><td>аллергия</td><td>1.1%</td><td>0.15%</td><td><span class='badge br'>7.8x</span></td></tr>
+<tr><td>синдром коллапса трахеи</td><td>1.1%</td><td>0.15%</td><td><span class='badge br'>7.8x</span></td></tr>
+<tr><td>Сердечная недостаточность/ кардиопатия</td><td>1.1%</td><td>0.2%</td><td><span class='badge br'>5.6x</span></td></tr>
+<tr><td>Холангит</td><td>1.1%</td><td>0.26%</td><td><span class='badge br'>4.3x</span></td></tr>
+</tbody></table></div>
+<div style="padding:14px;background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;margin-bottom:12px">
+<h4 style="color:#86efac;margin-bottom:8px">Овчарка <span style="color:var(--dim);font-weight:400">(161 собак)</span></h4>
+<table class="tb"><thead><tr><th>Диагноз</th><th>У породы</th><th>В среднем</th><th>Во сколько раз чаще</th></tr></thead><tbody>
+<tr><td>Паннус немецких овчарок</td><td>1.9%</td><td>0.12%</td><td><span class='badge br'>16.0x</span></td></tr>
+<tr><td>уроцистит</td><td>1.9%</td><td>0.15%</td><td><span class='badge br'>12.8x</span></td></tr>
+<tr><td>Эрлихиоз</td><td>4.3%</td><td>1.34%</td><td><span class='badge br'>3.3x</span></td></tr>
+<tr><td>Дерматит</td><td>1.9%</td><td>0.73%</td><td><span class='badge ba'>2.6x</span></td></tr>
+<tr><td>энтерит</td><td>1.2%</td><td>0.52%</td><td><span class='badge ba'>2.4x</span></td></tr>
+<tr><td>парвовирусный энтерит</td><td>1.9%</td><td>1.08%</td><td><span class='badge bg'>1.7x</span></td></tr>
+</tbody></table></div>
+<div style="padding:14px;background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;margin-bottom:12px">
+<h4 style="color:#86efac;margin-bottom:8px">Метис <span style="color:var(--dim);font-weight:400">(149 собак)</span></h4>
+<table class="tb"><thead><tr><th>Диагноз</th><th>У породы</th><th>В среднем</th><th>Во сколько раз чаще</th></tr></thead><tbody>
+<tr><td>Сахарный диабет</td><td>1.3%</td><td>0.12%</td><td><span class='badge br'>11.5x</span></td></tr>
+<tr><td>Перелом конечности</td><td>2.0%</td><td>0.44%</td><td><span class='badge br'>4.6x</span></td></tr>
+<tr><td>энтерит</td><td>2.0%</td><td>0.52%</td><td><span class='badge br'>3.8x</span></td></tr>
+<tr><td>Цистит</td><td>1.3%</td><td>0.35%</td><td><span class='badge br'>3.8x</span></td></tr>
+<tr><td>Гастроэнтерит</td><td>2.0%</td><td>0.64%</td><td><span class='badge br'>3.1x</span></td></tr>
+<tr><td>Катаракта</td><td>1.3%</td><td>0.52%</td><td><span class='badge ba'>2.6x</span></td></tr>
+<tr><td>парвовирусный энтерит</td><td>2.7%</td><td>1.08%</td><td><span class='badge ba'>2.5x</span></td></tr>
+<tr><td>гастроэнтероколит</td><td>1.3%</td><td>0.64%</td><td><span class='badge ba'>2.1x</span></td></tr>
+</tbody></table></div>
+<div style="padding:14px;background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;margin-bottom:12px">
+<h4 style="color:#86efac;margin-bottom:8px">Кокер-спаниель <span style="color:var(--dim);font-weight:400">(98 собак)</span></h4>
+<table class="tb"><thead><tr><th>Диагноз</th><th>У породы</th><th>В среднем</th><th>Во сколько раз чаще</th></tr></thead><tbody>
+<tr><td>анаплазмоз</td><td>2.0%</td><td>0.23%</td><td><span class='badge br'>8.8x</span></td></tr>
+<tr><td>Эпилепсия</td><td>2.0%</td><td>0.23%</td><td><span class='badge br'>8.8x</span></td></tr>
+<tr><td>Микроспория</td><td>2.0%</td><td>0.29%</td><td><span class='badge br'>7.0x</span></td></tr>
+<tr><td>Сухой кератоконъюнктивит</td><td>2.0%</td><td>0.35%</td><td><span class='badge br'>5.9x</span></td></tr>
+<tr><td>Беременность</td><td>2.0%</td><td>0.38%</td><td><span class='badge br'>5.4x</span></td></tr>
+<tr><td>Эрлихиоз</td><td>5.1%</td><td>1.34%</td><td><span class='badge br'>3.8x</span></td></tr>
+<tr><td>Дерматит</td><td>2.0%</td><td>0.73%</td><td><span class='badge ba'>2.8x</span></td></tr>
+<tr><td>Аллергический дерматит</td><td>2.0%</td><td>0.99%</td><td><span class='badge ba'>2.1x</span></td></tr>
+</tbody></table></div>
+<div style="padding:14px;background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;margin-bottom:12px">
+<h4 style="color:#86efac;margin-bottom:8px">Хаски <span style="color:var(--dim);font-weight:400">(90 собак)</span></h4>
+<table class="tb"><thead><tr><th>Диагноз</th><th>У породы</th><th>В среднем</th><th>Во сколько раз чаще</th></tr></thead><tbody>
+<tr><td>хроническая болезнь почек</td><td>2.2%</td><td>0.29%</td><td><span class='badge br'>7.6x</span></td></tr>
+<tr><td>Эрлихиоз</td><td>4.4%</td><td>1.34%</td><td><span class='badge br'>3.3x</span></td></tr>
+<tr><td>инородное тело кишечника</td><td>2.2%</td><td>0.84%</td><td><span class='badge ba'>2.6x</span></td></tr>
+<tr><td>инородное тело желудка</td><td>2.2%</td><td>0.93%</td><td><span class='badge ba'>2.4x</span></td></tr>
+<tr><td>Аллергический дерматит</td><td>2.2%</td><td>0.99%</td><td><span class='badge ba'>2.2x</span></td></tr>
+</tbody></table></div>
+<div style="padding:14px;background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;margin-bottom:12px">
+<h4 style="color:#86efac;margin-bottom:8px">Чихуахуа <span style="color:var(--dim);font-weight:400">(82 собак)</span></h4>
+<table class="tb"><thead><tr><th>Диагноз</th><th>У породы</th><th>В среднем</th><th>Во сколько раз чаще</th></tr></thead><tbody>
+<tr><td>Ринит</td><td>2.4%</td><td>0.09%</td><td><span class='badge br'>28.0x</span></td></tr>
+<tr><td>крипторхизм</td><td>2.4%</td><td>0.47%</td><td><span class='badge br'>5.2x</span></td></tr>
+<tr><td>Пищевая аллергия (не подтвержден)</td><td>2.4%</td><td>0.55%</td><td><span class='badge br'>4.4x</span></td></tr>
+<tr><td>Зубной камень</td><td>3.7%</td><td>1.37%</td><td><span class='badge ba'>2.7x</span></td></tr>
+<tr><td>зубной налет</td><td>3.7%</td><td>1.37%</td><td><span class='badge ba'>2.7x</span></td></tr>
+<tr><td>Кардиомиопатия</td><td>2.4%</td><td>1.13%</td><td><span class='badge ba'>2.2x</span></td></tr>
+<tr><td>Пищевая аллергия</td><td>2.4%</td><td>1.31%</td><td><span class='badge bg'>1.9x</span></td></tr>
+<tr><td>гиперчувствительность</td><td>2.4%</td><td>1.31%</td><td><span class='badge bg'>1.9x</span></td></tr>
+</tbody></table></div>
+</div></div>
+<div class="sec"><h2><span class="n">4</span> Вес и заболевания</h2>
+<div class="g2">
+  <div class="cb"><h3>Медианный вес по породе (кг)</h3><canvas id="c3"></canvas></div>
+  <div class="cb"><h3>Заболевания: выше медианы vs ниже (все породы)</h3><canvas id="c4"></canvas></div>
+</div>
+<div class="ins ins-g">
+<h3>Инсайт: что чаще у собак с весом выше медианы породы</h3><ul><li><strong>Онкология</strong>: 9 vs 1 записей (в 9.0x чаще у тяжёлых собак)</li><li><strong>Неврология</strong>: 8 vs 1 записей (в 8.0x чаще у тяжёлых собак)</li><li><strong>Урология</strong>: 23 vs 11 записей (в 2.1x чаще у тяжёлых собак)</li><li><strong>Ожирение</strong>: 6 vs 3 записей (в 2.0x чаще у тяжёлых собак)</li><li><strong>Аллергология</strong>: 65 vs 35 записей (в 1.9x чаще у тяжёлых собак)</li><li><strong>Стоматология</strong>: 45 vs 27 записей (в 1.7x чаще у тяжёлых собак)</li><li><strong>Ортопедия</strong>: 25 vs 20 записей (в 1.2x чаще у тяжёлых собак)</li><li><strong>Другое</strong>: 113 vs 99 записей (в 1.1x чаще у тяжёлых собак)</li><li><strong>Дерматология</strong>: 55 vs 50 записей (в 1.1x чаще у тяжёлых собак)</li><li><strong>Репродуктивная</strong>: 12 vs 11 записей (в 1.1x чаще у тяжёлых собак)</li></ul></div></div>
+<div class="sec"><h2><span class="n">5</span> Возраст и заболевания</h2>
+<div class="g2">
+  <div class="cb"><h3>Средний возраст при первом диагнозе (лет)</h3><canvas id="c5"></canvas></div>
+  <div class="cb"><h3>Как меняется профиль с возрастом</h3><canvas id="c6"></canvas></div>
+</div></div>
+<div class="sec"><h2><span class="n">6</span> Коморбидности</h2>
+<div class="g2">
+  <div class="cb"><h3>Какие болезни встречаются вместе (топ-12)</h3><canvas id="c7"></canvas></div>
+  <div>
+    <div class="ins ins-w"><h3>Топ кластеры болезней</h3><ul>
+<li><strong>Аллергология</strong> + <strong>Дерматология</strong> — 53 собак</li><li><strong>Другое</strong> + <strong>ЖКТ</strong> — 52 собак</li><li><strong>Другое</strong> + <strong>Офтальмология</strong> — 37 собак</li><li><strong>Другое</strong> + <strong>Стоматология</strong> — 21 собак</li><li><strong>Аллергология</strong> + <strong>Другое</strong> — 21 собак</li><li><strong>Дерматология</strong> + <strong>Другое</strong> — 21 собак</li><li><strong>Другое</strong> + <strong>ЛОР/Респираторные</strong> — 20 собак</li><li><strong>Другое</strong> + <strong>Кардиология</strong> — 18 собак</li><li><strong>Другое</strong> + <strong>Инфекции</strong> — 18 собак</li><li><strong>Аллергология</strong> + <strong>ЖКТ</strong> — 14 собак</li></ul></div></div></div></div><div class="sec"><h2><span class="n">7</span> Смертность</h2>
+<div class="g2">
+  <div>
+    <div class="ins ins-r">
+      <strong>21</strong> собак умерли за период наблюдения.
+      Средний возраст смерти: <strong>3.9 лет</strong>.
+    </div>
+    <h4 style="color:var(--dim);margin:12px 0 8px">Смертность по породам</h4>
+    <table class="tb"><thead><tr><th>Порода</th><th>Умерших</th></tr></thead><tbody>
+<tr><td>б/п</td><td>4</td></tr>
+<tr><td>Овчарка</td><td>2</td></tr>
+<tr><td>Кокер-спаниель</td><td>2</td></tr>
+<tr><td>Золотистый ретривер</td><td>2</td></tr>
+<tr><td>Джек-рассел-терьер</td><td>1</td></tr>
+<tr><td>Вест хайлэнд вайт -терьер</td><td>1</td></tr>
+<tr><td>Пудель</td><td>1</td></tr>
+<tr><td>Бишон-фризе</td><td>1</td></tr>
+<tr><td>Питбультерьер</td><td>1</td></tr>
+<tr><td>Чихуахуа</td><td>1</td></tr>
+</tbody></table></div>
+  <div class="cb"><h3>Категории последних диагнозов (умершие)</h3><canvas id="c8"></canvas></div>
+</div></div>
+<div class="sec"><h2><span class="n">8</span> Рекомендации: чекап-карта по породам</h2>
+<div class="ins ins-i">На основе наблюдаемых паттернов. Не заменяет клинические протоколы. Требует валидации ветеринаром.</div>
+<div style="padding:16px;background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;margin-bottom:12px">
+<h4 style="color:#4ade80">б/п <span style="color:var(--dim);font-weight:400">(408 собак)</span></h4>
+<div class="g2"><div><strong style="color:var(--dim)">Основные категории:</strong><ul style="padding-left:18px;margin-top:4px;color:var(--dim)">
+<li>Другое (40 записей)</li><li>Офтальмология (15 записей)</li><li>ЖКТ (15 записей)</li><li>Аллергология (13 записей)</li><li>Ортопедия (12 записей)</li></ul></div><div><strong style='color:var(--dim)'>Породные предрасположенности:</strong><ul style='padding-left:18px;margin-top:4px;color:var(--dim)'><li>Эрлихиоз — в 2.2x чаще</li></ul></div></div></div>
+<div style="padding:16px;background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;margin-bottom:12px">
+<h4 style="color:#4ade80">Шпиц <span style="color:var(--dim);font-weight:400">(328 собак)</span></h4>
+<div class="g2"><div><strong style="color:var(--dim)">Основные категории:</strong><ul style="padding-left:18px;margin-top:4px;color:var(--dim)">
+<li>Другое (34 записей)</li><li>Дерматология (28 записей)</li><li>ЖКТ (26 записей)</li><li>Ортопедия (18 записей)</li><li>Стоматология (18 записей)</li></ul></div><div><strong style='color:var(--dim)'>Породные предрасположенности:</strong><ul style='padding-left:18px;margin-top:4px;color:var(--dim)'><li>Х-алопеция — в 10.5x чаще</li><li>Луксация пателлы — в 8.4x чаще</li><li>Вывих конечности — в 6.6x чаще</li><li>Кардиомиопатия — в 2.2x чаще</li></ul></div></div></div>
+<div style="padding:16px;background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;margin-bottom:12px">
+<h4 style="color:#4ade80">Пудель <span style="color:var(--dim);font-weight:400">(317 собак)</span></h4>
+<div class="g2"><div><strong style="color:var(--dim)">Основные категории:</strong><ul style="padding-left:18px;margin-top:4px;color:var(--dim)">
+<li>Другое (36 записей)</li><li>ЖКТ (23 записей)</li><li>Офтальмология (15 записей)</li><li>Ортопедия (13 записей)</li><li>ЛОР/Респираторные (13 записей)</li></ul></div><div><strong style='color:var(--dim)'>Породные предрасположенности:</strong><ul style='padding-left:18px;margin-top:4px;color:var(--dim)'><li>Отит наружный — в 5.4x чаще</li><li>Катаракта — в 3.0x чаще</li><li>Перелом конечности — в 2.9x чаще</li><li>Пищевая аллергия (не подтвержден) — в 2.3x чаще</li></ul></div></div></div>
+<div style="padding:16px;background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;margin-bottom:12px">
+<h4 style="color:#4ade80">Пекинес <span style="color:var(--dim);font-weight:400">(189 собак)</span></h4>
+<div class="g2"><div><strong style="color:var(--dim)">Основные категории:</strong><ul style="padding-left:18px;margin-top:4px;color:var(--dim)">
+<li>Другое (41 записей)</li><li>Кардиология (24 записей)</li><li>Офтальмология (18 записей)</li><li>ЖКТ (15 записей)</li><li>Дерматология (14 записей)</li></ul></div><div><strong style='color:var(--dim)'>Породные предрасположенности:</strong><ul style='padding-left:18px;margin-top:4px;color:var(--dim)'><li>Перфорация роговицы — в 18.2x чаще</li><li>Дискоспондилит — в 7.3x чаще</li><li>язва роговицы — в 6.1x чаще</li><li>болезнь диска — в 6.1x чаще</li></ul></div></div></div>
+<div style="padding:16px;background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;margin-bottom:12px">
+<h4 style="color:#4ade80">Йоркширский терьер <span style="color:var(--dim);font-weight:400">(177 собак)</span></h4>
+<div class="g2"><div><strong style="color:var(--dim)">Основные категории:</strong><ul style="padding-left:18px;margin-top:4px;color:var(--dim)">
+<li>Другое (31 записей)</li><li>ЖКТ (27 записей)</li><li>Кардиология (23 записей)</li><li>Аллергология (20 записей)</li><li>Стоматология (18 записей)</li></ul></div><div><strong style='color:var(--dim)'>Породные предрасположенности:</strong><ul style='padding-left:18px;margin-top:4px;color:var(--dim)'><li>нефролитиаз — в 19.4x чаще</li><li>холецистит — в 11.1x чаще</li><li>Сенильная катаракта — в 9.7x чаще</li><li>Дермоид слезного мясце — в 9.7x чаще</li></ul></div></div></div>
+<div style="padding:16px;background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;margin-bottom:12px">
+<h4 style="color:#4ade80">Овчарка <span style="color:var(--dim);font-weight:400">(161 собак)</span></h4>
+<div class="g2"><div><strong style="color:var(--dim)">Основные категории:</strong><ul style="padding-left:18px;margin-top:4px;color:var(--dim)">
+<li>Другое (27 записей)</li><li>ЖКТ (17 записей)</li><li>Урология (13 записей)</li><li>Дерматология (9 записей)</li><li>Инфекции (9 записей)</li></ul></div><div><strong style='color:var(--dim)'>Породные предрасположенности:</strong><ul style='padding-left:18px;margin-top:4px;color:var(--dim)'><li>Паннус немецких овчарок — в 16.0x чаще</li><li>уроцистит — в 12.8x чаще</li><li>Эрлихиоз — в 3.3x чаще</li><li>Дерматит — в 2.6x чаще</li></ul></div></div></div>
+<div class="ins ins-g"><strong>Общая рекомендация:</strong> Ежегодный чекап для всех пород должен включать: взвешивание, аускультация сердца, осмотр кожи и ушей, пальпация лимфоузлов и брюшной полости, оценка зубов. Для пород с выявленными предрасположенностями — целевые проверки по списку выше.</div>
+</div>
+
+<div class="ft">Veterinary Neuroanalyst Agent &bull; BELVET &bull; 16.03.2026<br>
+Это аналитический отчёт. Все выводы должны быть рассмотрены лицензированным ветеринаром.</div>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+if (typeof Chart === 'undefined') return;
+Chart.defaults.color='#9ca3af';Chart.defaults.borderColor='rgba(255,255,255,0.06)';Chart.defaults.font.family="'Segoe UI',system-ui,sans-serif";
+var P=['#22c55e','#4ade80','#06b6d4','#6366f1','#8b5cf6','#ec4899','#f59e0b','#ef4444','#14b8a6','#f97316','#a855f7','#3b82f6','#84cc16','#e11d48','#0ea5e9','#d946ef'];
+var D = {"globalCatLabels": ["ЖКТ", "Дерматология", "Аллергология", "Стоматология", "Офтальмология", "ЛОР/Респираторные", "Кардиология", "Ортопедия", "Инфекции", "Урология", "Репродуктивная", "Травмы", "Онкология", "Неврология", "Эндокринология", "Ожирение"], "globalCatVals": [299, 190, 182, 151, 143, 108, 103, 90, 65, 59, 47, 31, 30, 13, 12, 11], "topDiagLabels": ["Блошиный аллергический дерматит", "Эрлихиоз", "Кардиомиопатия", "Зубной камень", "зубной налет", "отит", "парвовирусный энтерит", "Пищевая аллергия", "гиперчувствительность", "гастрит", "Аллергический дерматит", "Конъюнктивит", "Пищевая непереносимость", "инородное тело желудка", "инородное тело кишечника"], "topDiagVals": [72, 62, 62, 62, 62, 61, 54, 52, 52, 47, 46, 42, 37, 35, 31], "breedLabels": ["б/п", "Шпиц", "Пудель", "Пекинес", "Йоркширский терьер", "Овчарка", "Метис", "Кокер-спаниель", "Хаски", "Чихуахуа"], "breedWeights": [12.1, 3.9, 5.8, 5.5, 3.2, 32.0, 7.8, 12.2, 23.0, 3.1], "weightCompareCats": ["Другое", "ЖКТ", "Дерматология", "Аллергология", "Кардиология", "Стоматология", "ЛОР/Респираторные", "Офтальмология"], "weightAbove": [113, 47, 55, 65, 24, 45, 23, 26], "weightBelow": [99, 109, 50, 35, 53, 27, 30, 26], "ageDiagCats": ["Кардиология", "ЖКТ", "Дерматология", "Ортопедия", "Офтальмология", "ЛОР/Респираторные", "Урология", "Инфекции", "Аллергология", "Стоматология"], "ageDiagMeans": [4.5, 6.4, 5.5, 7.1, 5.4, 6.4, 4.6, 6.0, 4.8, 5.2], "ageProfileCats": ["Кардиология", "ЖКТ", "Дерматология", "Ортопедия", "Инфекции", "ЛОР/Респираторные", "Аллергология", "Урология"], "ageYoung": [25, 28, 19, 3, 13, 7, 28, 12], "ageAdult": [15, 75, 37, 12, 9, 24, 23, 11], "ageSenior": [4, 41, 19, 5, 15, 8, 22, 1], "comorbidLabels": ["Аллергология + Дерматология", "Другое + ЖКТ", "Другое + Офтальмология", "Другое + Стоматология", "Аллергология + Другое", "Дерматология + Другое", "Другое + ЛОР/Респираторные", "Другое + Кардиология", "Другое + Инфекции", "Аллергология + ЖКТ", "Другое + Репродуктивная", "ЖКТ + Кардиология"], "comorbidVals": [53, 52, 37, 21, 21, 21, 20, 18, 18, 14, 12, 11], "deadCatLabels": ["Дерматология", "Инфекции", "Другое"], "deadCatVals": [2, 1, 1]};
+
+new Chart(document.getElementById('c1'),{type:'bar',data:{labels:D.globalCatLabels,datasets:[{data:D.globalCatVals,backgroundColor:P,borderRadius:4}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}}}});
+
+new Chart(document.getElementById('c2'),{type:'bar',data:{labels:D.topDiagLabels,datasets:[{data:D.topDiagVals,backgroundColor:'rgba(34,197,94,0.6)',borderRadius:4}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}}}});
+
+new Chart(document.getElementById('c3'),{type:'bar',data:{labels:D.breedLabels,datasets:[{data:D.breedWeights,backgroundColor:'rgba(6,182,212,0.6)',borderRadius:4}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'кг'}}}}});
+
+new Chart(document.getElementById('c4'),{type:'bar',data:{labels:D.weightCompareCats,datasets:[{label:'Выше медианы',data:D.weightAbove,backgroundColor:'rgba(239,68,68,0.6)',borderRadius:4},{label:'Ниже медианы',data:D.weightBelow,backgroundColor:'rgba(34,197,94,0.5)',borderRadius:4}]},options:{responsive:true,plugins:{legend:{position:'bottom'}},scales:{y:{beginAtZero:true}}}});
+
+new Chart(document.getElementById('c5'),{type:'bar',data:{labels:D.ageDiagCats,datasets:[{data:D.ageDiagMeans,backgroundColor:P,borderRadius:4}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,title:{display:true,text:'лет'}}}}});
+
+new Chart(document.getElementById('c6'),{type:'bar',data:{labels:D.ageProfileCats,datasets:[{label:'Молодые (0-3)',data:D.ageYoung,backgroundColor:'rgba(34,197,94,0.6)',borderRadius:3},{label:'Взрослые (4-7)',data:D.ageAdult,backgroundColor:'rgba(99,102,241,0.6)',borderRadius:3},{label:'Пожилые (8+)',data:D.ageSenior,backgroundColor:'rgba(239,68,68,0.6)',borderRadius:3}]},options:{responsive:true,plugins:{legend:{position:'bottom'}},scales:{y:{beginAtZero:true}}}});
+
+new Chart(document.getElementById('c7'),{type:'bar',data:{labels:D.comorbidLabels,datasets:[{data:D.comorbidVals,backgroundColor:'rgba(139,92,246,0.6)',borderRadius:4}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}}}});
+
+new Chart(document.getElementById('c8'),{type:'bar',data:{labels:D.deadCatLabels,datasets:[{data:D.deadCatVals,backgroundColor:'rgba(239,68,68,0.6)',borderRadius:4}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}}}});
+
+});
+</script>
+</body>
+</html>
