@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BELVET — Топ пород: проблемы, сервисы, рекомендации по чеку</title>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--brd:#2a2d3a;--txt:#e4e4e7;--dim:#9ca3af}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.7}
+.c{max-width:1300px;margin:0 auto;padding:20px}
+.hdr{background:linear-gradient(135deg,#0a1628,#1a2d5a,#0a1628);border:1px solid var(--brd);border-radius:16px;padding:44px;margin-bottom:28px;text-align:center}
+.hdr h1{font-size:2.2em;font-weight:700;background:linear-gradient(135deg,#67e8f9,#6366f1,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr .sub{color:#a5b4fc;margin-top:6px}.hdr .meta{color:var(--dim);margin-top:10px;font-size:.88em}
+.sec{background:var(--card);border:1px solid var(--brd);border-radius:14px;padding:28px;margin-bottom:24px}
+.sec h2{font-size:1.3em;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:10px}
+.sec h2 .n{min-width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.82em;flex-shrink:0;color:#fff}
+.breed-card{border:1px solid var(--brd);border-radius:12px;margin-bottom:20px;overflow:hidden}
+.breed-header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.breed-header h3{font-size:1.1em}
+.breed-header .count{color:var(--dim);font-size:.88em}
+.breed-body{padding:0 20px 20px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:900px){.g3{grid-template-columns:1fr}}
+.col{font-size:.88em}
+.col h4{margin-bottom:8px;font-size:.9em}
+.col ul{padding-left:16px;line-height:1.9}
+.col li{margin-bottom:2px}
+.tag{display:inline-block;padding:2px 8px;border-radius:5px;font-size:.76em;font-weight:600;margin-right:4px}
+.tag-red{background:rgba(239,68,68,.15);color:#fca5a5}
+.tag-green{background:rgba(34,197,94,.15);color:#86efac}
+.tag-blue{background:rgba(99,102,241,.15);color:#a5b4fc}
+.tag-amber{background:rgba(245,158,11,.15);color:#fcd34d}
+.tag-purple{background:rgba(139,92,246,.15);color:#c4b5fd}
+.tag-pink{background:rgba(236,72,153,.15);color:#f9a8d4}
+
+.rec-sec{background:rgba(34,197,94,.03);border:1px solid rgba(34,197,94,.15);border-radius:12px;padding:24px;margin-bottom:20px}
+.rec-sec h3{color:#86efac;margin-bottom:14px;font-size:1.05em}
+.rec-item{padding:14px 16px;background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;margin-bottom:10px}
+.rec-item h4{margin-bottom:6px;font-size:.95em}
+.rec-item p{color:var(--dim);font-size:.88em}
+.rec-item .impact{margin-top:6px;font-size:.86em}
+.rec-item .impact strong{color:#86efac}
+
+.ft{text-align:center;color:var(--dim);font-size:.76em;padding:20px;border-top:1px solid var(--brd);margin-top:24px}
+</style>
+</head>
+<body>
+<div class="c">
+
+<div class="hdr">
+  <h1>Породы: проблемы, сервисы, чек</h1>
+  <div class="sub">Топ-10 пород собак и кошек — что болит, что продавать, как увеличить чек</div>
+  <div class="meta">BELVET &bull; На основе 12,900+ мед. записей и 23,700+ оказанных услуг</div>
+</div>
+
+<!-- ===================== DOGS ===================== -->
+<div class="sec">
+  <h2><span class="n" style="background:#6366f1">🐕</span> Топ-10 пород собак</h2>
+
+  <!-- ШПИЦ -->
+  <div class="breed-card" style="border-color:rgba(245,158,11,.3)">
+    <div class="breed-header" style="background:rgba(245,158,11,.04)">
+      <h3>Шпиц</h3><span class="count">328 собак</span>
+    </div>
+    <div class="breed-body"><div class="g3">
+      <div class="col">
+        <h4 style="color:#fca5a5">Проблемы</h4>
+        <ul>
+          <li>Х-алопеция (породная)</li>
+          <li>Кардиомиопатия</li>
+          <li>Зубной камень / налёт</li>
+          <li>Блошиный дерматит</li>
+          <li>Коллапс/стеноз трахеи</li>
+          <li>Луксация пателлы</li>
+          <li>Ожирение</li>
+        </ul>
+      </div>
+      <div class="col">
+        <h4 style="color:#67e8f9">Сервисы для продажи</h4>
+        <ul>
+          <li><span class="tag tag-green">базовый</span> ЭХО-КГ / ЭКГ ежегодно</li>
+          <li><span class="tag tag-green">базовый</span> Чистка зубов / санация</li>
+          <li><span class="tag tag-blue">допродажа</span> Дерматологический осмотр</li>
+          <li><span class="tag tag-blue">допродажа</span> Рентген трахеи (если кашель)</li>
+          <li><span class="tag tag-purple">пакет</span> «Здоровый Шпиц» — сердце+зубы+кожа</li>
+          <li><span class="tag tag-amber">товар</span> Антипаразитарные средства</li>
+          <li><span class="tag tag-amber">товар</span> Диетический корм (ожирение)</li>
+        </ul>
+      </div>
+      <div class="col">
+        <h4 style="color:#86efac">Апсейл</h4>
+        <ul>
+          <li>Кардиочекап: ЭХО + ЭКГ + приём = <strong>80-120</strong></li>
+          <li>Стоматологический пакет: чистка + рентген + санация = <strong>60-100</strong></li>
+          <li>Груминг + дерматолог = <strong>40-60</strong></li>
+        </ul>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- ПУДЕЛЬ -->
+  <div class="breed-card" style="border-color:rgba(139,92,246,.3)">
+    <div class="breed-header" style="background:rgba(139,92,246,.04)">
+      <h3>Пудель</h3><span class="count">317 собак</span>
+    </div>
+    <div class="breed-body"><div class="g3">
+      <div class="col"><h4 style="color:#fca5a5">Проблемы</h4><ul>
+        <li>Отит (наружный, средний)</li><li>Катаракта</li><li>Конъюнктивит</li>
+        <li>Эпилепсия</li><li>Инородные тела ЖКТ</li><li>Гастрит</li><li>Переломы</li>
+      </ul></div>
+      <div class="col"><h4 style="color:#67e8f9">Сервисы</h4><ul>
+        <li><span class="tag tag-green">базовый</span> Отоскопия + чистка ушей</li>
+        <li><span class="tag tag-green">базовый</span> Офтальмологический осмотр</li>
+        <li><span class="tag tag-blue">допродажа</span> Тест на глазное давление</li>
+        <li><span class="tag tag-blue">допродажа</span> Рентген ЖКТ при подозрении</li>
+        <li><span class="tag tag-purple">пакет</span> «Здоровый Пудель» — уши+глаза+ЖКТ</li>
+        <li><span class="tag tag-amber">товар</span> Ушные капли</li>
+      </ul></div>
+      <div class="col"><h4 style="color:#86efac">Апсейл</h4><ul>
+        <li>Офтальмо-пакет: осмотр + тонометрия + тест Ширмера = <strong>60-90</strong></li>
+        <li>Отологический пакет: отоскопия + чистка + цитология = <strong>40-60</strong></li>
+      </ul></div>
+    </div></div>
+  </div>
+
+  <!-- ПЕКИНЕС -->
+  <div class="breed-card" style="border-color:rgba(236,72,153,.3)">
+    <div class="breed-header" style="background:rgba(236,72,153,.04)">
+      <h3>Пекинес</h3><span class="count">189 собак</span>
+    </div>
+    <div class="breed-body"><div class="g3">
+      <div class="col"><h4 style="color:#fca5a5">Проблемы</h4><ul>
+        <li>Блошиный дерматит</li><li>Аллергический дерматит</li><li>Кардиомиопатия</li>
+        <li>Язва роговицы</li><li>Зубной камень</li><li>Гастрит</li>
+      </ul></div>
+      <div class="col"><h4 style="color:#67e8f9">Сервисы</h4><ul>
+        <li><span class="tag tag-green">базовый</span> Осмотр глаз (брахицефал!)</li>
+        <li><span class="tag tag-green">базовый</span> Кардиочекап</li>
+        <li><span class="tag tag-blue">допродажа</span> Флуоресцеиновый тест роговицы</li>
+        <li><span class="tag tag-purple">пакет</span> «Брахицефал-чекап» — глаза+сердце+дыхание</li>
+        <li><span class="tag tag-amber">товар</span> Глазные капли / увлажнитель</li>
+      </ul></div>
+      <div class="col"><h4 style="color:#86efac">Апсейл</h4><ul>
+        <li>Брахицефал-пакет: = <strong>80-120</strong></li>
+        <li>Дерматолог + аллергопроба = <strong>50-80</strong></li>
+      </ul></div>
+    </div></div>
+  </div>
+
+  <!-- ЙОРК -->
+  <div class="breed-card" style="border-color:rgba(6,182,212,.3)">
+    <div class="breed-header" style="background:rgba(6,182,212,.04)">
+      <h3>Йоркширский терьер</h3><span class="count">177 собак</span>
+    </div>
+    <div class="breed-body"><div class="g3">
+      <div class="col"><h4 style="color:#fca5a5">Проблемы</h4><ul>
+        <li>Кардиомиопатия</li><li>Зубной камень / налёт</li><li>Пищевая аллергия</li>
+        <li>Гастрит</li><li>Блошиный дерматит</li><li>Коллапс трахеи</li>
+      </ul></div>
+      <div class="col"><h4 style="color:#67e8f9">Сервисы</h4><ul>
+        <li><span class="tag tag-green">базовый</span> ЭХО-КГ ежегодно</li>
+        <li><span class="tag tag-green">базовый</span> Стоматология: чистка + удаление</li>
+        <li><span class="tag tag-blue">допродажа</span> Аллергопробы</li>
+        <li><span class="tag tag-purple">пакет</span> «Здоровый Йорк» — сердце+зубы+ЖКТ</li>
+        <li><span class="tag tag-amber">товар</span> Гипоаллергенный корм</li>
+      </ul></div>
+      <div class="col"><h4 style="color:#86efac">Апсейл</h4><ul>
+        <li>Стомат + кардио пакет = <strong>100-150</strong></li>
+        <li>Диетическая консультация + корм = <strong>30-50</strong></li>
+      </ul></div>
+    </div></div>
+  </div>
+
+  <!-- ОВЧАРКА -->
+  <div class="breed-card"><div class="breed-header" style="background:rgba(99,102,241,.04)"><h3>Овчарка</h3><span class="count">161 собак</span></div>
+    <div class="breed-body"><div class="g3">
+      <div class="col"><h4 style="color:#fca5a5">Проблемы</h4><ul><li>Эрлихиоз (клещевая)</li><li>Блошиный дерматит</li><li>Паннус (породная)</li><li>Парвовирусный энтерит</li><li>Дерматит</li><li>Дисплазия ТБС</li></ul></div>
+      <div class="col"><h4 style="color:#67e8f9">Сервисы</h4><ul><li><span class="tag tag-green">базовый</span> Антиклещевая обработка</li><li><span class="tag tag-green">базовый</span> Рентген ТБС</li><li><span class="tag tag-blue">допродажа</span> Анализ на эрлихиоз</li><li><span class="tag tag-purple">пакет</span> «Здоровая Овчарка» — суставы+кровь+глаза</li><li><span class="tag tag-amber">товар</span> Антипаразитарные (3мес курс)</li></ul></div>
+      <div class="col"><h4 style="color:#86efac">Апсейл</h4><ul><li>Ортопедический чекап = <strong>80-120</strong></li><li>Клещевой пакет: анализ+обработка = <strong>40-60</strong></li></ul></div>
+    </div></div></div>
+
+  <!-- МЕТИС, КОКЕР, ХАСКИ, ЧИХУАХУА, РЕТРИВЕР — компактно -->
+  <div class="breed-card"><div class="breed-header"><h3>Метис</h3><span class="count">149 собак</span></div>
+    <div class="breed-body"><div class="g3"><div class="col"><h4 style="color:#fca5a5">Проблемы</h4><ul><li>Парвовирусный энтерит</li><li>Аллергический дерматит</li><li>Пищевая аллергия</li><li>Гастроэнтерит</li><li>Конъюнктивит</li></ul></div>
+      <div class="col"><h4 style="color:#67e8f9">Сервисы</h4><ul><li><span class="tag tag-green">базовый</span> Вакцинация (многие не привиты)</li><li><span class="tag tag-blue">допродажа</span> Аллергопроба + диета</li><li><span class="tag tag-purple">пакет</span> Первичный чекап для метиса</li></ul></div>
+      <div class="col"><h4 style="color:#86efac">Апсейл</h4><ul><li>Первичный пакет: вакцинация+дегельминтизация+осмотр = <strong>50-80</strong></li></ul></div></div></div></div>
+
+  <div class="breed-card"><div class="breed-header"><h3>Кокер-спаниель</h3><span class="count">98 собак</span></div>
+    <div class="breed-body"><div class="g3"><div class="col"><h4 style="color:#fca5a5">Проблемы</h4><ul><li>Эрлихиоз</li><li>Сухой кератоконъюнктивит</li><li>Зубной камень</li><li>Микроспория (лишай)</li><li>Кардиомиопатия</li></ul></div>
+      <div class="col"><h4 style="color:#67e8f9">Сервисы</h4><ul><li><span class="tag tag-green">базовый</span> Тест Ширмера (сухой глаз)</li><li><span class="tag tag-green">базовый</span> Отоскопия</li><li><span class="tag tag-purple">пакет</span> «Здоровый Кокер» — уши+глаза+кожа</li></ul></div>
+      <div class="col"><h4 style="color:#86efac">Апсейл</h4><ul><li>Комбо: уши+глаза+дерматолог = <strong>70-100</strong></li></ul></div></div></div></div>
+
+  <div class="breed-card"><div class="breed-header"><h3>Хаски</h3><span class="count">90 собак</span></div>
+    <div class="breed-body"><div class="g3"><div class="col"><h4 style="color:#fca5a5">Проблемы</h4><ul><li>Эрлихиоз</li><li>ХБП (почки)</li><li>Блошиный дерматит</li><li>Инородные тела ЖКТ</li><li>Дистрофия роговицы</li></ul></div>
+      <div class="col"><h4 style="color:#67e8f9">Сервисы</h4><ul><li><span class="tag tag-green">базовый</span> Биохимия крови (почки)</li><li><span class="tag tag-blue">допродажа</span> Рентген ЖКТ</li><li><span class="tag tag-purple">пакет</span> «Активный Хаски» — кровь+рентген+кожа</li></ul></div>
+      <div class="col"><h4 style="color:#86efac">Апсейл</h4><ul><li>Нефрологический чекап = <strong>60-90</strong></li></ul></div></div></div></div>
+
+  <div class="breed-card"><div class="breed-header"><h3>Чихуахуа</h3><span class="count">82 собаки</span></div>
+    <div class="breed-body"><div class="g3"><div class="col"><h4 style="color:#fca5a5">Проблемы</h4><ul><li>Зубной камень/налёт</li><li>Ринит</li><li>Кардиомиопатия</li><li>Крипторхизм</li><li>Пищевая аллергия</li></ul></div>
+      <div class="col"><h4 style="color:#67e8f9">Сервисы</h4><ul><li><span class="tag tag-green">базовый</span> Стоматология</li><li><span class="tag tag-green">базовый</span> ЭХО-КГ</li><li><span class="tag tag-blue">допродажа</span> Крипторхизм → кастрация</li></ul></div>
+      <div class="col"><h4 style="color:#86efac">Апсейл</h4><ul><li>Стомат-пакет = <strong>50-80</strong></li></ul></div></div></div></div>
+
+  <div class="breed-card"><div class="breed-header"><h3>Золотистый ретривер</h3><span class="count">81 собака</span></div>
+    <div class="breed-body"><div class="g3"><div class="col"><h4 style="color:#fca5a5">Проблемы</h4><ul><li>Блошиный дерматит</li><li>Гастроэнтероколит</li><li>Инородные тела ЖКТ</li><li>Аллергии</li></ul></div>
+      <div class="col"><h4 style="color:#67e8f9">Сервисы</h4><ul><li><span class="tag tag-green">базовый</span> Антипаразитарная обработка</li><li><span class="tag tag-blue">допродажа</span> Рентген/УЗИ ЖКТ</li><li><span class="tag tag-purple">пакет</span> Ежегодный чекап крупной породы</li></ul></div>
+      <div class="col"><h4 style="color:#86efac">Апсейл</h4><ul><li>Полный чекап крупной породы = <strong>100-150</strong></li></ul></div></div></div></div>
+</div>
+
+<!-- ===================== CATS ===================== -->
+<div class="sec">
+  <h2><span class="n" style="background:#ec4899">🐈</span> Топ-10 пород кошек</h2>
+
+  <div class="breed-card" style="border-color:rgba(236,72,153,.3)"><div class="breed-header" style="background:rgba(236,72,153,.04)"><h3>Британская</h3><span class="count">577 кошек</span></div>
+    <div class="breed-body"><div class="g3"><div class="col"><h4 style="color:#fca5a5">Проблемы</h4><ul><li>Вирусная инфекция</li><li>ОЗМ (обструкция)</li><li>Конъюнктивит</li><li>Инородные тела ЖКТ</li><li>Блошиный дерматит</li><li>Отодектоз</li></ul></div>
+      <div class="col"><h4 style="color:#67e8f9">Сервисы</h4><ul><li><span class="tag tag-green">базовый</span> Вакцинация (Tricat)</li><li><span class="tag tag-green">базовый</span> Анализ мочи (ОЗМ)</li><li><span class="tag tag-blue">допродажа</span> УЗИ мочевого пузыря</li><li><span class="tag tag-purple">пакет</span> «Здоровый Британец» — моча+вакц+глаза</li><li><span class="tag tag-amber">товар</span> Корм для профилактики МКБ</li></ul></div>
+      <div class="col"><h4 style="color:#86efac">Апсейл</h4><ul><li>Урологический чекап = <strong>50-80</strong></li><li>Профилактический корм = <strong>15-30/мес</strong></li></ul></div></div></div></div>
+
+  <div class="breed-card"><div class="breed-header"><h3>Шотландская / Скоттиш-Фолд / Страйт</h3><span class="count">768 кошек (3 подтипа)</span></div>
+    <div class="breed-body"><div class="g3"><div class="col"><h4 style="color:#fca5a5">Проблемы</h4><ul><li>Вирусная инфекция</li><li>ОЗМ</li><li>Блошиный дерматит</li><li>Микроспория (лишай)</li><li>Пищевая непереносимость</li><li>Остеохондродисплазия (Фолд!)</li></ul></div>
+      <div class="col"><h4 style="color:#67e8f9">Сервисы</h4><ul><li><span class="tag tag-green">базовый</span> Рентген суставов (Фолд)</li><li><span class="tag tag-green">базовый</span> Люминесцентная диагностика (лишай)</li><li><span class="tag tag-blue">допродажа</span> Анализ на дерматофиты</li><li><span class="tag tag-purple">пакет</span> «Здоровый Скоттиш» — суставы+кожа+моча</li></ul></div>
+      <div class="col"><h4 style="color:#86efac">Апсейл</h4><ul><li>Ортопедический скрининг Фолд = <strong>60-90</strong></li><li>Дерматологический пакет = <strong>40-60</strong></li></ul></div></div></div></div>
+
+  <div class="breed-card"><div class="breed-header"><h3>Европейская</h3><span class="count">177 кошек</span></div>
+    <div class="breed-body"><div class="g3"><div class="col"><h4 style="color:#fca5a5">Проблемы</h4><ul><li>Вирусная инфекция (18%!)</li><li>Гемобартенеллез</li><li>Калицивироз</li><li>Гингивостоматит</li><li>Холангиогепатит</li></ul></div>
+      <div class="col"><h4 style="color:#67e8f9">Сервисы</h4><ul><li><span class="tag tag-green">базовый</span> Вакцинация + ревакцинация</li><li><span class="tag tag-blue">допродажа</span> ПЦР-тест на инфекции</li><li><span class="tag tag-blue">допродажа</span> Биохимия печени</li><li><span class="tag tag-purple">пакет</span> Инфекционный скрининг</li></ul></div>
+      <div class="col"><h4 style="color:#86efac">Апсейл</h4><ul><li>Инфекционный пакет: ПЦР+ОАК+биохимия = <strong>70-100</strong></li></ul></div></div></div></div>
+
+  <div class="breed-card"><div class="breed-header"><h3>Шиншилла</h3><span class="count">178 кошек</span></div>
+    <div class="breed-body"><div class="g3"><div class="col"><h4 style="color:#fca5a5">Проблемы</h4><ul><li>Пищевая непереносимость</li><li>Вирусная инфекция</li><li>Гастрит</li><li>ОЗМ</li><li>Блошиная инвазия</li></ul></div>
+      <div class="col"><h4 style="color:#67e8f9">Сервисы</h4><ul><li><span class="tag tag-blue">допродажа</span> Аллергопроба / элиминационная диета</li><li><span class="tag tag-amber">товар</span> Гипоаллергенный корм</li><li><span class="tag tag-purple">пакет</span> ЖКТ-чекап</li></ul></div>
+      <div class="col"><h4 style="color:#86efac">Апсейл</h4><ul><li>Диетическая программа = <strong>40-60</strong> + корм</li></ul></div></div></div></div>
+
+  <div class="breed-card"><div class="breed-header"><h3>Ангорская</h3><span class="count">84 кошки</span></div>
+    <div class="breed-body"><div class="g3"><div class="col"><h4 style="color:#fca5a5">Проблемы</h4><ul><li>Вирусная инфекция</li><li>Блошиный дерматит</li><li>Раны</li></ul></div>
+      <div class="col"><h4 style="color:#67e8f9">Сервисы</h4><ul><li><span class="tag tag-green">базовый</span> Вакцинация</li><li><span class="tag tag-green">базовый</span> Антипаразитарная обработка</li><li><span class="tag tag-blue">допродажа</span> Обработка ран + контроль</li></ul></div>
+      <div class="col"><h4 style="color:#86efac">Апсейл</h4><ul><li>Профилактический пакет = <strong>40-50</strong></li></ul></div></div></div></div>
+
+  <div class="breed-card"><div class="breed-header"><h3>Сиамская</h3><span class="count">63 кошки</span></div>
+    <div class="breed-body"><div class="g3"><div class="col"><h4 style="color:#fca5a5">Проблемы</h4><ul><li>Блошиный дерматит</li><li>Гингивостоматит (породная)</li><li>Пищевая аллергия</li><li>Вирусная инфекция</li></ul></div>
+      <div class="col"><h4 style="color:#67e8f9">Сервисы</h4><ul><li><span class="tag tag-green">базовый</span> Стоматологический осмотр</li><li><span class="tag tag-blue">допродажа</span> Биопсия дёсен (хр. стоматит)</li><li><span class="tag tag-purple">пакет</span> Стоматологический пакет</li></ul></div>
+      <div class="col"><h4 style="color:#86efac">Апсейл</h4><ul><li>Стомат-пакет = <strong>50-70</strong></li></ul></div></div></div></div>
+
+  <div class="breed-card"><div class="breed-header"><h3>Персидская</h3><span class="count">62 кошки</span></div>
+    <div class="breed-body"><div class="g3"><div class="col"><h4 style="color:#fca5a5">Проблемы</h4><ul><li>Конъюнктивит</li><li>ХБП (почки)</li><li>Корнеальный секвестр</li><li>Микроспория</li><li>МКБ</li></ul></div>
+      <div class="col"><h4 style="color:#67e8f9">Сервисы</h4><ul><li><span class="tag tag-green">базовый</span> Биохимия (почки) ежегодно</li><li><span class="tag tag-green">базовый</span> Офтальмологический осмотр</li><li><span class="tag tag-blue">допродажа</span> УЗИ почек</li><li><span class="tag tag-purple">пакет</span> «Здоровый Перс» — почки+глаза+кожа</li></ul></div>
+      <div class="col"><h4 style="color:#86efac">Апсейл</h4><ul><li>Нефро+офтальмо пакет = <strong>70-100</strong></li></ul></div></div></div></div>
+
+  <div class="breed-card"><div class="breed-header"><h3>Метис</h3><span class="count">416 кошек</span></div>
+    <div class="breed-body"><div class="g3"><div class="col"><h4 style="color:#fca5a5">Проблемы</h4><ul><li>Вирусная инфекция (30 кошек!)</li><li>Блошиный дерматит</li><li>Гемобартенеллез</li><li>Панлейкопения</li><li>Конъюнктивит</li></ul></div>
+      <div class="col"><h4 style="color:#67e8f9">Сервисы</h4><ul><li><span class="tag tag-green">базовый</span> Полная вакцинация</li><li><span class="tag tag-green">базовый</span> Стерилизация/кастрация</li><li><span class="tag tag-blue">допродажа</span> ПЦР на инфекции</li></ul></div>
+      <div class="col"><h4 style="color:#86efac">Апсейл</h4><ul><li>Первичный пакет «Новый кот»: вакц+стерил+анализы = <strong>80-120</strong></li></ul></div></div></div></div>
+</div>
+
+<!-- ===================== RECOMMENDATIONS ===================== -->
+<div class="sec">
+  <h2><span class="n" style="background:linear-gradient(135deg,#22c55e,#06b6d4)">💡</span> Рекомендации по увеличению среднего чека</h2>
+
+  <div class="rec-sec">
+    <h3>1. Породные пакеты — основной драйвер</h3>
+    <div class="rec-item">
+      <h4>Создать 5-7 породных пакетов осмотра</h4>
+      <p>«Здоровый Шпиц» (сердце+зубы+кожа), «Здоровый Пудель» (уши+глаза), «Здоровый Британец» (моча+вакцинация), «Брахицефал-чекап» (Пекинес/Мопс — глаза+дыхание+сердце), «Скоттиш-чекап» (суставы+кожа).</p>
+      <div class="impact"><strong>+30-50%</strong> к чеку при каждом профилактическом визите. При 200 визитах/мес и 20% конверсии в пакет — <strong>+2,000-3,000/мес</strong>.</div>
+    </div>
+  </div>
+
+  <div class="rec-sec">
+    <h3>2. Допродажа по диагнозу</h3>
+    <div class="rec-item">
+      <h4>Автоматические рекомендации в карточке пациента</h4>
+      <p>Если диагноз «дерматит» → предложить аллергопробу + гипоаллергенный корм. Если «зубной камень» → предложить ультразвуковую чистку. Если «отит» → предложить цитологию + ушные капли. Врач видит подсказку на экране.</p>
+      <div class="impact"><strong>+15-25%</strong> к среднему чеку. Не требует дополнительного маркетинга — работает на существующих визитах.</div>
+    </div>
+  </div>
+
+  <div class="rec-sec">
+    <h3>3. Товары при каждом визите</h3>
+    <div class="rec-item">
+      <h4>Антипаразитарные средства — главный товарный драйвер</h4>
+      <p>Блошиный дерматит — в топ-5 проблем у <strong>8 из 10 пород собак</strong> и <strong>8 из 10 пород кошек</strong>. Каждый визит — повод предложить антипаразитарную обработку (капли, таблетки). Маржа на препаратах высокая.</p>
+      <div class="impact">При 1,000 визитов/мес и 30% конверсии × 10 средний чек на препарат = <strong>+3,000/мес</strong>.</div>
+    </div>
+    <div class="rec-item">
+      <h4>Диетические корма по показаниям</h4>
+      <p>Пищевая аллергия/непереносимость — в топ проблем у Йорков, Шиншилл, Скоттишей. Партнёрство с Royal Canin / Hills → рекомендация + продажа в клинике.</p>
+      <div class="impact">Маржа 30-40% на кормах + привязка клиента (приходит за кормом = повод для осмотра).</div>
+    </div>
+  </div>
+
+  <div class="rec-sec">
+    <h3>4. Стерилизация как точка входа</h3>
+    <div class="rec-item">
+      <h4>Стерилизация → цепочка визитов</h4>
+      <p>Стерилизация/кастрация — не разовая услуга: предоперационные анализы (ОАК + биохимия) → операция → контроль через 3 дня → снятие швов через 10 → контроль веса через 3 мес (риск ожирения).</p>
+      <div class="impact">1 стерилизация = <strong>4-5 визитов</strong> × средний чек. Общий доход с цепочки: <strong>120-200</strong> на животное.</div>
+    </div>
+  </div>
+
+  <div class="rec-sec">
+    <h3>5. Возрастные чекапы</h3>
+    <div class="rec-item">
+      <h4>Автоматическое предложение по возрасту</h4>
+      <p>7+ лет: кардиочекап + биохимия + УЗИ брюшной. 5+ лет для крупных пород. SMS за 2 недели до дня рождения: «Вашему [имя] исполняется [N] — пора на возрастной чекап для [породы]».</p>
+      <div class="impact">Возрастной чекап = <strong>80-150</strong>. При 500 собак 7+ лет и 15% конверсии = <strong>6,000-11,000/год</strong>.</div>
+    </div>
+  </div>
+
+  <div class="rec-sec">
+    <h3>6. «Первый визит» — максимальный пакет</h3>
+    <div class="rec-item">
+      <h4>Пакет «Новый питомец»</h4>
+      <p>Первый визит — момент максимальной готовности владельца платить. Пакет: полный осмотр + вакцинация + дегельминтизация + чип + рекомендации по породе.</p>
+      <div class="impact">Вместо чека <strong>25-30</strong> (просто осмотр) → <strong>80-120</strong> (пакет). При 80 новых клиентов/мес — <strong>+4,000-7,000/мес</strong>.</div>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div style="margin-top:20px;padding:24px;background:linear-gradient(135deg,rgba(34,197,94,.05),rgba(99,102,241,.05));border:1px solid rgba(34,197,94,.2);border-radius:12px;text-align:center">
+    <h3 style="color:#86efac;margin-bottom:12px">Суммарный потенциал увеличения чека</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">
+      <div><span style="font-size:2em;font-weight:700;color:#86efac">+30-50%</span><br><span style="color:var(--dim);font-size:.86em">к среднему чеку<br>(породные пакеты + допродажа)</span></div>
+      <div><span style="font-size:2em;font-weight:700;color:#fcd34d">+10,000-20,000</span><br><span style="color:var(--dim);font-size:.86em">в месяц<br>(пакеты + товары + чекапы)</span></div>
+      <div><span style="font-size:2em;font-weight:700;color:#c4b5fd">120,000-240,000</span><br><span style="color:var(--dim);font-size:.86em">в год<br>(дополнительная выручка)</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="ft">Veterinary Neuroanalyst Agent &bull; BELVET &bull; 17.03.2026<br>На основе данных клиники. Рекомендации требуют валидации ветеринарным директором.</div>
+</div>
+</body>
+</html>
