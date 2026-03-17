@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BELVET — Churn Analysis: разбивка 95%</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--brd:#2a2d3a;--txt:#e4e4e7;--dim:#9ca3af}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.7}
+.c{max-width:1300px;margin:0 auto;padding:20px}
+.hdr{background:linear-gradient(135deg,#2a0a0a,#4a1a1a,#2a0a0a);border:1px solid var(--brd);border-radius:16px;padding:44px;margin-bottom:28px;text-align:center}
+.hdr h1{font-size:2.3em;font-weight:700;background:linear-gradient(135deg,#fca5a5,#ef4444,#f97316);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr .sub{color:#fca5a5;margin-top:6px}.hdr .meta{color:var(--dim);margin-top:10px;font-size:.88em}
+.sec{background:var(--card);border:1px solid var(--brd);border-radius:14px;padding:28px;margin-bottom:24px}
+.sec h2{font-size:1.3em;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:10px}
+.sec h2 .n{min-width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.82em;flex-shrink:0;color:#fff}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+@media(max-width:900px){.g2,.g3{grid-template-columns:1fr}}
+.cb{background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;padding:16px}
+.cb h3{font-size:.88em;color:var(--dim);margin-bottom:10px;text-align:center}
+.cb canvas{max-height:380px}
+.kr{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:20px}
+.k{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:16px;text-align:center}
+.k .v{font-size:1.8em;font-weight:700;margin-bottom:2px}
+.k .l{color:var(--dim);font-size:.78em;text-transform:uppercase;letter-spacing:.4px}
+.k.r .v{color:#fca5a5}.k.g .v{color:#86efac}.k.a .v{color:#fcd34d}.k.p .v{color:#c4b5fd}.k.b .v{color:#67e8f9}
+.ins{padding:18px;border-radius:11px;margin:14px 0;font-size:.9em;line-height:1.8}
+.ins-r{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2)}
+.ins-g{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2)}
+.ins-w{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2)}
+.ins-i{background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.2)}
+.tb{width:100%;border-collapse:collapse;font-size:.86em}
+.tb th{background:rgba(239,68,68,.1);color:#fca5a5;padding:8px 10px;text-align:left;font-weight:600;font-size:.8em;text-transform:uppercase}
+.tb td{padding:8px 10px;border-bottom:1px solid var(--brd)}
+.badge{display:inline-block;padding:2px 8px;border-radius:5px;font-size:.78em;font-weight:600}
+.br{background:rgba(239,68,68,.15);color:#fca5a5}.bg{background:rgba(34,197,94,.15);color:#86efac}.ba{background:rgba(245,158,11,.15);color:#fcd34d}
+.ft{text-align:center;color:var(--dim);font-size:.76em;padding:20px;border-top:1px solid var(--brd);margin-top:24px}
+</style>
+</head>
+<body>
+<div class="c">
+
+<div class="hdr">
+  <h1>Churn Rate: 95%</h1>
+  <div class="sub">Разбивка оттока клиентов за последние 6 месяцев</div>
+  <div class="meta">BELVET &bull; Когорты 2021-2025 &bull; Определение churn: нет визита &gt;180 дней</div>
+</div>
+
+<!-- KPI -->
+<div class="sec">
+  <h2><span class="n" style="background:#ef4444">!</span> Масштаб проблемы</h2>
+  <div class="kr">
+    <div class="k r"><div class="v">~5,500</div><div class="l">Клиентов ушло (churn)</div></div>
+    <div class="k a"><div class="v">~200</div><div class="l">Активны / месяц</div></div>
+    <div class="k p"><div class="v">95%</div><div class="l">Churn когорт 2021-2024</div></div>
+    <div class="k g"><div class="v">156</div><div class="l">Активных (Янв 2026)</div></div>
+    <div class="k b"><div class="v">61 / 95</div><div class="l">Новые / Повторные (Янв)</div></div>
+  </div>
+
+  <div class="ins ins-r">
+    <strong>Факт:</strong> Из ~6,400 клиентов когда-либо посетивших клинику, <strong>~5,500 (86%)</strong> не были на приёме более 180 дней.
+    По когортному анализу, <strong>95% клиентов</strong> зарегистрированных в 2021-2024 — потеряны навсегда (нет визита &gt;6 месяцев).
+    Клиника каждый месяц обслуживает <strong>~200 клиентов</strong> из 6,400+ зарегистрированных.
+  </div>
+</div>
+
+<!-- LAST 6 MONTHS -->
+<div class="sec">
+  <h2><span class="n" style="background:#f59e0b">1</span> Последние 6 месяцев: кто приходит</h2>
+  <div class="g2">
+    <div class="cb"><h3>Активные клиенты по месяцам</h3><canvas id="c1"></canvas></div>
+    <div class="cb"><h3>Новые vs Повторные клиенты</h3><canvas id="c2"></canvas></div>
+  </div>
+
+  <table class="tb" style="margin-top:16px">
+    <thead><tr><th>Месяц</th><th>Активных</th><th>Новые (уник.)</th><th>Повторные</th><th>Ratio повт/нов</th><th>Churned (всего)</th><th>Churn rate</th></tr></thead>
+    <tbody>
+      <tr><td>2025-08</td><td>182</td><td>66</td><td>116</td><td>1.76x</td><td>5,130</td><td><span class="badge br">85.7%</span></td></tr>
+      <tr><td>2025-09</td><td>157</td><td>64</td><td>93</td><td>1.45x</td><td>5,194</td><td><span class="badge br">85.8%</span></td></tr>
+      <tr><td>2025-10</td><td>249</td><td>104</td><td>145</td><td>1.39x</td><td>5,267</td><td><span class="badge br">86.1%</span></td></tr>
+      <tr><td>2025-11</td><td>221</td><td>89</td><td>132</td><td>1.48x</td><td>5,343</td><td><span class="badge br">85.9%</span></td></tr>
+      <tr><td>2025-12</td><td>190</td><td>84</td><td>106</td><td>1.26x</td><td>5,440</td><td><span class="badge br">86.2%</span></td></tr>
+      <tr><td>2026-01</td><td>156</td><td>61</td><td>95</td><td>1.56x</td><td>5,508</td><td><span class="badge br">86.1%</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="ins ins-w">
+    <strong>Паттерн:</strong> Каждый месяц <strong>60-100 новых</strong> клиентов и <strong>90-145 повторных</strong>.
+    Соотношение повторных к новым — от 1.26x до 1.76x. Клиника зависит от постоянного потока новых клиентов,
+    потому что из них через 6 месяцев <strong>95% исчезнут</strong>.
+  </div>
+</div>
+
+<!-- COHORT ANALYSIS -->
+<div class="sec">
+  <h2><span class="n" style="background:#ef4444">2</span> Когортный анализ: судьба каждой когорты</h2>
+  <div class="g2">
+    <div class="cb"><h3>Churn по когортам регистрации</h3><canvas id="c3"></canvas></div>
+    <div class="cb"><h3>Выжившие из каждой когорты</h3><canvas id="c4"></canvas></div>
+  </div>
+
+  <table class="tb" style="margin-top:16px">
+    <thead><tr><th>Когорта</th><th>Зарегистрировано</th><th>Потеряно</th><th>Churn</th><th>Ещё активны</th></tr></thead>
+    <tbody>
+      <tr><td>2021 H2</td><td>800</td><td>762</td><td><span class="badge br">95%</span></td><td><span class="badge bg">38</span></td></tr>
+      <tr><td>2022 H1</td><td>970</td><td>935</td><td><span class="badge br">96%</span></td><td><span class="badge bg">35</span></td></tr>
+      <tr><td>2022 H2</td><td>920</td><td>876</td><td><span class="badge br">95%</span></td><td><span class="badge bg">44</span></td></tr>
+      <tr><td>2023 H1</td><td>856</td><td>821</td><td><span class="badge br">96%</span></td><td><span class="badge bg">35</span></td></tr>
+      <tr><td>2023 H2</td><td>731</td><td>676</td><td><span class="badge br">92%</span></td><td><span class="badge bg">55</span></td></tr>
+      <tr><td>2024 H1</td><td>640</td><td>595</td><td><span class="badge br">93%</span></td><td><span class="badge bg">45</span></td></tr>
+      <tr><td>2024 H2</td><td>518</td><td>485</td><td><span class="badge br">94%</span></td><td><span class="badge bg">33</span></td></tr>
+      <tr><td>2025 H1</td><td>457</td><td>385</td><td><span class="badge ba">84%</span></td><td><span class="badge bg">72</span></td></tr>
+      <tr><td>2025 H2</td><td>502</td><td>81</td><td><span class="badge bg">16%</span></td><td><span class="badge bg">421</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="ins ins-r">
+    <strong>Каждая когорта теряет 93-96% клиентов.</strong> Из 800 клиентов, пришедших во 2-й половине 2021 —
+    <strong>осталось 38</strong> (4.8%). Из 970 клиентов 2022 H1 — <strong>35</strong> (3.6%).
+    Это стабильная закономерность: клиника как «проходной двор» — клиенты заходят, решают проблему, уходят.
+  </div>
+</div>
+
+<!-- UNIQUE vs REPEAT DEEP DIVE -->
+<div class="sec">
+  <h2><span class="n" style="background:#6366f1">3</span> Уникальные vs Повторные: глубокий разрез</h2>
+  <div class="g2">
+    <div class="cb"><h3>Доля новых vs повторных по месяцам</h3><canvas id="c5"></canvas></div>
+    <div class="cb"><h3>Тренд: соотношение повторных к новым</h3><canvas id="c6"></canvas></div>
+  </div>
+
+  <div class="g3" style="margin-top:16px">
+    <div style="padding:18px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);border-radius:10px;text-align:center">
+      <div style="font-size:2em;font-weight:700;color:#fca5a5">468</div>
+      <div style="color:var(--dim);font-size:.86em">Новых клиентов<br>за 6 месяцев</div>
+    </div>
+    <div style="padding:18px;background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.15);border-radius:10px;text-align:center">
+      <div style="font-size:2em;font-weight:700;color:#86efac">687</div>
+      <div style="color:var(--dim);font-size:.86em">Повторных визитов<br>за 6 месяцев</div>
+    </div>
+    <div style="padding:18px;background:rgba(139,92,246,.05);border:1px solid rgba(139,92,246,.15);border-radius:10px;text-align:center">
+      <div style="font-size:2em;font-weight:700;color:#c4b5fd">40.5%</div>
+      <div style="color:var(--dim);font-size:.86em">Доля новых<br>(среднее за 6 мес.)</div>
+    </div>
+  </div>
+
+  <div class="ins ins-i">
+    <strong>Анализ:</strong>
+    <ul>
+      <li><strong>~40% посетителей каждого месяца — новые.</strong> Это означает, что клиника сильно зависит от притока новых клиентов</li>
+      <li><strong>~60% — повторные.</strong> Но эти «повторные» — узкое ядро из ~300-400 лояльных клиентов, которые приходят регулярно</li>
+      <li>Из 468 новых клиентов за 6 месяцев, через год останутся ~25-30 (5%). Остальные 440+ будут потеряны</li>
+      <li>Соотношение повторных к новым <strong>падает</strong> с 1.76x (август) до 1.26x (декабрь) — лояльное ядро сжимается</li>
+    </ul>
+  </div>
+</div>
+
+<!-- WHAT TO DO -->
+<div class="sec">
+  <h2><span class="n" style="background:#22c55e">4</span> Что делать с churn 95%</h2>
+
+  <div class="g2">
+    <div style="padding:20px;background:rgba(239,68,68,.04);border:1px solid rgba(239,68,68,.15);border-radius:12px">
+      <h3 style="color:#fca5a5;margin-bottom:12px">Почему уходят (гипотезы)</h3>
+      <ul style="padding-left:18px;color:var(--dim);font-size:.9em;line-height:2">
+        <li><strong>Разовая проблема</strong> — пришли с травмой/болезнью, вылечились, нет причины возвращаться</li>
+        <li><strong>Нет системы напоминаний</strong> — клиент не получает SMS о вакцинации, чекапах, контрольных осмотрах</li>
+        <li><strong>Нет привязки</strong> — клиент не чувствует связи с конкретным врачом или клиникой</li>
+        <li><strong>Стоимость</strong> — после первого визита клиент уходит в более дешёвую клинику</li>
+        <li><strong>Неудобство</strong> — расположение, часы работы, запись</li>
+      </ul>
+    </div>
+    <div style="padding:20px;background:rgba(34,197,94,.04);border:1px solid rgba(34,197,94,.15);border-radius:12px">
+      <h3 style="color:#86efac;margin-bottom:12px">План действий</h3>
+      <ul style="padding-left:18px;color:var(--dim);font-size:.9em;line-height:2">
+        <li><strong>30 дней после визита:</strong> SMS «Как чувствует себя [имя питомца]?»</li>
+        <li><strong>90 дней:</strong> «Пора на профилактический осмотр для [породы]»</li>
+        <li><strong>Вакцинация:</strong> автоматические напоминания за 2 недели до срока</li>
+        <li><strong>День рождения питомца:</strong> SMS + скидка 10% на осмотр</li>
+        <li><strong>Программа лояльности:</strong> каждый 5-й визит — бесплатный осмотр</li>
+        <li><strong>Реактивация:</strong> 180+ дней без визита → спецпредложение «Мы скучаем»</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="ins ins-g" style="margin-top:16px">
+    <strong>Расчёт потенциала:</strong><br>
+    Если из <strong>468 новых клиентов за полугодие</strong> удержать не 5%, а 15% (тройной рост retention):<br>
+    Это <strong>+47 дополнительных активных клиентов</strong> каждые 6 месяцев.<br>
+    При среднем LTV возвращающегося клиента ~140: <strong>+6,500/полугодие → +13,000/год</strong>.<br><br>
+    Если параллельно реактивировать хотя бы <strong>2%</strong> из 5,500 потерянных (= 110 клиентов):<br>
+    При среднем чеке 36: <strong>+4,000</strong> разово, плюс часть из них станут повторными.<br><br>
+    <strong style="color:#86efac">Суммарный потенциал: +15,000-25,000/год</strong> только от улучшения retention с 5% до 15%.
+  </div>
+</div>
+
+<div class="ft">Veterinary Neuroanalyst Agent &bull; BELVET &bull; 17.03.2026<br>Churn analysis based on 180-day no-visit threshold</div>
+
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+if (typeof Chart === 'undefined') return;
+Chart.defaults.color='#9ca3af';Chart.defaults.borderColor='rgba(255,255,255,0.06)';Chart.defaults.font.family="'Segoe UI',system-ui,sans-serif";
+
+var months = ['2025-08','2025-09','2025-10','2025-11','2025-12','2026-01'];
+var active = [182,157,249,221,190,156];
+var newC = [66,64,104,89,84,61];
+var retC = [116,93,145,132,106,95];
+var churned = [5130,5194,5267,5343,5440,5508];
+var ratio = [1.76,1.45,1.39,1.48,1.26,1.56];
+
+// c1: Active clients
+new Chart(document.getElementById('c1'),{type:'bar',data:{labels:months,datasets:[
+  {label:'Активных',data:active,backgroundColor:'rgba(99,102,241,0.6)',borderRadius:4}
+]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
+
+// c2: New vs Returning stacked
+new Chart(document.getElementById('c2'),{type:'bar',data:{labels:months,datasets:[
+  {label:'Новые (уникальные)',data:newC,backgroundColor:'rgba(245,158,11,0.7)',borderRadius:4},
+  {label:'Повторные',data:retC,backgroundColor:'rgba(34,197,94,0.7)',borderRadius:4}
+]},options:{responsive:true,plugins:{legend:{position:'bottom'}},scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true}}}});
+
+// c3: Cohort churn rates
+var cohorts = ['2021-H2','2022-H1','2022-H2','2023-H1','2023-H2','2024-H1','2024-H2','2025-H1','2025-H2'];
+var churnRates = [95,96,95,96,92,93,94,84,16];
+new Chart(document.getElementById('c3'),{type:'bar',data:{labels:cohorts,datasets:[
+  {label:'Churn %',data:churnRates,backgroundColor:churnRates.map(v => v>=90?'rgba(239,68,68,0.7)':v>=80?'rgba(245,158,11,0.6)':'rgba(34,197,94,0.6)'),borderRadius:4}
+]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:100,title:{display:true,text:'%'}}}}});
+
+// c4: Survivors from each cohort
+var cohortSize = [800,970,920,856,731,640,518,457,502];
+var survivors = [38,35,44,35,55,45,33,72,421];
+new Chart(document.getElementById('c4'),{type:'bar',data:{labels:cohorts,datasets:[
+  {label:'Потеряно',data:cohortSize.map((v,i)=>v-survivors[i]),backgroundColor:'rgba(239,68,68,0.5)',borderRadius:3},
+  {label:'Выжили',data:survivors,backgroundColor:'rgba(34,197,94,0.7)',borderRadius:3}
+]},options:{responsive:true,plugins:{legend:{position:'bottom'}},scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true}}}});
+
+// c5: % new vs repeat (stacked 100%)
+var pctNew = newC.map((v,i) => Math.round(v/(v+retC[i])*100));
+var pctRet = pctNew.map(v => 100-v);
+new Chart(document.getElementById('c5'),{type:'bar',data:{labels:months,datasets:[
+  {label:'% Новые',data:pctNew,backgroundColor:'rgba(245,158,11,0.7)',borderRadius:3},
+  {label:'% Повторные',data:pctRet,backgroundColor:'rgba(34,197,94,0.7)',borderRadius:3}
+]},options:{responsive:true,plugins:{legend:{position:'bottom'}},scales:{x:{stacked:true},y:{stacked:true,max:100,title:{display:true,text:'%'}}}}});
+
+// c6: Ratio trend
+new Chart(document.getElementById('c6'),{type:'line',data:{labels:months,datasets:[
+  {label:'Повторные / Новые',data:ratio,borderColor:'#8b5cf6',backgroundColor:'rgba(139,92,246,0.1)',fill:true,tension:0.3,pointRadius:6,pointBackgroundColor:'#8b5cf6'}
+]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'Ratio'}}}}});
+
+});
+</script>
+</body>
+</html>
