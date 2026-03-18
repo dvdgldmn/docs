@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BELVET — Все отчёты</title>
+<style>
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0f1117; color: #e4e4e7; min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; }
+  .wrap { max-width: 650px; text-align: center; padding: 40px; }
+  h1 { font-size: 2em; margin-bottom: 8px; background: linear-gradient(135deg, #c7d2fe, #e0e7ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .sub { color: #a5b4fc; margin-bottom: 10px; }
+  .note { color: #6b7280; font-size: 0.82em; margin-bottom: 28px; }
+  a.card { display: block; background: #1a1d27; border: 1px solid #2a2d3a; border-radius: 14px; padding: 20px 24px; margin: 12px 0; text-decoration: none; color: #e4e4e7; transition: transform 0.2s, box-shadow 0.2s; }
+  a.card:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(99,102,241,0.2); border-color: #6366f1; }
+  a.card h2 { color: #a5b4fc; font-size: 1.15em; margin-bottom: 5px; }
+  a.card p { color: #9ca3af; font-size: 0.85em; }
+  .section-label { text-align: left; color: #6b7280; font-size: 0.75em; text-transform: uppercase; letter-spacing: 1px; margin: 24px 0 8px; padding-left: 4px; }
+  .footer { margin-top: 30px; color: #6b7280; font-size: 0.8em; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>BELVET Analytics</h1>
+  <div class="sub">Все аналитические отчёты</div>
+  <div class="note">Полный каталог — 8 отчётов</div>
+
+  <div class="section-label">Бизнес и клиенты</div>
+
+  <a class="card" href="report_full.html">
+    <h2>Полный аналитический отчёт</h2>
+    <p>8 секций: клиенты, животные, операционка, записи, медицина, финансы, породы — 30+ графиков</p>
+  </a>
+
+  <a class="card" href="report_insights.html">
+    <h2>Инсайты и рекомендации</h2>
+    <p>7 секций: деньги, удержание, отмены, врачи, утечки, качество данных, точки роста</p>
+  </a>
+
+  <a class="card" href="churn_analysis.html" style="border-color:rgba(239,68,68,.3)">
+    <h2 style="color:#fca5a5">Churn Analysis: разбивка 95%</h2>
+    <p>Когортный анализ оттока, последние 6 месяцев, уникальные vs повторные клиенты</p>
+  </a>
+
+  <a class="card" href="breed_services.html" style="border-color:rgba(6,182,212,.3)">
+    <h2 style="color:#67e8f9">Породы: проблемы, сервисы, чек</h2>
+    <p>Топ-10 пород собак и кошек — болезни, услуги для продажи, 6 стратегий увеличения чека</p>
+  </a>
+
+  <div class="section-label">Медицина и здоровье</div>
+
+  <a class="card" href="report_health.html" style="border-color:rgba(34,197,94,.3)">
+    <h2 style="color:#86efac">Здоровье по породам</h2>
+    <p>Тепловая карта болезней, породные предрасположенности, вес и возраст vs диагнозы, коморбидности, смертность</p>
+  </a>
+
+  <a class="card" href="report_ophth.html" style="border-color:rgba(6,182,212,.3)">
+    <h2 style="color:#67e8f9">Офтальмологический отчёт</h2>
+    <p>41 диагноз, породная предрасположенность собак и кошек, коморбидности, рекомендации по скринингу</p>
+  </a>
+
+  <a class="card" href="report_zoonosis.html" style="border-color:rgba(239,68,68,.3)">
+    <h2 style="color:#fca5a5">Зоонозы: болезни, опасные для человека</h2>
+    <p>19 заболеваний, 412 клиентов — породы риска, пути передачи, таблица клиентов, рекомендации</p>
+  </a>
+
+  <div class="section-label">Данные и процессы</div>
+
+  <a class="card" href="data_quality.html" style="border-color:rgba(245,158,11,.3)">
+    <h2 style="color:#fcd34d">Качество данных: что заполнять и зачем</h2>
+    <p>Обязательные поля, текущие пробелы, дорожная карта в 4 фазы, расчёт ROI</p>
+  </a>
+
+  <div class="footer">Veterinary Neuroanalyst Agent &bull; 18.03.2026</div>
+</div>
+</body>
+</html>
