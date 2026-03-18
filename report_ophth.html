@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BELVET — Офтальмологический отчёт</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--brd:#2a2d3a;--txt:#e4e4e7;--dim:#9ca3af}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.7}
+.c{max-width:1300px;margin:0 auto;padding:20px}
+.hdr{background:linear-gradient(135deg,#0a1a2e,#1a3050,#0a1a2e);border:1px solid var(--brd);border-radius:16px;padding:44px;margin-bottom:28px;text-align:center}
+.hdr h1{font-size:2.2em;font-weight:700;background:linear-gradient(135deg,#67e8f9,#06b6d4,#0ea5e9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr .sub{color:#67e8f9;margin-top:6px}.hdr .meta{color:var(--dim);margin-top:10px;font-size:.88em}
+.sec{background:var(--card);border:1px solid var(--brd);border-radius:14px;padding:28px;margin-bottom:24px}
+.sec h2{font-size:1.3em;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:10px}
+.sec h2 .n{background:linear-gradient(135deg,#06b6d4,#0ea5e9);color:#fff;min-width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.82em;flex-shrink:0}
+.kr{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:20px}
+.k{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:16px;text-align:center}
+.k .v{font-size:1.8em;font-weight:700;margin-bottom:2px}.k .l{color:var(--dim);font-size:.78em;text-transform:uppercase;letter-spacing:.4px}
+.k.b .v{color:#67e8f9}.k.p .v{color:#c4b5fd}.k.g .v{color:#86efac}.k.a .v{color:#fcd34d}.k.r .v{color:#fca5a5}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+@media(max-width:900px){.g2,.g3{grid-template-columns:1fr}}
+.cb{background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;padding:16px}
+.cb h3{font-size:.88em;color:var(--dim);margin-bottom:10px;text-align:center}
+.cb canvas{max-height:380px}
+.tb{width:100%;border-collapse:collapse;font-size:.84em}
+.tb th{background:rgba(6,182,212,.1);color:#67e8f9;padding:8px 10px;text-align:left;font-weight:600;font-size:.78em;text-transform:uppercase}
+.tb td{padding:8px 10px;border-bottom:1px solid var(--brd)}
+.tb tr:hover td{background:rgba(6,182,212,.03)}
+.badge{display:inline-block;padding:2px 8px;border-radius:5px;font-size:.76em;font-weight:600}
+.br{background:rgba(239,68,68,.15);color:#fca5a5}.bg{background:rgba(34,197,94,.15);color:#86efac}
+.ba{background:rgba(245,158,11,.15);color:#fcd34d}.bb{background:rgba(6,182,212,.15);color:#67e8f9}
+.ins{padding:18px;border-radius:11px;margin:14px 0;font-size:.9em;line-height:1.8}
+.ins-i{background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.2)}
+.ins-w{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2)}
+.ins-g{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2)}
+.breed-card{border:1px solid var(--brd);border-radius:10px;padding:16px;margin-bottom:12px}
+.breed-card h4{margin-bottom:8px}
+.breed-card .diags{font-size:.86em;color:var(--dim)}
+.ft{text-align:center;color:var(--dim);font-size:.76em;padding:20px;border-top:1px solid var(--brd);margin-top:24px}
+</style>
+</head>
+<body>
+<div class="c">
+
+<div class="hdr">
+  <h1>Офтальмологический отчёт</h1>
+  <div class="sub">Заболевания глаз: диагнозы, породная предрасположенность, коморбидности</div>
+  <div class="meta">BELVET &bull; 1456 пациентов с офтальмо-диагнозами &bull; 1740 записей &bull; 41 диагноз</div>
+</div>
+
+<div class="sec"><h2><span class="n">1</span> Обзор</h2>
+<div class="kr">
+  <div class="k b"><div class="v">1456</div><div class="l">Пациентов с глазными проблемами</div></div>
+  <div class="k p"><div class="v">1,740</div><div class="l">Мед. записей</div></div>
+  <div class="k a"><div class="v">41</div><div class="l">Уникальных диагнозов</div></div>
+  <div class="k g"><div class="v">484</div><div class="l">Собак</div></div>
+  <div class="k r"><div class="v">972</div><div class="l">Кошек</div></div>
+  <div class="k b"><div class="v">13.0%</div><div class="l">Распространённость</div></div>
+</div>
+<div class="g2">
+  <div class="cb"><h3>Топ офтальмо-диагнозов</h3><canvas id="c1"></canvas></div>
+  <div class="cb"><h3>Категории заболеваний глаз</h3><canvas id="c2"></canvas></div>
+</div>
+</div>
+
+<div class="sec"><h2><span class="n">2</span> Собаки vs Кошки: профиль глазных болезней</h2>
+<div class="g2">
+  <div class="cb"><h3>Собаки — категории</h3><canvas id="c3"></canvas></div>
+  <div class="cb"><h3>Кошки — категории</h3><canvas id="c4"></canvas></div>
+</div>
+<div class="ins ins-i">
+<strong>Ключевые различия:</strong>
+<ul>
+<li><strong>Кошки:</strong> доминируют конъюнктивит (часто вирусной природы), симблефарон, корнеальный секвестр</li>
+<li><strong>Собаки:</strong> чаще катаракта, сухой кератоконъюнктивит (KCS), пигментный кератит у брахицефалов</li>
+</ul>
+</div>
+</div>
+<div class="sec"><h2><span class="n">3</span> Породная предрасположенность — Собаки</h2>
+<div class="g2">
+  <div class="cb"><h3>% собак с глазными проблемами по породе</h3><canvas id="c5"></canvas></div>
+  <div>
+<div class="breed-card">
+<h4>Бишон-фризе <span class="badge br">24.2%</span> <span style="color:var(--dim);font-weight:400;font-size:.85em">(8/33)</span></h4>
+<div class="diags">Конъюнктивит (5), Эпифора (3), Кератит (1)</div></div>
+<div class="breed-card">
+<h4>Балонка <span class="badge br">20.0%</span> <span style="color:var(--dim);font-weight:400;font-size:.85em">(2/10)</span></h4>
+<div class="diags">Конъюнктивит (2)</div></div>
+<div class="breed-card">
+<h4>Мопс <span class="badge br">13.2%</span> <span style="color:var(--dim);font-weight:400;font-size:.85em">(5/38)</span></h4>
+<div class="diags">Пигментный кератит (3), язва роговицы (2), Кератит (2)</div></div>
+<div class="breed-card">
+<h4>Кангал <span class="badge br">10.5%</span> <span style="color:var(--dim);font-weight:400;font-size:.85em">(2/19)</span></h4>
+<div class="diags">Корнеосклеральный дермоид (1), Конъюнктивит (1)</div></div>
+<div class="breed-card">
+<h4>мальтезе <span class="badge ba">9.8%</span> <span style="color:var(--dim);font-weight:400;font-size:.85em">(4/41)</span></h4>
+<div class="diags">Конъюнктивит (2), Сенильная катаракта (1), Катаракта (1)</div></div>
+<div class="breed-card">
+<h4>Чау-чау <span class="badge ba">8.3%</span> <span style="color:var(--dim);font-weight:400;font-size:.85em">(1/12)</span></h4>
+<div class="diags">Эпифора (1)</div></div>
+<div class="breed-card">
+<h4>Французский бульдог <span class="badge ba">7.1%</span> <span style="color:var(--dim);font-weight:400;font-size:.85em">(3/42)</span></h4>
+<div class="diags">Дистрофия роговицы (1), Кератит (1), септическая язва роговицы (1)</div></div>
+<div class="breed-card">
+<h4>Пекинес <span class="badge ba">6.9%</span> <span style="color:var(--dim);font-weight:400;font-size:.85em">(13/189)</span></h4>
+<div class="diags">язва роговицы (4), Конъюнктивит (2), Кератит (2)</div></div>
+</div></div>
+<div class="ins ins-w">
+<strong>Породы высокого риска (собаки):</strong>
+<ul>
+<li><strong>Пекинес</strong> — язва роговицы, кератит (брахицефальный синдром, выступающие глаза)</li>
+<li><strong>Бишон-фризе</strong> — эпифора, конъюнктивит (атрезия носослёзных каналов)</li>
+<li><strong>Мопс</strong> — пигментный кератит, язва роговицы (экстремальная брахицефалия)</li>
+<li><strong>Пудель</strong> — катаракта (наследственная предрасположенность)</li>
+<li><strong>Кокер-спаниель</strong> — сухой кератоконъюнктивит (KCS)</li>
+</ul></div></div>
+<div class="sec"><h2><span class="n">4</span> Породная предрасположенность — Кошки</h2>
+<div class="g2">
+  <div class="cb"><h3>% кошек с глазными проблемами по породе</h3><canvas id="c6"></canvas></div>
+  <div>
+<div class="breed-card">
+<h4>Экзотическая короткошерстная <span class="badge br">27.3%</span> <span style="color:var(--dim);font-weight:400;font-size:.85em">(3/11)</span></h4>
+<div class="diags">Корнеальный секвестр (2), язва роговицы (2), Кератит (1)</div></div>
+<div class="breed-card">
+<h4>Тайская <span class="badge ba">9.1%</span> <span style="color:var(--dim);font-weight:400;font-size:.85em">(1/11)</span></h4>
+<div class="diags">Конъюнктивит (1)</div></div>
+<div class="breed-card">
+<h4>Персидская <span class="badge ba">8.1%</span> <span style="color:var(--dim);font-weight:400;font-size:.85em">(5/62)</span></h4>
+<div class="diags">Конъюнктивит (2), Корнеальный секвестр (2), септическая язва роговицы (1)</div></div>
+<div class="breed-card">
+<h4>Турецкая ангора <span class="badge ba">5.3%</span> <span style="color:var(--dim);font-weight:400;font-size:.85em">(1/19)</span></h4>
+<div class="diags">Конъюнктивит (1)</div></div>
+<div class="breed-card">
+<h4>Метис <span class="badge bg">4.3%</span> <span style="color:var(--dim);font-weight:400;font-size:.85em">(18/416)</span></h4>
+<div class="diags">Конъюнктивит (9), Субатрофия глаза (3), язва роговицы (2)</div></div>
+<div class="breed-card">
+<h4>Европейская <span class="badge bg">4.0%</span> <span style="color:var(--dim);font-weight:400;font-size:.85em">(7/177)</span></h4>
+<div class="diags">Конъюнктивит (6), Сосудистый кератит (1), Подозрение на вирусную инфекцию (1)</div></div>
+<div class="breed-card">
+<h4>Британская <span class="badge bg">3.3%</span> <span style="color:var(--dim);font-weight:400;font-size:.85em">(19/577)</span></h4>
+<div class="diags">Конъюнктивит (11), Корнеальный секвестр (5), язва роговицы (2)</div></div>
+<div class="breed-card">
+<h4>Ангорская <span class="badge bg">2.4%</span> <span style="color:var(--dim);font-weight:400;font-size:.85em">(2/84)</span></h4>
+<div class="diags">увеит (1), Конъюнктивит (1)</div></div>
+</div></div>
+<div class="ins ins-w">
+<strong>Породы высокого риска (кошки):</strong>
+<ul>
+<li><strong>Экзотическая короткошерстная</strong> — корнеальный секвестр, кератит (брахицефал)</li>
+<li><strong>Персидская</strong> — корнеальный секвестр, конъюнктивит (хронический)</li>
+<li><strong>Британская</strong> — корнеальный секвестр, конъюнктивит (высокий объём)</li>
+<li><strong>Европейская</strong> — конъюнктивит (чаще вирусной этиологии)</li>
+</ul></div></div>
+
+<div class="sec"><h2><span class="n">5</span> Коморбидности: с чем сочетаются глазные болезни</h2>
+<div class="g2">
+  <div class="cb"><h3>Сопутствующие диагнозы у пациентов с офтальмо-проблемами</h3><canvas id="c7"></canvas></div>
+  <div>
+    <div class="ins ins-i">
+    <strong>У 223 пациентов</strong> с глазными проблемами обнаружены сопутствующие заболевания.
+    <br>Наиболее частые сочетания:
+    <ul>
+<li><strong>Вирусная инфекция кошек</strong> — 29 пациентов</li>
+<li><strong>Бомбаж радужной оболочки</strong> — 15 пациентов</li>
+<li><strong>Блошиный аллергический дерматит</strong> — 11 пациентов</li>
+<li><strong>Аллергический дерматит</strong> — 8 пациентов</li>
+<li><strong>инородное тело желудка</strong> — 8 пациентов</li>
+<li><strong>зубной налет</strong> — 7 пациентов</li>
+<li><strong>Зубной камень</strong> — 7 пациентов</li>
+<li><strong>отит</strong> — 7 пациентов</li>
+</ul></div></div></div></div>
+
+<div class="sec"><h2><span class="n">6</span> Рекомендации</h2>
+<div class="g3">
+  <div style="padding:16px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);border-radius:10px">
+    <h4 style="color:#fca5a5;margin-bottom:8px">Обязательный скрининг</h4>
+    <ul style="padding-left:16px;font-size:.86em;line-height:2;color:var(--dim)">
+      <li>Пекинес, Мопс, Фр. бульдог — осмотр роговицы при каждом визите</li>
+      <li>Пудель, Кокер — тест Ширмера ежегодно после 5 лет</li>
+      <li>Бишон-фризе — проверка носослёзных каналов</li>
+      <li>Британская, Экзотическая — мониторинг корнеального секвестра</li>
+    </ul>
+  </div>
+  <div style="padding:16px;background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.15);border-radius:10px">
+    <h4 style="color:#fcd34d;margin-bottom:8px">Услуги для развития</h4>
+    <ul style="padding-left:16px;font-size:.86em;line-height:2;color:var(--dim)">
+      <li>Пакет «Офтальмо-чекап»: осмотр + Ширмер + тонометрия + флуоресцеин</li>
+      <li>Пакет «Брахицефал»: глаза + дыхание + кожные складки</li>
+      <li>Хирургия: экзентерация, пластика век, удаление секвестра</li>
+      <li>Аптека: глазные капли, увлажнители, антибиотики</li>
+    </ul>
+  </div>
+  <div style="padding:16px;background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.15);border-radius:10px">
+    <h4 style="color:#86efac;margin-bottom:8px">Потенциал выручки</h4>
+    <ul style="padding-left:16px;font-size:.86em;line-height:2;color:var(--dim)">
+      <li>Офтальмо-чекап: <strong>60-90</strong> за визит</li>
+      <li>~1456 пациентов уже с проблемами — повторные визиты</li>
+      <li>Брахицефалы (189+38+42) — группа профилактики</li>
+      <li>Тест Ширмера (15) + флуоресцеин (10) = простая допродажа</li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<div class="ft">Veterinary Neuroanalyst Agent &bull; BELVET &bull; 18.03.2026<br>
+Офтальмологический отчёт. Рекомендации требуют валидации ветеринарным офтальмологом.</div>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+if (typeof Chart === 'undefined') return;
+Chart.defaults.color='#9ca3af';Chart.defaults.borderColor='rgba(255,255,255,0.06)';Chart.defaults.font.family="'Segoe UI',system-ui,sans-serif";
+var P=['#06b6d4','#0ea5e9','#6366f1','#8b5cf6','#22c55e','#f59e0b','#ef4444','#ec4899','#14b8a6','#f97316','#a855f7','#3b82f6','#84cc16','#e11d48','#d946ef'];
+var D={"topDiagLabels": ["Конъюнктивит", "язва роговицы", "Катаракта", "Корнеальный секвестр", "увеит", "Кератит", "Симблефарон", "Субатрофия глаза", "Сухой кератоконъюнктивит", "септическая язва роговицы", "Глаукома", "Анкилоблефарон", "Эпифора", "Атрезия носослезных каналов", "Пигментный кератит"], "topDiagVals": [122, 36, 27, 25, 25, 24, 23, 21, 21, 14, 12, 11, 8, 7, 6], "catLabels": ["Конъюнктивит", "Язва роговицы", "Катаракта", "Кератит", "Корнеальный секвестр", "Увеит", "Симблефарон", "Субатрофия глаза", "Глаукома", "Анкилоблефарон"], "catVals": [144, 50, 31, 30, 25, 25, 23, 21, 12, 11], "dcLabels": ["Конъюнктивит", "Язва роговицы", "Катаракта", "Кератит", "Увеит", "Корнеальный секвестр", "Симблефарон", "Субатрофия глаза"], "dcDog": [60, 18, 26, 17, 11, 0, 0, 6], "dcCat": [84, 32, 5, 13, 14, 25, 23, 15], "dogRateLabels": ["Бишон-фризе (8/33)", "Балонка (2/10)", "Мопс (5/38)", "Кангал (2/19)", "мальтезе (4/41)", "Чау-чау (1/12)", "Французский бульдог (3/42)", "Пекинес (13/189)", "Ши-тцу (2/30)", "Ротвейлер (2/30)"], "dogRateVals": [24.2, 20.0, 13.2, 10.5, 9.8, 8.3, 7.1, 6.9, 6.7, 6.7], "dogRateColors": ["rgba(239,68,68,0.7)", "rgba(239,68,68,0.7)", "rgba(239,68,68,0.7)", "rgba(239,68,68,0.7)", "rgba(245,158,11,0.6)", "rgba(245,158,11,0.6)", "rgba(245,158,11,0.6)", "rgba(245,158,11,0.6)", "rgba(245,158,11,0.6)", "rgba(245,158,11,0.6)"], "catRateLabels": ["Экзотическая короткошерстная (3/11)", "Тайская (1/11)", "Персидская (5/62)", "Турецкая ангора (1/19)", "Метис (18/416)", "Европейская (7/177)", "Британская (19/577)", "Ангорская (2/84)", "Шиншилла (4/178)", "б/п (95/4759)"], "catRateVals": [27.3, 9.1, 8.1, 5.3, 4.3, 4.0, 3.3, 2.4, 2.2, 2.0], "catRateColors": ["rgba(239,68,68,0.7)", "rgba(245,158,11,0.6)", "rgba(245,158,11,0.6)", "rgba(245,158,11,0.6)", "rgba(236,72,153,0.5)", "rgba(236,72,153,0.5)", "rgba(236,72,153,0.5)", "rgba(236,72,153,0.5)", "rgba(236,72,153,0.5)", "rgba(236,72,153,0.5)"], "comorbLabels": ["Вирусная инфекция кошек", "Бомбаж радужной оболочки", "Блошиный аллергический дермати", "Аллергический дерматит", "инородное тело желудка", "зубной налет", "Зубной камень", "отит", "Буфтальмия", "Пищевая непереносимость"], "comorbVals": [29, 15, 11, 8, 8, 7, 7, 7, 7, 7]};
+
+new Chart(document.getElementById('c1'),{type:'bar',data:{labels:D.topDiagLabels,datasets:[{data:D.topDiagVals,backgroundColor:'rgba(6,182,212,0.6)',borderRadius:4}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}}}});
+
+new Chart(document.getElementById('c2'),{type:'doughnut',data:{labels:D.catLabels,datasets:[{data:D.catVals,backgroundColor:P,borderWidth:0,hoverOffset:8}]},options:{responsive:true,plugins:{legend:{position:'right',labels:{font:{size:11}}}}}});
+
+new Chart(document.getElementById('c3'),{type:'bar',data:{labels:D.dcLabels,datasets:[{label:'Собаки',data:D.dcDog,backgroundColor:'rgba(99,102,241,0.7)',borderRadius:3}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}}}});
+
+new Chart(document.getElementById('c4'),{type:'bar',data:{labels:D.dcLabels,datasets:[{label:'Кошки',data:D.dcCat,backgroundColor:'rgba(236,72,153,0.7)',borderRadius:3}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}}}});
+
+new Chart(document.getElementById('c5'),{type:'bar',data:{labels:D.dogRateLabels,datasets:[{data:D.dogRateVals,backgroundColor:D.dogRateColors,borderRadius:4}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,title:{display:true,text:'%'}}}}});
+
+new Chart(document.getElementById('c6'),{type:'bar',data:{labels:D.catRateLabels,datasets:[{data:D.catRateVals,backgroundColor:D.catRateColors,borderRadius:4}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,title:{display:true,text:'%'}}}}});
+
+new Chart(document.getElementById('c7'),{type:'bar',data:{labels:D.comorbLabels,datasets:[{data:D.comorbVals,backgroundColor:'rgba(139,92,246,0.6)',borderRadius:4}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}}}});
+
+});
+</script>
+</body>
+</html>
