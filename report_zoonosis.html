@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BELVET — Зоонозы: болезни, опасные для человека</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--brd:#2a2d3a;--txt:#e4e4e7;--dim:#9ca3af}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.7}
+.c{max-width:1300px;margin:0 auto;padding:20px}
+.hdr{background:linear-gradient(135deg,#2a0a0a,#5a1a1a,#2a0a0a);border:1px solid var(--brd);border-radius:16px;padding:44px;margin-bottom:28px;text-align:center}
+.hdr h1{font-size:2.2em;font-weight:700;background:linear-gradient(135deg,#fca5a5,#ef4444,#dc2626);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr .sub{color:#fca5a5;margin-top:6px}.hdr .meta{color:var(--dim);margin-top:10px;font-size:.88em}
+.sec{background:var(--card);border:1px solid var(--brd);border-radius:14px;padding:28px;margin-bottom:24px}
+.sec h2{font-size:1.3em;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:10px}
+.sec h2 .n{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;min-width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.82em;flex-shrink:0}
+.kr{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:20px}
+.k{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:16px;text-align:center}
+.k .v{font-size:1.8em;font-weight:700;margin-bottom:2px}.k .l{color:var(--dim);font-size:.78em;text-transform:uppercase;letter-spacing:.4px}
+.k.r .v{color:#fca5a5}.k.a .v{color:#fcd34d}.k.g .v{color:#86efac}.k.b .v{color:#67e8f9}.k.p .v{color:#c4b5fd}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:900px){.g2{grid-template-columns:1fr}}
+.cb{background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;padding:16px}
+.cb h3{font-size:.88em;color:var(--dim);margin-bottom:10px;text-align:center}
+.cb canvas{max-height:380px}
+.tb{width:100%;border-collapse:collapse;font-size:.84em}
+.tb th{background:rgba(239,68,68,.1);color:#fca5a5;padding:8px 10px;text-align:left;font-weight:600;font-size:.78em;text-transform:uppercase}
+.tb td{padding:8px 10px;border-bottom:1px solid var(--brd)}
+.badge{display:inline-block;padding:2px 8px;border-radius:5px;font-size:.76em;font-weight:600}
+.br{background:rgba(239,68,68,.15);color:#fca5a5}.ba{background:rgba(245,158,11,.15);color:#fcd34d}
+.bg{background:rgba(34,197,94,.15);color:#86efac}.bb{background:rgba(6,182,212,.15);color:#67e8f9}
+.ins{padding:18px;border-radius:11px;margin:14px 0;font-size:.9em;line-height:1.8}
+.ins-r{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2)}
+.ins-w{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2)}
+.ins-g{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2)}
+.ins-i{background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.2)}
+.zoo-card{border:1px solid var(--brd);border-radius:10px;padding:16px;margin-bottom:14px}
+.zoo-card h4{margin-bottom:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.zoo-card .detail{font-size:.86em;color:var(--dim);line-height:1.8}
+.zoo-card .human{margin-top:8px;padding:10px 12px;border-radius:8px;font-size:.86em}
+.ft{text-align:center;color:var(--dim);font-size:.76em;padding:20px;border-top:1px solid var(--brd);margin-top:24px}
+</style>
+</head>
+<body>
+<div class="c">
+
+<div class="hdr">
+  <h1>Зоонозы: болезни, опасные для человека</h1>
+  <div class="sub">Заболевания животных, которые могут передаваться владельцам</div>
+  <div class="meta">BELVET &bull; 19 зоонозных заболеваний &bull; 472 пациентов &bull; 757 записей (без вакцинации от бешенства)</div>
+</div>
+
+<div class="sec"><h2><span class="n">1</span> Обзор</h2>
+<div class="kr">
+  <div class="k r"><div class="v">19</div><div class="l">Зоонозных болезней</div></div>
+  <div class="k a"><div class="v">472</div><div class="l">Животных (без бешенства)</div></div>
+  <div class="k p"><div class="v">156</div><div class="l">Грибковые (лишай)</div></div>
+  <div class="k b"><div class="v">326</div><div class="l">Клещевые</div></div>
+  <div class="k g"><div class="v">122</div><div class="l">Паразитарные</div></div>
+  <div class="k a"><div class="v">49</div><div class="l">Бактериальные</div></div>
+</div>
+<div class="g2">
+  <div class="cb"><h3>Зоонозы по количеству животных (без бешенства)</h3><canvas id="c1"></canvas></div>
+  <div class="cb"><h3>Распределение по группам</h3><canvas id="c2"></canvas></div>
+</div>
+<div class="ins ins-r">
+<strong>Внимание:</strong> Бешенство (1,273 записи) — это в основном <strong>записи о вакцинации</strong>, не о заболевании.
+Реальные зоонозные риски — лишай, клещевые инфекции, кишечные паразиты.
+</div>
+</div>
+<div class="sec"><h2><span class="n">2</span> Все зоонозы: детальная таблица</h2>
+<table class="tb"><thead><tr><th>Заболевание</th><th>Группа</th><th>Животных</th><th>Записей</th><th>Путь передачи</th><th>Опасность</th><th>Осн. вид</th></tr></thead><tbody>
+<tr><td><strong>Эрлихиоз</strong></td><td>Клещевые</td><td>181</td><td>228</td><td>Через клещей</td><td><span class='badge ba'>Средний</span></td><td>Собаки</td></tr>
+<tr><td><strong>Микроспория (лишай)</strong></td><td>Грибковые</td><td>135</td><td>159</td><td>Контактный</td><td><span class='badge br'>Высокий</span></td><td>Кошки</td></tr>
+<tr><td><strong>Анаплазмоз</strong></td><td>Клещевые</td><td>120</td><td>134</td><td>Через клещей</td><td><span class='badge ba'>Средний</span></td><td>Собаки</td></tr>
+<tr><td><strong>Криптоспоридиоз</strong></td><td>Паразитарные</td><td>67</td><td>71</td><td>Фекально-оральный</td><td><span class='badge br'>Высокий</span></td><td>Кошки</td></tr>
+<tr><td><strong>Хламидиоз</strong></td><td>Бактериальные</td><td>34</td><td>35</td><td>Контактный</td><td><span class='badge ba'>Средний</span></td><td>Кошки</td></tr>
+<tr><td><strong>Бабезиоз</strong></td><td>Клещевые</td><td>25</td><td>30</td><td>Через клещей</td><td><span class='badge ba'>Средний</span></td><td>Собаки</td></tr>
+<tr><td><strong>Дерматофитоз</strong></td><td>Грибковые</td><td>20</td><td>20</td><td>Контактный</td><td><span class='badge br'>Высокий</span></td><td>Кошки</td></tr>
+<tr><td><strong>Лямблиоз</strong></td><td>Паразитарные</td><td>17</td><td>21</td><td>Фекально-оральный</td><td><span class='badge ba'>Средний</span></td><td>Кошки</td></tr>
+<tr><td><strong>Саркоптоз (чесотка)</strong></td><td>Паразитарные</td><td>17</td><td>20</td><td>Контактный</td><td><span class='badge ba'>Средний</span></td><td>Собаки</td></tr>
+<tr><td><strong>Демодекоз</strong></td><td>Паразитарные</td><td>12</td><td>12</td><td>Контактный</td><td><span class='badge bg'>Низкий</span></td><td>Собаки</td></tr>
+<tr><td><strong>Нотоэдроз</strong></td><td>Паразитарные</td><td>5</td><td>5</td><td>Контактный</td><td><span class='badge ba'>Средний</span></td><td>Кошки</td></tr>
+<tr><td><strong>Бартонеллёз</strong></td><td>Бактериальные</td><td>5</td><td>6</td><td>Царапина/укус</td><td><span class='badge ba'>Средний</span></td><td>Кошки</td></tr>
+<tr><td><strong>Дипилидиоз</strong></td><td>Паразитарные</td><td>4</td><td>4</td><td>Через блох</td><td><span class='badge bg'>Низкий</span></td><td>Кошки</td></tr>
+<tr><td><strong>Стафилококковая инф.</strong></td><td>Бактериальные</td><td>4</td><td>5</td><td>Контактный</td><td><span class='badge ba'>Средний</span></td><td>Собаки</td></tr>
+<tr><td><strong>Лептоспироз</strong></td><td>Бактериальные</td><td>4</td><td>4</td><td>Моча животного</td><td><span class='badge br'>Высокий</span></td><td>Собаки</td></tr>
+<tr><td><strong>Туберкулёз</strong></td><td>Бактериальные</td><td>2</td><td>2</td><td>Воздушно-капельный</td><td><span class='badge br'>Высокий</span></td><td>Собаки</td></tr>
+<tr><td><strong>Трихофития</strong></td><td>Грибковые</td><td>1</td><td>1</td><td>Контактный</td><td><span class='badge br'>Высокий</span></td><td>Кошки</td></tr>
+</tbody></table></div>
+<div class="sec"><h2><span class="n" style="background:#f59e0b">🍄</span> Грибковые зоонозы</h2>
+<div class="zoo-card" style="border-color:#f59e0b30">
+<h4>Микроспория (лишай) <span class="badge br">Высокий</span> <span class="badge bb">Контактный</span></h4>
+<div class="detail">
+<strong>135</strong> животных, <strong>159</strong> записей<br>
+Виды: Кошки (138), Собаки (21)<br>
+Породы: б/п (65), Британская (14), Скоттиш -Фолд (12), Шотландская (9), Шиншилла (8)
+</div>
+<div class="human" style="background:#f59e0b10;border:1px solid #f59e0b30">
+<strong>Риск для человека:</strong> Зудящие пятна на коже. Особенно дети. Лечится, но заразно.
+</div></div>
+<div class="zoo-card" style="border-color:#f59e0b30">
+<h4>Дерматофитоз <span class="badge br">Высокий</span> <span class="badge bb">Контактный</span></h4>
+<div class="detail">
+<strong>20</strong> животных, <strong>20</strong> записей<br>
+Виды: Кошки (17), Собаки (3)<br>
+Породы: б/п (8), Британская (4), Шиншилла (2), Кокер-спаниель (1), Шотландская (1)
+</div>
+<div class="human" style="background:#f59e0b10;border:1px solid #f59e0b30">
+<strong>Риск для человека:</strong> Грибковое поражение кожи и ногтей.
+</div></div>
+<div class="zoo-card" style="border-color:#f59e0b30">
+<h4>Трихофития <span class="badge br">Высокий</span> <span class="badge bb">Контактный</span></h4>
+<div class="detail">
+<strong>1</strong> животных, <strong>1</strong> записей<br>
+Виды: Кошки (1)<br>
+Породы: б/п (1)
+</div>
+<div class="human" style="background:#f59e0b10;border:1px solid #f59e0b30">
+<strong>Риск для человека:</strong> Стригущий лишай у человека.
+</div></div>
+</div>
+<div class="sec"><h2><span class="n" style="background:#06b6d4">🕷</span> Клещевые зоонозы</h2>
+<div class="zoo-card" style="border-color:#06b6d430">
+<h4>Эрлихиоз <span class="badge ba">Средний</span> <span class="badge bb">Через клещей</span></h4>
+<div class="detail">
+<strong>181</strong> животных, <strong>228</strong> записей<br>
+Виды: Собаки (226), Кошки (2)<br>
+Породы: б/п (34), Овчарка (28), Пудель (22), Хаски (21), Кокер-спаниель (15)
+</div>
+<div class="human" style="background:#06b6d410;border:1px solid #06b6d430">
+<strong>Риск для человека:</strong> Общий клещевой вектор. Лихорадка, боли.
+</div></div>
+<div class="zoo-card" style="border-color:#06b6d430">
+<h4>Анаплазмоз <span class="badge ba">Средний</span> <span class="badge bb">Через клещей</span></h4>
+<div class="detail">
+<strong>120</strong> животных, <strong>134</strong> записей<br>
+Виды: Собаки (133), Кошки (1)<br>
+Породы: б/п (19), Овчарка (17), Кокер-спаниель (10), Хаски (8), Метис (7)
+</div>
+<div class="human" style="background:#06b6d410;border:1px solid #06b6d430">
+<strong>Риск для человека:</strong> Клещевая инфекция. Лихорадка, головная боль.
+</div></div>
+<div class="zoo-card" style="border-color:#06b6d430">
+<h4>Бабезиоз <span class="badge ba">Средний</span> <span class="badge bb">Через клещей</span></h4>
+<div class="detail">
+<strong>25</strong> животных, <strong>30</strong> записей<br>
+Виды: Собаки (30)<br>
+Породы: Овчарка (4), б/п (4), Хаски (4), Кокер-спаниель (4), Йоркширский терьер (3)
+</div>
+<div class="human" style="background:#06b6d410;border:1px solid #06b6d430">
+<strong>Риск для человека:</strong> Редко у человека, но клещи — общий вектор.
+</div></div>
+</div>
+<div class="sec"><h2><span class="n" style="background:#8b5cf6">🦠</span> Паразитарные зоонозы</h2>
+<div class="zoo-card" style="border-color:#8b5cf630">
+<h4>Криптоспоридиоз <span class="badge br">Высокий</span> <span class="badge bb">Фекально-оральный</span></h4>
+<div class="detail">
+<strong>67</strong> животных, <strong>71</strong> записей<br>
+Виды: Кошки (43), Собаки (28)<br>
+Породы: б/п (26), Метис (5), Шпиц (4), Британская (4), Тойпудель (4)
+</div>
+<div class="human" style="background:#8b5cf610;border:1px solid #8b5cf630">
+<strong>Риск для человека:</strong> Диарея. Опасен для детей, пожилых, ВИЧ+.
+</div></div>
+<div class="zoo-card" style="border-color:#8b5cf630">
+<h4>Лямблиоз <span class="badge ba">Средний</span> <span class="badge bb">Фекально-оральный</span></h4>
+<div class="detail">
+<strong>17</strong> животных, <strong>21</strong> записей<br>
+Виды: Кошки (18), Собаки (3)<br>
+Породы: б/п (13), Метис (2), Европейская (1), Португальская водяная (1), Шиншилла золотая (1)
+</div>
+<div class="human" style="background:#8b5cf610;border:1px solid #8b5cf630">
+<strong>Риск для человека:</strong> Диарея, боли в животе. Частый у детей.
+</div></div>
+<div class="zoo-card" style="border-color:#8b5cf630">
+<h4>Саркоптоз (чесотка) <span class="badge ba">Средний</span> <span class="badge bb">Контактный</span></h4>
+<div class="detail">
+<strong>17</strong> животных, <strong>20</strong> записей<br>
+Виды: Собаки (11), Кошки (9)<br>
+Породы: б/п (10), Йоркширский терьер (2), Алабай (2), Кане-корсо (1), Мопс (1)
+</div>
+<div class="human" style="background:#8b5cf610;border:1px solid #8b5cf630">
+<strong>Риск для человека:</strong> Сильный зуд, сыпь. Проходит без лечения хозяина.
+</div></div>
+<div class="zoo-card" style="border-color:#8b5cf630">
+<h4>Демодекоз <span class="badge bg">Низкий</span> <span class="badge bb">Контактный</span></h4>
+<div class="detail">
+<strong>12</strong> животных, <strong>12</strong> записей<br>
+Виды: Собаки (9), Кошки (3)<br>
+Породы: б/п (3), Метис (2), Лабрадор (1), Ангорская (1), Пудель (1)
+</div>
+<div class="human" style="background:#8b5cf610;border:1px solid #8b5cf630">
+<strong>Риск для человека:</strong> Минимальный риск. Разные виды клещей.
+</div></div>
+<div class="zoo-card" style="border-color:#8b5cf630">
+<h4>Нотоэдроз <span class="badge ba">Средний</span> <span class="badge bb">Контактный</span></h4>
+<div class="detail">
+<strong>5</strong> животных, <strong>5</strong> записей<br>
+Виды: Кошки (5)<br>
+Породы: б/п (5)
+</div>
+<div class="human" style="background:#8b5cf610;border:1px solid #8b5cf630">
+<strong>Риск для человека:</strong> Кошачья чесотка. Зуд у человека.
+</div></div>
+<div class="zoo-card" style="border-color:#8b5cf630">
+<h4>Дипилидиоз <span class="badge bg">Низкий</span> <span class="badge bb">Через блох</span></h4>
+<div class="detail">
+<strong>4</strong> животных, <strong>4</strong> записей<br>
+Виды: Кошки (4)<br>
+Породы: б/п (4)
+</div>
+<div class="human" style="background:#8b5cf610;border:1px solid #8b5cf630">
+<strong>Риск для человека:</strong> Огуречный цепень. Редко, при проглатывании блохи.
+</div></div>
+</div>
+<div class="sec"><h2><span class="n" style="background:#ef4444">⚠</span> Бактериальные зоонозы</h2>
+<div class="zoo-card" style="border-color:#ef444430">
+<h4>Хламидиоз <span class="badge ba">Средний</span> <span class="badge bb">Контактный</span></h4>
+<div class="detail">
+<strong>34</strong> животных, <strong>35</strong> записей<br>
+Виды: Кошки (35)<br>
+Породы: б/п (21), Британская (4), Скоттиш -Фолд (3), Ангорская (2), Шотландская (2)
+</div>
+<div class="human" style="background:#ef444410;border:1px solid #ef444430">
+<strong>Риск для человека:</strong> Конъюнктивит у владельцев кошек.
+</div></div>
+<div class="zoo-card" style="border-color:#ef444430">
+<h4>Бартонеллёз <span class="badge ba">Средний</span> <span class="badge bb">Царапина/укус</span></h4>
+<div class="detail">
+<strong>5</strong> животных, <strong>6</strong> записей<br>
+Виды: Кошки (6)<br>
+Породы: б/п (3), Шотландская (2), Британская (1)
+</div>
+<div class="human" style="background:#ef444410;border:1px solid #ef444430">
+<strong>Риск для человека:</strong> Болезнь кошачьих царапин. Лимфаденит.
+</div></div>
+<div class="zoo-card" style="border-color:#ef444430">
+<h4>Стафилококковая инф. <span class="badge ba">Средний</span> <span class="badge bb">Контактный</span></h4>
+<div class="detail">
+<strong>4</strong> животных, <strong>5</strong> записей<br>
+Виды: Собаки (3), Кошки (2)<br>
+Породы: б/п (2), Шпиц (1), Мопс (1), Доберман (1)
+</div>
+<div class="human" style="background:#ef444410;border:1px solid #ef444430">
+<strong>Риск для человека:</strong> Кожные инфекции при контакте с ранами.
+</div></div>
+<div class="zoo-card" style="border-color:#ef444430">
+<h4>Лептоспироз <span class="badge br">Высокий</span> <span class="badge bb">Моча животного</span></h4>
+<div class="detail">
+<strong>4</strong> животных, <strong>4</strong> записей<br>
+Виды: Собаки (4)<br>
+Породы: Золотистый ретривер (1), Звонок (1), Овчарка (1), Лабрадор (1)
+</div>
+<div class="human" style="background:#ef444410;border:1px solid #ef444430">
+<strong>Риск для человека:</strong> Серьёзное! Поражение печени и почек.
+</div></div>
+<div class="zoo-card" style="border-color:#ef444430">
+<h4>Туберкулёз <span class="badge br">Высокий</span> <span class="badge bb">Воздушно-капельный</span></h4>
+<div class="detail">
+<strong>2</strong> животных, <strong>2</strong> записей<br>
+Виды: Собаки (1), Кошки (1)<br>
+Породы: Овчарка (1), б/п (1)
+</div>
+<div class="human" style="background:#ef444410;border:1px solid #ef444430">
+<strong>Риск для человека:</strong> Крайне серьёзно. Редко от животных.
+</div></div>
+</div>
+<div class="sec"><h2><span class="n">3</span> Динамика: топ-5 зоонозов по кварталам</h2>
+<div class="cb"><canvas id="c3" style="max-height:350px"></canvas></div>
+</div>
+<div class="sec"><h2><span class="n">4</span> Породы в зоне зоонозного риска</h2>
+<div class="g2">
+  <div class="cb"><h3>Собаки: зоонозы по породе</h3><canvas id="c4"></canvas></div>
+  <div class="cb"><h3>Кошки: зоонозы по породе</h3><canvas id="c5"></canvas></div>
+</div>
+</div>
+<div class="sec"><h2><span class="n">5</span> Рекомендации по защите владельцев</h2>
+<div class="g2">
+<div style="padding:16px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);border-radius:10px">
+  <h4 style="color:#fca5a5;margin-bottom:10px">Что должен знать владелец</h4>
+  <ul style="padding-left:18px;font-size:.88em;line-height:2;color:var(--dim)">
+    <li><strong>Лишай (135 случаев):</strong> Не гладить бездомных кошек. Мыть руки после контакта. При пятнах на коже — к дерматологу</li>
+    <li><strong>Клещевые (326 случаев):</strong> Регулярная обработка собак. Осмотр после прогулок. Те же клещи кусают людей</li>
+    <li><strong>Криптоспоридиоз/лямблиоз:</strong> Убирать лоток в перчатках. Мыть руки. Дети и пожилые — в группе риска</li>
+    <li><strong>Хламидиоз (34 кошки):</strong> При конъюнктивите у кошки — мыть руки, не тереть глаза</li>
+    <li><strong>Бартонеллёз:</strong> Обрабатывать царапины кошек. При воспалении лимфоузлов — к врачу</li>
+  </ul>
+</div>
+<div style="padding:16px;background:rgba(34,197,94,.05);border:1px solid rgba(34,197,94,.15);border-radius:10px">
+  <h4 style="color:#86efac;margin-bottom:10px">Что может делать клиника</h4>
+  <ul style="padding-left:18px;font-size:.88em;line-height:2;color:var(--dim)">
+    <li><strong>Памятка владельцу</strong> при каждом зоонозном диагнозе — распечатка с правилами гигиены</li>
+    <li><strong>Пакет «Антипаразитарный»:</strong> анализ кала + обработка от блох/клещей + дегельминтизация</li>
+    <li><strong>Люминесцентная диагностика</strong> на лишай при каждом первом визите кошки</li>
+    <li><strong>Антиклещевая программа:</strong> ежемесячная обработка март-декабрь, SMS-напоминания</li>
+    <li><strong>Беременные владелицы:</strong> рекомендовать тест на токсоплазмоз кошки</li>
+    <li><strong>Сезонные акции:</strong> весной — «Антиклещ», осенью — «Проверка на лишай»</li>
+  </ul>
+</div>
+</div>
+<div class="ins ins-w" style="margin-top:14px">
+<strong>Важно:</strong> При каждом зоонозном диагнозе клиника должна информировать владельца о риске передачи.
+Это не только этическая обязанность, но и фактор доверия и лояльности.
+</div>
+</div>
+
+<div class="ft">Veterinary Neuroanalyst Agent &bull; BELVET &bull; 18.03.2026<br>
+Зоонозный отчёт. Информация для ветеринаров и менеджмента клиники. Не является медицинской рекомендацией для владельцев.</div>
+</div>
+
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+if (typeof Chart === 'undefined') return;
+Chart.defaults.color='#9ca3af';Chart.defaults.borderColor='rgba(255,255,255,0.06)';Chart.defaults.font.family="'Segoe UI',system-ui,sans-serif";
+var D={"zooLabels": ["Эрлихиоз", "Микроспория (лишай)", "Анаплазмоз", "Криптоспоридиоз", "Хламидиоз", "Бабезиоз", "Дерматофитоз", "Лямблиоз", "Саркоптоз (чесотка)", "Демодекоз", "Нотоэдроз", "Бартонеллёз"], "zooVals": [181, 135, 120, 67, 34, 25, 20, 17, 17, 12, 5, 5], "zooColors": ["rgba(6,182,212,0.7)", "rgba(245,158,11,0.7)", "rgba(6,182,212,0.7)", "rgba(139,92,246,0.7)", "rgba(239,68,68,0.7)", "rgba(6,182,212,0.7)", "rgba(245,158,11,0.7)", "rgba(139,92,246,0.7)", "rgba(139,92,246,0.7)", "rgba(139,92,246,0.7)", "rgba(139,92,246,0.7)", "rgba(239,68,68,0.7)"], "groupLabels": ["Грибковые", "Клещевые", "Паразитарные", "Бактериальные"], "groupVals": [156, 326, 122, 49], "quarters": ["2023-Q2", "2023-Q3", "2023-Q4", "2024-Q1", "2024-Q2", "2024-Q3", "2024-Q4", "2025-Q1", "2025-Q2", "2025-Q3", "2025-Q4", "2026-Q1"], "timeline": [{"label": "Эрлихиоз", "data": [14, 12, 10, 0, 11, 18, 9, 9, 15, 12, 7, 1], "borderColor": "#ef4444", "backgroundColor": "#ef444420", "tension": 0.3, "fill": false, "pointRadius": 4}, {"label": "Микроспория (лишай)", "data": [13, 15, 20, 12, 11, 8, 17, 4, 5, 14, 3, 3], "borderColor": "#f59e0b", "backgroundColor": "#f59e0b20", "tension": 0.3, "fill": false, "pointRadius": 4}, {"label": "Анаплазмоз", "data": [12, 7, 8, 0, 8, 9, 4, 6, 11, 9, 3, 0], "borderColor": "#06b6d4", "backgroundColor": "#06b6d420", "tension": 0.3, "fill": false, "pointRadius": 4}, {"label": "Криптоспоридиоз", "data": [5, 5, 4, 3, 5, 12, 7, 5, 5, 3, 6, 2], "borderColor": "#8b5cf6", "backgroundColor": "#8b5cf620", "tension": 0.3, "fill": false, "pointRadius": 4}, {"label": "Хламидиоз", "data": [5, 2, 5, 1, 3, 0, 0, 1, 1, 0, 2, 0], "borderColor": "#22c55e", "backgroundColor": "#22c55e20", "tension": 0.3, "fill": false, "pointRadius": 4}], "dogBreedLabels": ["б/п", "Овчарка", "Хаски", "Кокер-спаниель", "Пудель", "Йоркширский терьер", "Пекинес", "Шпиц", "Метис", "Немецкая овчарка"], "dogBreedVals": [57, 51, 36, 33, 33, 23, 21, 20, 20, 14], "catBreedLabels": ["б/п", "Британская", "Скоттиш -Фолд", "Шотландская", "Метис", "Шиншилла", "Европейская", "Сиамская", "Ангорская", "Персидская"], "catBreedVals": [162, 27, 18, 16, 16, 11, 7, 5, 5, 4]};
+
+new Chart(document.getElementById('c1'),{type:'bar',data:{labels:D.zooLabels,datasets:[{data:D.zooVals,backgroundColor:D.zooColors,borderRadius:4}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}}}});
+
+new Chart(document.getElementById('c2'),{type:'doughnut',data:{labels:D.groupLabels,datasets:[{data:D.groupVals,backgroundColor:['#f59e0b','#06b6d4','#8b5cf6','#ef4444'],borderWidth:0,hoverOffset:8}]},options:{responsive:true,plugins:{legend:{position:'bottom'}}}});
+
+new Chart(document.getElementById('c3'),{type:'line',data:{labels:D.quarters,datasets:D.timeline},options:{responsive:true,plugins:{legend:{position:'bottom',labels:{font:{size:11}}}},scales:{y:{beginAtZero:true}}}});
+
+new Chart(document.getElementById('c4'),{type:'bar',data:{labels:D.dogBreedLabels,datasets:[{data:D.dogBreedVals,backgroundColor:'rgba(99,102,241,0.6)',borderRadius:4}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}}}});
+
+new Chart(document.getElementById('c5'),{type:'bar',data:{labels:D.catBreedLabels,datasets:[{data:D.catBreedVals,backgroundColor:'rgba(236,72,153,0.6)',borderRadius:4}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}}}});
+
+});
+</script>
+</body>
+</html>
