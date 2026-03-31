@@ -1,0 +1,2412 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BELVET — Disease Progression Models: Зоонозы</title>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--brd:#2a2d3a;--txt:#e4e4e7;--dim:#9ca3af;--acc:#ef4444;--warn:#f59e0b;--ok:#22c55e;--info:#6366f1;--cyan:#06b6d4}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.7}
+.c{max-width:1200px;margin:0 auto;padding:20px}
+.hdr{background:linear-gradient(135deg,#1a0a2e,#2d1b4e,#1a0a2e);border:1px solid var(--brd);border-radius:16px;padding:44px;margin-bottom:28px;text-align:center}
+.hdr h1{font-size:2.2em;font-weight:700;background:linear-gradient(135deg,#c4b5fd,#8b5cf6,#6d28d9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr .sub{color:#c4b5fd;margin-top:6px;font-size:1.05em}
+.hdr .meta{color:var(--dim);margin-top:10px;font-size:.88em}
+
+/* Navigation */
+.nav{background:var(--card);border:1px solid var(--brd);border-radius:14px;padding:20px 24px;margin-bottom:24px}
+.nav h3{color:var(--dim);font-size:.82em;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+.nav-list{display:flex;flex-wrap:wrap;gap:8px}
+.nav-list a{display:inline-block;padding:6px 14px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:8px;color:#a5b4fc;text-decoration:none;font-size:.86em;transition:all .2s}
+.nav-list a:hover{background:rgba(99,102,241,.15);border-color:rgba(99,102,241,.4)}
+
+/* Disease block */
+.disease{background:var(--card);border:1px solid var(--brd);border-radius:16px;margin-bottom:28px;overflow:hidden}
+.disease-hdr{padding:28px 28px 20px;border-bottom:1px solid var(--brd)}
+.disease-hdr h2{font-size:1.6em;font-weight:700;margin-bottom:4px}
+.disease-hdr .en{color:var(--dim);font-size:.92em}
+.disease-hdr .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.tag{display:inline-block;padding:3px 10px;border-radius:6px;font-size:.76em;font-weight:600}
+.tag-r{background:rgba(239,68,68,.15);color:#fca5a5}
+.tag-a{background:rgba(245,158,11,.15);color:#fcd34d}
+.tag-g{background:rgba(34,197,94,.15);color:#86efac}
+.tag-b{background:rgba(6,182,212,.15);color:#67e8f9}
+.tag-p{background:rgba(139,92,246,.15);color:#c4b5fd}
+
+.disease-body{padding:28px}
+
+/* Section */
+.sec{margin-bottom:24px}
+.sec:last-child{margin-bottom:0}
+.sec-title{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--brd)}
+.sec-num{background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;min-width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.8em;font-weight:700;flex-shrink:0}
+.sec-title h3{font-size:1.08em;font-weight:600}
+
+/* Stages */
+.stage{border:1px solid var(--brd);border-radius:12px;padding:18px;margin-bottom:12px;position:relative;overflow:hidden}
+.stage::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px}
+.stage-0::before{background:#6b7280}
+.stage-1::before{background:#3b82f6}
+.stage-2::before{background:#f59e0b}
+.stage-3::before{background:#f97316}
+.stage-4::before{background:#ef4444}
+.stage-5::before{background:#dc2626}
+.stage h4{font-size:.96em;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.stage p,.stage ul{font-size:.88em;color:var(--dim);line-height:1.8}
+.stage ul{padding-left:18px}
+.stage li{margin-bottom:2px}
+.risk-line{margin-top:8px;padding:8px 12px;border-radius:8px;font-size:.84em}
+.risk-high{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#fca5a5}
+.risk-med{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);color:#fcd34d}
+.risk-low{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);color:#86efac}
+.risk-none{background:rgba(107,114,128,.08);border:1px solid rgba(107,114,128,.2);color:#9ca3af}
+
+/* Alert boxes */
+.alert{padding:16px 18px;border-radius:10px;margin:12px 0;font-size:.88em;line-height:1.8}
+.alert-r{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2)}
+.alert-w{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2)}
+.alert-g{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2)}
+.alert-i{background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.2)}
+
+/* Grid */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:900px){.g2,.g3{grid-template-columns:1fr}}
+.gbox{background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;padding:16px}
+.gbox h4{font-size:.88em;color:var(--dim);margin-bottom:10px;text-transform:uppercase;letter-spacing:.3px}
+.gbox ul{padding-left:16px;font-size:.86em;color:var(--dim);line-height:1.9}
+
+/* Table */
+.tb{width:100%;border-collapse:collapse;font-size:.84em;margin-top:12px}
+.tb th{background:rgba(99,102,241,.1);color:#a5b4fc;padding:10px 12px;text-align:left;font-weight:600;font-size:.8em;text-transform:uppercase}
+.tb td{padding:10px 12px;border-bottom:1px solid var(--brd);vertical-align:top}
+.tb tr:last-child td{border-bottom:none}
+
+/* Symptom list */
+.sym{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px}
+@media(max-width:700px){.sym{grid-template-columns:1fr}}
+.sym-item{padding:10px 14px;background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:8px;font-size:.86em}
+.sym-item strong{display:block;margin-bottom:4px;color:var(--txt)}
+.sym-item span{color:var(--dim)}
+
+.ft{text-align:center;color:var(--dim);font-size:.76em;padding:20px;border-top:1px solid var(--brd);margin-top:24px}
+
+/* Confusion block */
+.confusion{background:rgba(245,158,11,.04);border:1px solid rgba(245,158,11,.15);border-radius:10px;padding:16px;margin-top:12px}
+.confusion h4{color:#fcd34d;font-size:.9em;margin-bottom:8px}
+.confusion ul{padding-left:16px;font-size:.86em;color:var(--dim);line-height:1.8}
+
+/* Implementation block */
+.impl{background:linear-gradient(135deg,rgba(99,102,241,.06),rgba(139,92,246,.06));border:2px solid rgba(99,102,241,.25);border-radius:14px;padding:24px;margin-top:24px}
+.impl-title{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(99,102,241,.2)}
+.impl-title h3{font-size:1.1em;font-weight:700;background:linear-gradient(135deg,#a5b4fc,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.impl-title .ico{font-size:1.4em}
+.impl-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:900px){.impl-grid{grid-template-columns:1fr}}
+.impl-box{background:rgba(0,0,0,.2);border:1px solid var(--brd);border-radius:10px;padding:16px}
+.impl-box h4{font-size:.84em;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.impl-box h4 .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.impl-box ul{padding-left:16px;font-size:.84em;color:var(--dim);line-height:1.9}
+.impl-box code{background:rgba(99,102,241,.12);color:#a5b4fc;padding:1px 6px;border-radius:4px;font-size:.88em;font-family:'Fira Code','Consolas',monospace}
+.impl-full{background:rgba(0,0,0,.2);border:1px solid var(--brd);border-radius:10px;padding:16px;margin-top:14px}
+.impl-full h4{font-size:.84em;text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.impl-full h4 .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.impl-full ul{padding-left:16px;font-size:.84em;color:var(--dim);line-height:1.9}
+.impl-full code{background:rgba(99,102,241,.12);color:#a5b4fc;padding:1px 6px;border-radius:4px;font-size:.88em;font-family:'Fira Code','Consolas',monospace}
+.score-table{width:100%;border-collapse:collapse;font-size:.82em;margin:10px 0}
+.score-table th{background:rgba(99,102,241,.12);color:#a5b4fc;padding:6px 10px;text-align:left;font-size:.78em;text-transform:uppercase}
+.score-table td{padding:6px 10px;border-bottom:1px solid rgba(99,102,241,.1)}
+.score-table code{background:rgba(99,102,241,.12);color:#a5b4fc;padding:1px 5px;border-radius:3px;font-size:.9em}
+</style>
+</head>
+<body>
+<div class="c">
+
+<div class="hdr">
+  <h1>Disease Progression Models</h1>
+  <div class="sub">Зоонозы: система раннего предупреждения</div>
+  <div class="meta">BELVET &bull; 10 заболеваний &bull; Clinical Intelligence Briefs &bull; Surveillance Rule Reference</div>
+</div>
+
+<div class="nav">
+  <h3>Навигация по заболеваниям</h3>
+  <div class="nav-list">
+    <a href="#d1">1. Лептоспироз</a>
+    <a href="#d2">2. Бешенство</a>
+    <a href="#d3">3. Дерматофития</a>
+    <a href="#d4">4. Токсоплазмоз</a>
+    <a href="#d5">5. Сальмонеллёз</a>
+    <a href="#d6">6. Кампилобактериоз</a>
+    <a href="#d7">7. Эхинококкоз</a>
+    <a href="#d8">8. Лямблиоз</a>
+    <a href="#d9">9. Бруцеллёз</a>
+    <a href="#d10">10. Криптоспоридиоз</a>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DISEASE 1: ЛЕПТОСПИРОЗ -->
+<!-- ============================================================ -->
+<div class="disease" id="d1">
+<div class="disease-hdr">
+  <h2>1. Лептоспироз</h2>
+  <div class="en">Leptospirosis &bull; Возбудитель: Leptospira interrogans (спирохета)</div>
+  <div class="tags">
+    <span class="tag tag-r">Высокая опасность</span>
+    <span class="tag tag-a">Бактериальный</span>
+    <span class="tag tag-b">Собаки &gt; Кошки</span>
+    <span class="tag tag-p">One Health: критически важен</span>
+  </div>
+</div>
+<div class="disease-body">
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">1</span><h3>Почему это важно (One Health)</h3></div>
+  <p style="color:var(--dim);font-size:.9em">Лептоспироз — классическое заболевание One Health: один и тот же патоген поражает животных и людей. Основной резервуар — грызуны, но собаки являются <strong>индикаторным видом</strong>: рост заболеваемости у собак предшествует вспышкам у людей. Заражение человека происходит через контакт с мочой инфицированного животного, часто через повреждённую кожу или слизистые.</p>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">2</span><h3>Почему опасен для системы раннего мониторинга</h3></div>
+  <div class="g2">
+    <div class="gbox">
+      <h4>Почему легко пропустить</h4>
+      <ul>
+        <li>Ранние симптомы неспецифичны — похожи на «просто вялость»</li>
+        <li>Владелец часто списывает на жару, усталость, еду</li>
+        <li>Лёгкая форма может пройти без диагноза</li>
+        <li>Кошки болеют субклинически — почти без симптомов</li>
+      </ul>
+    </div>
+    <div class="gbox">
+      <h4>Почему критичен для predictive grid</h4>
+      <ul>
+        <li>Сезонность: пик после дождей, паводков</li>
+        <li>Кластеры случаев — сигнал загрязнения водоёма</li>
+        <li>Собака заразна до появления явных симптомов</li>
+        <li>Смертность без лечения: 20–80%</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">3</span><h3>Как животное заражается</h3></div>
+  <div class="alert alert-i">
+    <strong>Основные пути:</strong> контакт с мочой инфицированных животных (грызуны, другие собаки), стоячая вода, лужи, загрязнённая почва. Бактерия проникает через повреждённую кожу, слизистые оболочки, при питье из луж.<br>
+    <strong>Бытовые сценарии:</strong> собака пьёт из лужи на прогулке, купается в водоёме, контактирует с крысиной мочой в подвале или на участке.<br>
+    <strong>Факторы риска:</strong> охотничьи и рабочие собаки, жизнь вблизи водоёмов, наличие грызунов, невакцинированные животные.<br>
+    <strong>Сезонность:</strong> конец лета — осень, пик после продолжительных дождей и паводков.
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">4</span><h3>Disease Progression Model</h3></div>
+
+  <div class="stage stage-0">
+    <h4>Стадия 0 — Экспозиция <span class="tag tag-g">Риск для человека: нет</span></h4>
+    <p><strong>Что происходит:</strong> Бактерия попадает на слизистые или повреждённую кожу. Ещё не проникла в кровь.</p>
+    <p><strong>Что видит владелец:</strong> Ничего. Собака выглядит нормально.</p>
+    <div class="risk-line risk-none">Заразность для человека: <strong>отсутствует</strong>. Вероятность пропуска: <strong>100%</strong> — нет симптомов.</div>
+  </div>
+
+  <div class="stage stage-1">
+    <h4>Стадия 1 — Инкубация (2–14 дней) <span class="tag tag-a">Риск: низкий</span></h4>
+    <p><strong>Что происходит:</strong> Лептоспиры размножаются в крови (лептоспиремия). Бактерии распространяются по органам.</p>
+    <p><strong>Что видит владелец:</strong> Собака может быть чуть менее активной. Большинство владельцев не замечают ничего.</p>
+    <ul>
+      <li>Слабый сигнал: лёгкое снижение аппетита</li>
+      <li>Слабый сигнал: собака менее охотно идёт на прогулку</li>
+    </ul>
+    <div class="risk-line risk-low">Заразность: <strong>низкая, но уже возможна</strong> — бактерии могут присутствовать в крови. Вероятность пропуска: <strong>95%</strong>.</div>
+  </div>
+
+  <div class="stage stage-2">
+    <h4>Стадия 2 — Ранние неспецифические признаки (день 3–7) <span class="tag tag-a">Риск: средний</span></h4>
+    <p><strong>Что происходит:</strong> Бактериемия нарастает. Начинается поражение эндотелия сосудов. Иммунная система реагирует — лихорадка.</p>
+    <ul>
+      <li><strong>Лихорадка</strong> — нос горячий и сухой, собака ищет прохладные поверхности</li>
+      <li><strong>Вялость</strong> — отказ от игр, лежит больше обычного</li>
+      <li><strong>Снижение аппетита</strong> — ест половину порции или нюхает и отходит</li>
+      <li><strong>Мышечная боль</strong> — скованная походка, нежелание прыгать, подниматься по лестнице</li>
+      <li><strong>Дрожь</strong> — мелкая мышечная дрожь, особенно в покое</li>
+    </ul>
+    <div class="risk-line risk-med">Заразность: <strong>средняя</strong> — бактерии в крови, начало выделения с мочой. Владелец часто думает: «устала на прогулке», «что-то не то съела». Вероятность пропуска: <strong>70%</strong>.</div>
+  </div>
+
+  <div class="stage stage-3">
+    <h4>Стадия 3 — Клиническая фаза (день 5–14) <span class="tag tag-r">Риск: высокий</span></h4>
+    <p><strong>Что происходит:</strong> Поражение печени и почек. Васкулит. Возможна желтуха, геморрагии.</p>
+    <ul>
+      <li><strong>Рвота</strong> — многократная, иногда с кровью</li>
+      <li><strong>Диарея</strong> — жидкая, возможно с кровью</li>
+      <li><strong>Желтуха</strong> — пожелтение белков глаз, дёсен, кожи живота</li>
+      <li><strong>Тёмная моча</strong> — от ярко-оранжевой до коричневой</li>
+      <li><strong>Полидипсия/полиурия</strong> — пьёт много, мочится часто (ранний признак почечного поражения)</li>
+      <li><strong>Болезненность живота</strong> — собака сжимается при прикосновении к бокам</li>
+      <li><strong>Обезвоживание</strong> — сухие дёсны, кожная складка не расправляется</li>
+    </ul>
+    <div class="risk-line risk-high">Заразность: <strong>высокая</strong> — массивное выделение лептоспир с мочой. Моча на полу, на траве, на руках владельца при уборке — прямой путь заражения. Вероятность пропуска: <strong>15%</strong> — большинство уже замечает, но некоторые ждут «само пройдёт».</div>
+  </div>
+
+  <div class="stage stage-4">
+    <h4>Стадия 4 — Органная недостаточность (день 7–21) <span class="tag tag-r">Критическая</span></h4>
+    <p><strong>Что происходит:</strong> Острая почечная и/или печёночная недостаточность. Возможен ДВС-синдром, лёгочные кровотечения.</p>
+    <ul>
+      <li><strong>Олигурия/анурия</strong> — собака перестаёт мочиться или мочится по каплям</li>
+      <li><strong>Выраженная желтуха</strong> — вся кожа и слизистые жёлтые</li>
+      <li><strong>Кровотечения</strong> — из дёсен, носа, кровь в кале, петехии на коже</li>
+      <li><strong>Одышка</strong> — тяжёлое, частое дыхание (лёгочный лептоспироз)</li>
+      <li><strong>Отёки</strong> — конечности, морда</li>
+      <li><strong>Аммиачный запах изо рта</strong> — признак уремии</li>
+    </ul>
+    <div class="risk-line risk-high">Заразность: <strong>максимальная</strong>. Без лечения — гибель в течение дней. Смертность 60–80%.</div>
+  </div>
+
+  <div class="stage stage-5">
+    <h4>Стадия 5 — Исход: выздоровление / хроническое носительство</h4>
+    <p><strong>При лечении:</strong> выздоровление за 2–4 недели, но собака может <strong>выделять лептоспиры с мочой до 3–6 месяцев</strong> после клинического выздоровления.</p>
+    <div class="risk-line risk-med"><strong>КРИТИЧЕСКИ ВАЖНО:</strong> Собака выглядит здоровой, но остаётся заразной для человека. Это самый опасный период для владельца с точки зрения ложного чувства безопасности.</div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">5</span><h3>Практическая симптоматика для владельца</h3></div>
+  <div class="sym">
+    <div class="sym-item"><strong>Поведение</strong><span>Вялость, нежелание играть, прячется в тёмные места, скулит при движении</span></div>
+    <div class="sym-item"><strong>Аппетит</strong><span>Нюхает еду и отходит, ест <50% порции, полный отказ от еды</span></div>
+    <div class="sym-item"><strong>Активность</strong><span>Отказ от прогулки, скованная походка, не прыгает</span></div>
+    <div class="sym-item"><strong>Вода / мочеиспускание</strong><span>Пьёт жадно и много, мочится часто, моча тёмная или мутная</span></div>
+    <div class="sym-item"><strong>Стул</strong><span>Диарея, возможно с кровью, рвота многократная</span></div>
+    <div class="sym-item"><strong>Дыхание</strong><span>Учащённое, тяжёлое, хрипы (на поздних стадиях)</span></div>
+    <div class="sym-item"><strong>Кожа / глаза / слизистые</strong><span>Желтизна белков глаз и дёсен, сухость слизистых, петехии</span></div>
+    <div class="sym-item"><strong>Запахи</strong><span>Аммиачный запах изо рта (уремия), кислый запах рвоты</span></div>
+  </div>
+
+  <div class="confusion">
+    <h4>Что владелец ошибочно считает «ничего страшного»</h4>
+    <ul>
+      <li>«Просто устала после прогулки» — а это мышечная боль от лептоспиремии</li>
+      <li>«Жарко, поэтому пьёт много» — а это начало почечного поражения</li>
+      <li>«Съела что-то не то» — а рвота и диарея уже сигнал поражения печени</li>
+      <li>«Нос горячий, но завтра пройдёт» — а температура 40°+ говорит о системной инфекции</li>
+      <li>«Моча чуть тёмная — наверно мало пила» — а это билирубинурия</li>
+    </ul>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">6</span><h3>Как понять дома, что начались поражения органов</h3></div>
+  <div class="g2">
+    <div class="gbox">
+      <h4>Почки</h4>
+      <ul>
+        <li>Пьёт намного больше обычного</li>
+        <li>Моча очень светлая (разбавленная) или наоборот почти отсутствует</li>
+        <li>Запах аммиака изо рта</li>
+        <li>Отёки на лапах и морде</li>
+        <li>Рвота без связи с едой</li>
+      </ul>
+    </div>
+    <div class="gbox">
+      <h4>Печень</h4>
+      <ul>
+        <li>Жёлтые белки глаз (легче заметить при дневном свете)</li>
+        <li>Жёлтые дёсны и внутренняя поверхность ушей</li>
+        <li>Ярко-оранжевая или коричневая моча</li>
+        <li>Светлый, глинистый кал</li>
+        <li>Болезненность при нажатии справа под рёбрами</li>
+      </ul>
+    </div>
+    <div class="gbox">
+      <h4>Дыхательная система</h4>
+      <ul>
+        <li>Дышит ртом в покое</li>
+        <li>Частота дыхания >40/мин в покое</li>
+        <li>Кашель с розоватой мокротой (лёгочное кровотечение)</li>
+        <li>Синюшный язык</li>
+      </ul>
+    </div>
+    <div class="gbox">
+      <h4>Обезвоживание / интоксикация</h4>
+      <ul>
+        <li>Кожная складка на загривке не расправляется за 2 сек</li>
+        <li>Сухие, липкие дёсны</li>
+        <li>Запавшие глаза</li>
+        <li>Слабость, шаткая походка</li>
+        <li>Холодные уши и лапы</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">7</span><h3>Когда животное опасно для человека</h3></div>
+  <div class="alert alert-r">
+    <strong>Может ли заражать сразу после заражения?</strong> Нет. Первые 2–3 дня бактерии ещё не выделяются.<br>
+    <strong>Когда риск появляется впервые?</strong> С момента начала лептоспиремии (день 3–5) — бактерии в крови, начало выделения с мочой.<br>
+    <strong>Когда риск максимален?</strong> Клиническая фаза (стадия 3–4) — массивное выделение лептоспир с мочой.<br>
+    <strong>Через что передаётся?</strong> Моча (основной путь), кровь, слюна (редко). Контакт с мочой на полу, траве, при уборке лотка, через повреждённую кожу рук.<br>
+    <strong>Может ли выглядеть нормальной, но быть заразной?</strong> <span style="color:#fca5a5;font-weight:700">ДА. После выздоровления собака выделяет лептоспиры с мочой до 6 месяцев.</span><br>
+    <strong>Сохраняется ли заразность после выздоровления?</strong> <span style="color:#fca5a5;font-weight:700">ДА. Это главная опасность.</span>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">8</span><h3>Красные флаги для системы раннего предупреждения</h3></div>
+  <div class="g3">
+    <div class="gbox" style="border-color:rgba(245,158,11,.3)">
+      <h4 style="color:#fcd34d">Ранние предикторы</h4>
+      <ul>
+        <li>Вялость + снижение аппетита + сезон дождей</li>
+        <li>Лихорадка + мышечная боль после прогулки у водоёма</li>
+        <li>Неспецифическая вялость у невакцинированной собаки</li>
+        <li>Два+ случая вялости из одного района за неделю</li>
+      </ul>
+    </div>
+    <div class="gbox" style="border-color:rgba(249,115,22,.3)">
+      <h4 style="color:#fb923c">Средние сигналы</h4>
+      <ul>
+        <li>Рвота + полидипсия + тёмная моча</li>
+        <li>Лихорадка + болезненность живота</li>
+        <li>Желтушность + рвота у собаки</li>
+        <li>Два+ случая похожих симптомов в одной клинике за неделю</li>
+      </ul>
+    </div>
+    <div class="gbox" style="border-color:rgba(239,68,68,.3)">
+      <h4 style="color:#fca5a5">HIGH-RISK сигналы</h4>
+      <ul>
+        <li>Желтуха + анурия + кровотечения</li>
+        <li>Острая почечная недостаточность + лихорадка</li>
+        <li>Кластер 3+ случаев желтухи/ОПН в районе</li>
+        <li>Гибель собаки с подозрением на лептоспироз</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">9</span><h3>Сигналы: владелец / surveillance / регулятор</h3></div>
+  <div class="g3">
+    <div class="gbox">
+      <h4>Для владельца — срочно в клинику</h4>
+      <ul>
+        <li>Жёлтые глаза или дёсны</li>
+        <li>Отказ от еды >24 часов + рвота</li>
+        <li>Тёмная или отсутствующая моча</li>
+        <li>Кровь в рвоте, кале или моче</li>
+        <li>Одышка в покое</li>
+      </ul>
+    </div>
+    <div class="gbox">
+      <h4>Для surveillance system</h4>
+      <ul>
+        <li>Любая острая желтуха у собаки — триггер</li>
+        <li>ОПН у невакцинированной собаки — триггер</li>
+        <li>Кластер вялости + рвоты в одном районе</li>
+        <li>Рост обращений с полидипсией после дождей</li>
+      </ul>
+    </div>
+    <div class="gbox">
+      <h4>Для регулятора / public health</h4>
+      <ul>
+        <li>Подтверждённый лептоспироз — обязательное уведомление</li>
+        <li>Кластер 2+ случаев — сигнал загрязнения среды</li>
+        <li>Гибель от лептоспироза — проверка водоёмов района</li>
+        <li>Рост случаев у собак = предиктор вспышки у людей</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">10</span><h3>Итоговая матрица</h3></div>
+  <table class="tb">
+    <thead><tr><th>Стадия</th><th>Что в организме</th><th>Что видит владелец</th><th>Заметность</th><th>Риск для человека</th><th>Вер. пропуска</th></tr></thead>
+    <tbody>
+    <tr><td>0 — Экспозиция</td><td>Контакт с бактерией</td><td>Ничего</td><td>0%</td><td>Нет</td><td>100%</td></tr>
+    <tr><td>1 — Инкубация</td><td>Размножение в крови</td><td>Чуть вялая</td><td>5%</td><td>Низкий</td><td>95%</td></tr>
+    <tr><td>2 — Ранние признаки</td><td>Лихорадка, миалгия</td><td>Вялость, плохой аппетит, дрожь</td><td>30%</td><td>Средний</td><td>70%</td></tr>
+    <tr><td>3 — Клиническая</td><td>Поражение печени/почек</td><td>Рвота, желтуха, тёмная моча</td><td>85%</td><td style="color:#fca5a5;font-weight:700">Высокий</td><td>15%</td></tr>
+    <tr><td>4 — Органная недост.</td><td>ОПН, ДВС, лёг. кровотечения</td><td>Анурия, кровотечения, одышка</td><td>95%</td><td style="color:#fca5a5;font-weight:700">Максимальный</td><td>5%</td></tr>
+    <tr><td>5 — Носительство</td><td>Лептоспиры в почках</td><td>Собака выглядит здоровой</td><td>0%</td><td style="color:#fcd34d;font-weight:700">Средний (скрытый!)</td><td>99%</td></tr>
+    </tbody>
+  </table>
+</div>
+
+  <div class="confusion">
+    <h4>С чем часто путают на ранней стадии</h4>
+    <ul>
+      <li><strong>Пищевое отравление</strong> — рвота и диарея похожи, но при лептоспирозе добавляется желтуха и тёмная моча</li>
+      <li><strong>Пироплазмоз (бабезиоз)</strong> — тоже тёмная моча и лихорадка, но моча при пироплазмозе красная (гемоглобинурия), а при лептоспирозе — коричнево-оранжевая (билирубинурия)</li>
+      <li><strong>Гепатит</strong> — похожая желтуха, но лептоспироз обычно сопровождается одновременным поражением почек</li>
+      <li><strong>Тепловой удар</strong> — вялость и тахипноэ летом легко объясняют жарой</li>
+    </ul>
+  </div>
+
+<div class="impl">
+  <div class="impl-title"><span class="ico">&#9881;</span><h3>Имплементация в панель: Лептоспироз</h3></div>
+
+  <div class="impl-grid">
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#6366f1"></span> Data Model — поля для сбора</h4>
+      <ul>
+        <li><code>symptom_lethargy</code> — вялость (bool + severity 1-3)</li>
+        <li><code>symptom_vomiting</code> — рвота (bool + frequency)</li>
+        <li><code>symptom_jaundice</code> — желтуха (bool)</li>
+        <li><code>symptom_dark_urine</code> — тёмная моча (bool)</li>
+        <li><code>symptom_polydipsia</code> — повышенная жажда (bool)</li>
+        <li><code>symptom_abdominal_pain</code> — боль в животе (bool)</li>
+        <li><code>vaccination_lepto</code> — дата последней вакцинации</li>
+        <li><code>water_exposure</code> — контакт с водоёмами (bool)</li>
+        <li><code>species</code> — вид (собака приоритет)</li>
+        <li><code>season_rain</code> — автоматически: текущий сезон дождей (bool)</li>
+      </ul>
+    </div>
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#f59e0b"></span> Risk Score — формула</h4>
+      <table class="score-table">
+        <tr><th>Фактор</th><th>Баллы</th></tr>
+        <tr><td>Собака (не кошка)</td><td><code>+5</code></td></tr>
+        <tr><td>Нет вакцинации от лепто</td><td><code>+15</code></td></tr>
+        <tr><td>Сезон дождей / лето-осень</td><td><code>+5</code></td></tr>
+        <tr><td>Контакт с водоёмом</td><td><code>+10</code></td></tr>
+        <tr><td>Вялость + сниж. аппетита</td><td><code>+10</code></td></tr>
+        <tr><td>Рвота</td><td><code>+10</code></td></tr>
+        <tr><td>Желтуха</td><td><code>+25</code></td></tr>
+        <tr><td>Тёмная моча</td><td><code>+20</code></td></tr>
+        <tr><td>Полидипсия</td><td><code>+10</code></td></tr>
+        <tr><td>Олигурия/анурия</td><td><code>+30</code></td></tr>
+      </table>
+      <ul>
+        <li><code>0–19</code> = низкий (зелёный)</li>
+        <li><code>20–39</code> = средний (жёлтый) → мониторинг</li>
+        <li><code>40–59</code> = высокий (оранж) → приоритетный приём</li>
+        <li><code>60+</code> = критический (красный) → СРОЧНЫЙ ALERT</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="impl-full" style="margin-top:14px">
+    <h4><span class="dot" style="background:#ef4444"></span> Alert Rules — триггеры алертов</h4>
+    <ul>
+      <li><strong>Alert Level 1 (жёлтый):</strong> <code>IF</code> собака + невакцинирована + (вялость OR сниж. аппетита) + сезон дождей → <code>PUSH</code> уведомление врачу: «Рекомендован тест на лептоспироз»</li>
+      <li><strong>Alert Level 2 (оранж):</strong> <code>IF</code> рвота + (полидипсия OR тёмная моча) → <code>PUSH</code> срочный приём + пометка «зоонозный риск»</li>
+      <li><strong>Alert Level 3 (красный):</strong> <code>IF</code> желтуха + (олигурия OR кровотечение) → <code>PUSH</code> экстренный + <code>SMS</code> владельцу о мерах защиты</li>
+      <li><strong>Cluster Alert:</strong> <code>IF</code> 2+ случаев score≥40 из одного района за 14 дней → <code>PUSH</code> эпид-алерт + уведомление регулятору</li>
+    </ul>
+  </div>
+
+  <div class="impl-grid" style="margin-top:14px">
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#22c55e"></span> Dashboard Widgets</h4>
+      <ul>
+        <li><strong>Heatmap:</strong> случаи лептоспироза по районам (геолокация клиентов)</li>
+        <li><strong>Trend line:</strong> количество случаев по месяцам + наложение данных об осадках</li>
+        <li><strong>Gauge:</strong> текущий risk score каждого пациента с подозрением</li>
+        <li><strong>Counter:</strong> невакцинированные собаки в базе (потенциальная группа риска)</li>
+        <li><strong>Timeline:</strong> progression tracker — на какой стадии пациент</li>
+      </ul>
+    </div>
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#06b6d4"></span> Автоматизация</h4>
+      <ul>
+        <li><code>ON diagnosis(lepto)</code> → автоматически создать карточку «Зоонозный риск» + прикрепить PDF-памятку для владельца</li>
+        <li><code>ON diagnosis(lepto)</code> → автоматический SMS владельцу: «Ваш питомец диагностирован с лептоспирозом. Избегайте контакта с мочой. Мойте руки. Подробнее: [ссылка]»</li>
+        <li><code>ON recovery(lepto)</code> → напоминание: «Собака может выделять лептоспиры до 6 месяцев. Продолжайте меры гигиены»</li>
+        <li><code>CRON(March 1)</code> → массовая SMS-рассылка невакцинированным: «Сезон лептоспироза. Запишитесь на вакцинацию»</li>
+        <li><code>ON rain_season_start</code> → повысить baseline risk score для всех невакцинированных собак на <code>+5</code></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DISEASE 2: БЕШЕНСТВО -->
+<!-- ============================================================ -->
+<div class="disease" id="d2">
+<div class="disease-hdr">
+  <h2>2. Бешенство</h2>
+  <div class="en">Rabies &bull; Возбудитель: Rabies lyssavirus (рабдовирус)</div>
+  <div class="tags">
+    <span class="tag tag-r">Летальность 100%</span>
+    <span class="tag tag-a">Вирусный</span>
+    <span class="tag tag-b">Все теплокровные</span>
+    <span class="tag tag-p">One Health: приоритет №1</span>
+  </div>
+</div>
+<div class="disease-body">
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">1</span><h3>Почему это важно (One Health)</h3></div>
+  <p style="color:var(--dim);font-size:.9em">Бешенство — единственное заболевание со <strong>100% летальностью</strong> после появления клинических симптомов как у животного, так и у человека. Это абсолютный приоритет в любой системе мониторинга. Основные резервуары — дикие хищники (лисы, шакалы, летучие мыши), но домашние собаки и кошки — главный интерфейс передачи человеку.</p>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">2</span><h3>Почему опасен для системы раннего мониторинга</h3></div>
+  <div class="g2">
+    <div class="gbox">
+      <h4>Почему легко пропустить</h4>
+      <ul>
+        <li>Продромальная стадия похожа на «плохое настроение»</li>
+        <li>Тихая форма без агрессии — владелец думает, что собака просто грустная</li>
+        <li>Инкубация может длиться до 6 месяцев — связь с контактом теряется</li>
+        <li>Кошки чаще болеют «тихой» формой</li>
+      </ul>
+    </div>
+    <div class="gbox">
+      <h4>Почему критичен для predictive grid</h4>
+      <ul>
+        <li>Один пропущенный случай = потенциальная гибель людей</li>
+        <li>Невакцинированное животное + укус дикого = максимальный алерт</li>
+        <li>Кластер агрессии у животных — сигнал эпизоотии</li>
+        <li>Прижизненной диагностики практически нет</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">3</span><h3>Как животное заражается</h3></div>
+  <div class="alert alert-i">
+    <strong>Основной путь:</strong> укус инфицированного животного. Вирус в слюне проникает в рану.<br>
+    <strong>Редкие пути:</strong> ослюнение повреждённой кожи, царапина от заразного животного, аэрозоль в пещерах с летучими мышами.<br>
+    <strong>Бытовые сценарии:</strong> драка с бездомной собакой, контакт с лисой/шакалом на прогулке, укус летучей мыши, принесённое домой дикое животное.<br>
+    <strong>Факторы риска:</strong> самовыгул, жизнь в сельской местности, отсутствие вакцинации, контакт с дикими животными.<br>
+    <strong>Сезонность:</strong> весна-лето (повышенная активность диких животных), но возможно круглогодично.
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">4</span><h3>Disease Progression Model</h3></div>
+
+  <div class="stage stage-0">
+    <h4>Стадия 0 — Экспозиция <span class="tag tag-g">Риск для человека: нет</span></h4>
+    <p><strong>Что происходит:</strong> Укус. Вирус в ране, ещё не начал продвигаться по нервам.</p>
+    <p><strong>Что видит владелец:</strong> Рана от укуса (если заметил). Животное может скрывать укус — вылизывает рану.</p>
+    <div class="risk-line risk-none">Заразность: <strong>нет</strong>. Вероятность пропуска: <strong>60%</strong> — мелкие укусы часто не замечают.</div>
+  </div>
+
+  <div class="stage stage-1">
+    <h4>Стадия 1 — Инкубация (2 недели – 6 месяцев, обычно 3–8 недель) <span class="tag tag-g">Риск: нет</span></h4>
+    <p><strong>Что происходит:</strong> Вирус медленно продвигается по периферическим нервам к головному мозгу. Скорость ~15–100 мм/сутки.</p>
+    <p><strong>Что видит владелец:</strong> Абсолютно ничего. Животное полностью нормально. Рана может зажить.</p>
+    <div class="risk-line risk-none">Заразность: <strong>нет</strong> (вирус ещё не в слюнных железах). Вероятность пропуска: <strong>100%</strong>.</div>
+  </div>
+
+  <div class="stage stage-2">
+    <h4>Стадия 2 — Продромальная (2–3 дня) <span class="tag tag-a">Риск: появляется!</span></h4>
+    <p><strong>Что происходит:</strong> Вирус достиг мозга. Начинается энцефалит. Вирус начинает размножаться в слюнных железах.</p>
+    <ul>
+      <li><strong>Изменение характера</strong> — ласковая собака избегает контакта, или наоборот — тихая становится навязчивой</li>
+      <li><strong>Беспокойство</strong> — не находит себе места, бродит, скулит без причины</li>
+      <li><strong>Зуд / раздражение в месте укуса</strong> — грызёт или лижет старую зажившую рану</li>
+      <li><strong>Лёгкая лихорадка</strong></li>
+      <li><strong>Изменение голоса</strong> — лай становится хриплым или изменяет тон</li>
+    </ul>
+    <div class="risk-line risk-med"><strong>КРИТИЧНО:</strong> Вирус уже в слюне за <strong>3–5 дней до появления явных симптомов</strong>. Животное может укусить и заразить человека, выглядя «почти нормально». Вероятность пропуска: <strong>80%</strong>.</div>
+  </div>
+
+  <div class="stage stage-3">
+    <h4>Стадия 3 — Буйная форма (2–4 дня) <span class="tag tag-r">Риск: максимальный</span></h4>
+    <p><strong>Что происходит:</strong> Тяжёлый энцефалит. Поражение лимбической системы → агрессия, потеря страха.</p>
+    <ul>
+      <li><strong>Агрессия без провокации</strong> — кусает хозяев, предметы, самого себя</li>
+      <li><strong>Гиперсаливация</strong> — пена изо рта, слюна вязкая, свисающая</li>
+      <li><strong>Гидрофобия</strong> — реже, чем у людей, но может отказываться пить</li>
+      <li><strong>Бесцельные движения</strong> — бежит «в никуда», врезается в предметы</li>
+      <li><strong>Расширенные зрачки</strong> — «стеклянный взгляд»</li>
+      <li><strong>Судороги</strong></li>
+      <li><strong>Поедание несъедобного</strong> — камни, палки, землю</li>
+    </ul>
+    <div class="risk-line risk-high">Заразность: <strong>максимальная</strong>. Каждый укус — потенциальное заражение. Слюна на руках, лице — тоже риск.</div>
+  </div>
+
+  <div class="stage stage-3" style="margin-top:12px">
+    <h4>Стадия 3 (alt) — Тихая/паралитическая форма (2–4 дня) <span class="tag tag-r">Риск: максимальный, но СКРЫТЫЙ</span></h4>
+    <p><strong>Что происходит:</strong> Тот же энцефалит, но с преобладанием паралитического компонента. <strong>Встречается у 30% собак и большинства кошек.</strong></p>
+    <ul>
+      <li><strong>Отвисшая нижняя челюсть</strong> — рот открыт, не может закрыть</li>
+      <li><strong>Слюнотечение</strong> — обильное, но без агрессии</li>
+      <li><strong>Паралич задних конечностей</strong> — шаткая походка, «волочит» лапы</li>
+      <li><strong>Изменённый голос или немота</strong> — паралич гортани</li>
+      <li><strong>Апатия</strong> — лежит, не реагирует</li>
+    </ul>
+    <div class="risk-line risk-high"><strong>САМАЯ ОПАСНАЯ ФОРМА ДЛЯ ВЛАДЕЛЬЦА:</strong> Нет агрессии → владелец лезет помогать, трогает морду, проверяет рот. Слюна попадает на слизистые или микротрещины кожи. Вероятность пропуска как бешенства: <strong>70%</strong>.</div>
+  </div>
+
+  <div class="stage stage-5">
+    <h4>Стадия 4 — Терминальная (1–3 дня)</h4>
+    <p><strong>Что происходит:</strong> Генерализованный паралич, кома, остановка дыхания.</p>
+    <p><strong>Исход:</strong> Гибель в 100% случаев. От первых симптомов до смерти — 3–10 дней.</p>
+    <div class="risk-line risk-high">Заразность сохраняется до момента гибели.</div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">5</span><h3>Практическая симптоматика для владельца</h3></div>
+  <div class="sym">
+    <div class="sym-item"><strong>Поведение</strong><span>Резкая смена характера: ласковая→агрессивная ИЛИ активная→апатичная. Бродит ночью, скулит</span></div>
+    <div class="sym-item"><strong>Аппетит</strong><span>Затруднение глотания, роняет еду, поедание несъедобного</span></div>
+    <div class="sym-item"><strong>Движение</strong><span>Шаткая походка, «пьяная» ходьба, падает, бежит бесцельно</span></div>
+    <div class="sym-item"><strong>Глаза / слизистые</strong><span>Расширенные зрачки, «пустой» взгляд, косоглазие</span></div>
+    <div class="sym-item"><strong>Голос</strong><span>Изменённый лай, хриплый вой, немота</span></div>
+    <div class="sym-item"><strong>Слюна</strong><span>Обильная пена, вязкая свисающая слюна, мокрая морда</span></div>
+  </div>
+
+  <div class="confusion">
+    <h4>Что владелец ошибочно считает «ничего страшного»</h4>
+    <ul>
+      <li>«Просто грустная / испугалась чего-то» — а это продромальная стадия бешенства</li>
+      <li>«Застряла кость в горле» — а отвисшая челюсть и слюнотечение = паралитическая форма</li>
+      <li>«Ударилась, поэтому шатается» — а это паралич конечностей</li>
+      <li>«Нервничает из-за грозы» — а беспокойство без причины = ранний энцефалит</li>
+    </ul>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">6</span><h3>Как понять дома, что поражена нервная система</h3></div>
+  <div class="g2">
+    <div class="gbox">
+      <h4>Признаки энцефалита</h4>
+      <ul>
+        <li>Агрессия без повода</li>
+        <li>Судороги</li>
+        <li>Дезориентация — не узнаёт дом, хозяев</li>
+        <li>Бессонница, ночная активность</li>
+        <li>Гиперчувствительность к свету и звуку</li>
+      </ul>
+    </div>
+    <div class="gbox">
+      <h4>Признаки паралича</h4>
+      <ul>
+        <li>Не может закрыть рот (паралич челюсти)</li>
+        <li>Волочит задние лапы</li>
+        <li>Изменённый или отсутствующий лай</li>
+        <li>Не может глотать — давится водой</li>
+        <li>Расширенные нереактивные зрачки</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">7</span><h3>Когда животное опасно для человека</h3></div>
+  <div class="alert alert-r">
+    <strong>Может ли заражать сразу после укуса дикого?</strong> Нет. Только когда вирус достигнет слюнных желёз — через недели/месяцы.<br>
+    <strong>Когда риск появляется?</strong> За <strong>3–10 дней до первых клинических симптомов</strong> вирус уже в слюне.<br>
+    <strong>Когда риск максимален?</strong> Буйная и паралитическая стадии — вся слюна инфицирована.<br>
+    <strong>Через что?</strong> Укус (основной), слюна на повреждённой коже или слизистых.<br>
+    <strong>Может ли выглядеть нормальной, но быть заразной?</strong> <span style="color:#fca5a5;font-weight:700">ДА. За 3–10 дней до симптомов.</span><br>
+    <strong>Именно поэтому</strong> при укусе подозрительного животного его изолируют и наблюдают 10 дней — если живо, значит не было заразным в момент укуса.
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">8</span><h3>Красные флаги для системы раннего предупреждения</h3></div>
+  <div class="g3">
+    <div class="gbox" style="border-color:rgba(245,158,11,.3)">
+      <h4 style="color:#fcd34d">Ранние предикторы</h4>
+      <ul>
+        <li>Контакт с диким животным у невакцинированного питомца</li>
+        <li>Укус неизвестной собаки + отсутствие данных о вакцинации</li>
+        <li>Резкая смена поведения после ранения</li>
+      </ul>
+    </div>
+    <div class="gbox" style="border-color:rgba(249,115,22,.3)">
+      <h4 style="color:#fb923c">Средние сигналы</h4>
+      <ul>
+        <li>Агрессия + гиперсаливация</li>
+        <li>Паралич челюсти + слюнотечение</li>
+        <li>Атаксия + изменение голоса</li>
+        <li>Укус бездомного + смена поведения через 2–8 недель</li>
+      </ul>
+    </div>
+    <div class="gbox" style="border-color:rgba(239,68,68,.3)">
+      <h4 style="color:#fca5a5">HIGH-RISK / НЕМЕДЛЕННЫЙ ALERT</h4>
+      <ul>
+        <li>Любое подозрение на бешенство = немедленная изоляция</li>
+        <li>Укус человека животным с подозрением</li>
+        <li>Обнаружение бешеного дикого животного в районе</li>
+        <li>Невакцинированное животное + неврологические симптомы</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">9</span><h3>Сигналы: владелец / surveillance / регулятор</h3></div>
+  <div class="g3">
+    <div class="gbox">
+      <h4>Для владельца</h4>
+      <ul>
+        <li>Питомца укусило дикое или бездомное животное → в клинику НЕМЕДЛЕННО</li>
+        <li>Резкое изменение поведения + слюнотечение → НЕ ТРОГАТЬ ЖИВОТНОЕ, вызвать помощь</li>
+        <li>Если укусил питомец с подозрением — промыть рану 15 минут с мылом, в больницу СЕЙЧАС</li>
+      </ul>
+    </div>
+    <div class="gbox">
+      <h4>Для surveillance system</h4>
+      <ul>
+        <li>Любой случай неврологии + агрессия = автоматический алерт</li>
+        <li>Паралич челюсти = автоматический алерт</li>
+        <li>Невакцинированное + контакт с диким = алерт + отслеживание</li>
+      </ul>
+    </div>
+    <div class="gbox">
+      <h4>Для регулятора</h4>
+      <ul>
+        <li>Любое подозрение — обязательное уведомление</li>
+        <li>Подтверждённый случай — карантин зоны, оповещение населения</li>
+        <li>Отслеживание контактных животных и людей</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">10</span><h3>Итоговая матрица</h3></div>
+  <table class="tb">
+    <thead><tr><th>Стадия</th><th>Что в организме</th><th>Что видит владелец</th><th>Заметность</th><th>Риск для человека</th><th>Вер. пропуска</th></tr></thead>
+    <tbody>
+    <tr><td>0 — Укус</td><td>Вирус в ране</td><td>Рана (если заметил)</td><td>40%</td><td>Нет</td><td>60%</td></tr>
+    <tr><td>1 — Инкубация</td><td>Вирус движется по нервам</td><td>Ничего</td><td>0%</td><td>Нет</td><td>100%</td></tr>
+    <tr><td>2 — Продром</td><td>Вирус в мозге и слюне</td><td>Смена характера, беспокойство</td><td>20%</td><td style="color:#fcd34d;font-weight:700">Средний (скрытый!)</td><td>80%</td></tr>
+    <tr><td>3 — Буйная</td><td>Энцефалит</td><td>Агрессия, пена, судороги</td><td>95%</td><td style="color:#fca5a5;font-weight:700">Максимальный</td><td>5%</td></tr>
+    <tr><td>3alt — Тихая</td><td>Энцефалит + паралич</td><td>Отвисшая челюсть, апатия</td><td>50%</td><td style="color:#fca5a5;font-weight:700">Максимальный</td><td>70%</td></tr>
+    <tr><td>4 — Терминальная</td><td>Кома, паралич дыхания</td><td>Без сознания, смерть</td><td>100%</td><td>Высокий</td><td>0%</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="impl">
+  <div class="impl-title"><span class="ico">&#9881;</span><h3>Имплементация в панель: Бешенство</h3></div>
+
+  <div class="impl-grid">
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#6366f1"></span> Data Model — поля для сбора</h4>
+      <ul>
+        <li><code>vaccination_rabies</code> — дата + серия вакцины</li>
+        <li><code>vaccination_rabies_valid</code> — автоматически: ещё действует? (bool)</li>
+        <li><code>bite_history</code> — был ли укус/контакт с диким/бездомным (date + описание)</li>
+        <li><code>symptom_behavior_change</code> — резкая смена поведения (enum: aggression | apathy | restlessness)</li>
+        <li><code>symptom_hypersalivation</code> — гиперсаливация (bool)</li>
+        <li><code>symptom_paralysis_jaw</code> — паралич челюсти (bool)</li>
+        <li><code>symptom_ataxia</code> — шаткая походка (bool)</li>
+        <li><code>symptom_voice_change</code> — изменение голоса (bool)</li>
+        <li><code>symptom_seizures</code> — судороги (bool)</li>
+        <li><code>outdoor_access</code> — самовыгул (bool)</li>
+        <li><code>location_rural</code> — сельская местность (bool)</li>
+      </ul>
+    </div>
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#f59e0b"></span> Risk Score — формула</h4>
+      <table class="score-table">
+        <tr><th>Фактор</th><th>Баллы</th></tr>
+        <tr><td>Нет вакцинации от бешенства</td><td><code>+20</code></td></tr>
+        <tr><td>Просроченная вакцинация</td><td><code>+15</code></td></tr>
+        <tr><td>Укус/контакт с диким животным</td><td><code>+30</code></td></tr>
+        <tr><td>Самовыгул</td><td><code>+10</code></td></tr>
+        <tr><td>Сельская местность</td><td><code>+5</code></td></tr>
+        <tr><td>Резкая смена поведения</td><td><code>+20</code></td></tr>
+        <tr><td>Гиперсаливация</td><td><code>+25</code></td></tr>
+        <tr><td>Агрессия без причины</td><td><code>+30</code></td></tr>
+        <tr><td>Паралич челюсти</td><td><code>+35</code></td></tr>
+        <tr><td>Судороги + любой из выше</td><td><code>+30</code></td></tr>
+      </table>
+      <ul>
+        <li><code>0–19</code> = низкий → стандартный мониторинг</li>
+        <li><code>20–39</code> = средний → наблюдение 10 дней</li>
+        <li><code>40–69</code> = высокий → изоляция + тест</li>
+        <li><code>70+</code> = <strong>КРИТИЧЕСКИЙ → НЕМЕДЛЕННАЯ ИЗОЛЯЦИЯ + УВЕДОМЛЕНИЕ ГОСОРГАНА</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="impl-full" style="margin-top:14px">
+    <h4><span class="dot" style="background:#ef4444"></span> Alert Rules — БЕШЕНСТВО = НУЛЕВАЯ ТОЛЕРАНТНОСТЬ</h4>
+    <ul>
+      <li><strong>Auto-Alert (красный):</strong> <code>IF</code> (агрессия OR паралич_челюсти OR гиперсаливация) + невакцинирован → <code>IMMEDIATE</code> блокировка карточки, статус «ПОДОЗРЕНИЕ НА БЕШЕНСТВО», уведомление главврачу</li>
+      <li><strong>Auto-Alert (красный):</strong> <code>IF</code> укус_дикого + невакцинирован → <code>IMMEDIATE</code> 10-дневный карантин, создание протокола наблюдения</li>
+      <li><strong>Auto-Alert (красный):</strong> <code>IF</code> подозрение_бешенство + укус_человека → <code>IMMEDIATE</code> уведомление СЭС + генерация экстренного отчёта</li>
+      <li><strong>Compliance Alert:</strong> <code>IF</code> vaccination_rabies_valid = false + outdoor_access = true → <code>SMS</code> владельцу: «Вакцинация от бешенства просрочена. Это обязательная вакцинация по закону»</li>
+    </ul>
+  </div>
+
+  <div class="impl-grid" style="margin-top:14px">
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#22c55e"></span> Dashboard Widgets</h4>
+      <ul>
+        <li><strong>Compliance Meter:</strong> % вакцинированных от бешенства в базе (цель: >95%)</li>
+        <li><strong>Map:</strong> случаи бешенства у диких животных в регионе (данные госорганов)</li>
+        <li><strong>Countdown:</strong> для каждого животного на карантине — оставшиеся дни из 10</li>
+        <li><strong>Alert Panel:</strong> красная панель, если есть хоть 1 подозрение — видна всем сотрудникам</li>
+        <li><strong>Overdue List:</strong> список питомцев с просроченной вакцинацией + контакт владельца</li>
+      </ul>
+    </div>
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#06b6d4"></span> Автоматизация</h4>
+      <ul>
+        <li><code>ON suspicion(rabies)</code> → автозаполнение формы уведомления для госоргана (PDF)</li>
+        <li><code>ON suspicion(rabies)</code> → блокировка записи: «Только изоляция и наблюдение. Не выпускать»</li>
+        <li><code>ON bite_report</code> → автосоздание 10-дневного протокола с напоминаниями на каждый день</li>
+        <li><code>CRON(monthly)</code> → выгрузка списка с просроченной вакцинацией → SMS-кампания</li>
+        <li><code>ON vaccination(rabies)</code> → автогенерация сертификата + QR-код для владельца</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DISEASE 3: ДЕРМАТОФИТИЯ -->
+<!-- ============================================================ -->
+<div class="disease" id="d3">
+<div class="disease-hdr">
+  <h2>3. Дерматофития (стригущий лишай)</h2>
+  <div class="en">Dermatophytosis / Ringworm &bull; Возбудитель: Microsporum canis, Trichophyton mentagrophytes (грибки)</div>
+  <div class="tags">
+    <span class="tag tag-r">Высокая заразность</span>
+    <span class="tag tag-a">Грибковый</span>
+    <span class="tag tag-b">Кошки &gt; Собаки</span>
+    <span class="tag tag-p">135 случаев в базе BELVET</span>
+  </div>
+</div>
+<div class="disease-body">
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">1</span><h3>Почему это важно (One Health)</h3></div>
+  <p style="color:var(--dim);font-size:.9em">Дерматофития — <strong>самый частый зооноз по контакту</strong> в практике ветеринарных клиник. В базе BELVET — 156 случаев грибковых инфекций. Основной путь — прямой контакт с больным животным. Особенно уязвимы дети. Споры грибка живут в окружающей среде <strong>до 18 месяцев</strong>, что делает заражение возможным даже без прямого контакта.</p>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">2</span><h3>Почему опасен для системы мониторинга</h3></div>
+  <div class="g2">
+    <div class="gbox">
+      <h4>Почему легко пропустить</h4>
+      <ul>
+        <li>У кошек-носителей нет видимых симптомов</li>
+        <li>Маленькие очаги скрыты шерстью</li>
+        <li>Путают с аллергией, укусами блох, сухостью кожи</li>
+        <li>Длинношёрстные породы — очаги невидимы</li>
+      </ul>
+    </div>
+    <div class="gbox">
+      <h4>Почему критичен для predictive grid</h4>
+      <ul>
+        <li>Высокая контагиозность — один питомец → вся семья</li>
+        <li>Споры в доме = повторное заражение даже после лечения</li>
+        <li>Приюты и питомники — риск массового распространения</li>
+        <li>Дети заражаются первыми — сигнал для педиатров</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">3</span><h3>Как животное заражается</h3></div>
+  <div class="alert alert-i">
+    <strong>Пути:</strong> Прямой контакт с больным животным, контакт с заражёнными предметами (расчёски, подстилки, мебель), споры в окружающей среде.<br>
+    <strong>Бытовые сценарии:</strong> Подобрали котёнка с улицы, посещение грумера с заражёнными инструментами, контакт с бездомными животными, передержка/приют.<br>
+    <strong>Факторы риска:</strong> Котята и щенки, длинношёрстные породы (Персидская, Британская), иммунодефицит, стресс, скученное содержание.<br>
+    <strong>Сезонность:</strong> Круглогодично, но чаще осенью-зимой (снижение иммунитета, скученность).
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">4</span><h3>Disease Progression Model</h3></div>
+
+  <div class="stage stage-0">
+    <h4>Стадия 0 — Экспозиция <span class="tag tag-a">Риск: уже возможен</span></h4>
+    <p><strong>Что происходит:</strong> Споры попали на шерсть/кожу. Ещё не внедрились.</p>
+    <p><strong>Что видит владелец:</strong> Ничего.</p>
+    <div class="risk-line risk-low">Заразность: <strong>низкая</strong> — споры на шерсти уже могут передаться при поглаживании. Вероятность пропуска: <strong>100%</strong>.</div>
+  </div>
+
+  <div class="stage stage-1">
+    <h4>Стадия 1 — Инкубация (1–3 недели) <span class="tag tag-a">Риск: средний</span></h4>
+    <p><strong>Что происходит:</strong> Споры внедряются в волосяные фолликулы, начинают прорастать. Грибок питается кератином.</p>
+    <p><strong>Что видит владелец:</strong> Ничего или едва заметный участок разреженной шерсти.</p>
+    <ul>
+      <li>Слабый сигнал: кошка чуть чаще чешет одно место</li>
+      <li>Слабый сигнал: шерсть в одном месте потеряла блеск</li>
+    </ul>
+    <div class="risk-line risk-med">Заразность: <strong>средняя</strong> — животное активно распространяет споры. <strong>Это ключевая проблема:</strong> носитель заразен до появления очевидных симптомов. Вероятность пропуска: <strong>90%</strong>.</div>
+  </div>
+
+  <div class="stage stage-2">
+    <h4>Стадия 2 — Ранние очаги (неделя 2–4) <span class="tag tag-r">Риск: высокий</span></h4>
+    <p><strong>Что происходит:</strong> Грибок разрушает стержень волоса. Формируются характерные очаги алопеции.</p>
+    <ul>
+      <li><strong>Округлые участки облысения</strong> — 1–3 см, с чешуйками по краям</li>
+      <li><strong>Обломанные волоски</strong> — «пеньки» 2–3 мм на очаге</li>
+      <li><strong>Серые чешуйки</strong> — напоминают перхоть, но локализованы</li>
+      <li><strong>Лёгкий зуд</strong> — но не всегда!</li>
+      <li><strong>Покраснение кожи</strong> в центре очага</li>
+    </ul>
+    <div class="risk-line risk-high">Заразность: <strong>высокая</strong>. Обломанные волоски и чешуйки — это концентрированные споры. Падают на мебель, ковры, одежду. Вероятность пропуска: <strong>40%</strong> (у длинношёрстных — до 70%).</div>
+  </div>
+
+  <div class="stage stage-3">
+    <h4>Стадия 3 — Развитая клиника (неделя 4–8) <span class="tag tag-r">Риск: высокий</span></h4>
+    <ul>
+      <li><strong>Множественные очаги</strong> — расползаются, сливаются</li>
+      <li><strong>Локализация:</strong> морда, уши, лапы (у кошек); морда, хвост, лапы (у собак)</li>
+      <li><strong>Корочки и воспаление</strong></li>
+      <li><strong>Деформация когтей</strong> — онихомикоз (редко, но важный признак)</li>
+      <li><strong>Генерализованная форма</strong> — у иммуноскомпрометированных, котят</li>
+    </ul>
+    <div class="risk-line risk-high">Заразность: <strong>максимальная</strong>. Весь дом контаминирован спорами. Вероятность пропуска: <strong>5%</strong>.</div>
+  </div>
+
+  <div class="stage stage-5">
+    <h4>Стадия 4 — Хроническое носительство (бессрочно) <span class="tag tag-a">Риск: средний</span></h4>
+    <p><strong>Что происходит:</strong> Некоторые кошки (особенно длинношёрстные) становятся <strong>бессимптомными носителями</strong>. Выглядят здоровыми, но продолжают распространять споры.</p>
+    <div class="risk-line risk-med"><strong>Это объясняет «непонятные» случаи лишая у владельцев:</strong> кошка выглядит нормально, а дети болеют. Без посева на грибок носительство невозможно выявить. Вероятность пропуска: <strong>99%</strong>.</div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">5</span><h3>Практическая симптоматика для владельца</h3></div>
+  <div class="sym">
+    <div class="sym-item"><strong>Шерсть</strong><span>Округлые залысины, обломанные «пеньки», потеря блеска локально</span></div>
+    <div class="sym-item"><strong>Кожа</strong><span>Серые чешуйки, покраснение, корочки в центре очага</span></div>
+    <div class="sym-item"><strong>Зуд</strong><span>Умеренный или отсутствует — это путает: «раз не чешется, значит не лишай»</span></div>
+    <div class="sym-item"><strong>Когти</strong><span>Деформация, ломкость, потемнение (редко)</span></div>
+    <div class="sym-item"><strong>Поведение</strong><span>Чаще вылизывает один участок, трётся мордой о предметы</span></div>
+    <div class="sym-item"><strong>Характерная деталь</strong><span>Очаги часто на морде и ушах — именно туда дети тянут руки</span></div>
+  </div>
+  <div class="confusion">
+    <h4>Что владелец ошибочно считает «ничего страшного»</h4>
+    <ul>
+      <li>«Просто линька» — но линька равномерная, а лишай создаёт чёткие округлые очаги</li>
+      <li>«Аллергия на корм» — но аллергия зудит сильнее и диффузно</li>
+      <li>«Расчесала блохами» — но локализация и форма очага другие</li>
+      <li>«Не чешется = не заразно» — дерматофития может протекать без зуда</li>
+    </ul>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">7</span><h3>Когда животное опасно для человека</h3></div>
+  <div class="alert alert-r">
+    <strong>Может ли заражать сразу?</strong> Да. Споры на шерсти заразны ещё до появления очагов.<br>
+    <strong>Когда риск максимален?</strong> Стадия 2–3 — обломанные волоски и чешуйки = массовое распространение спор.<br>
+    <strong>Через что?</strong> Поглаживание, объятия, совместный сон, заражённые предметы (расчёски, подстилки, мебель, ковры).<br>
+    <strong>Может ли выглядеть здоровой, но быть заразной?</strong> <span style="color:#fca5a5;font-weight:700">ДА. Бессимптомное носительство у кошек — частая причина «непонятного» лишая у владельцев.</span><br>
+    <strong>Группы риска:</strong> Дети, пожилые, иммуноскомпрометированные.
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">8</span><h3>Красные флаги для системы</h3></div>
+  <div class="g3">
+    <div class="gbox" style="border-color:rgba(245,158,11,.3)">
+      <h4 style="color:#fcd34d">Ранние предикторы</h4>
+      <ul>
+        <li>Новый питомец в доме (подобранный, из приюта)</li>
+        <li>Локальная алопеция у котёнка</li>
+        <li>Владелец упоминает «пятна на руках»</li>
+      </ul>
+    </div>
+    <div class="gbox" style="border-color:rgba(249,115,22,.3)">
+      <h4 style="color:#fb923c">Средние сигналы</h4>
+      <ul>
+        <li>Округлые очаги + чешуйки у кошки</li>
+        <li>Несколько животных в доме с алопецией</li>
+        <li>Лишай у ребёнка + наличие кошки дома</li>
+      </ul>
+    </div>
+    <div class="gbox" style="border-color:rgba(239,68,68,.3)">
+      <h4 style="color:#fca5a5">HIGH-RISK</h4>
+      <ul>
+        <li>Кластер случаев из одного приюта/питомника</li>
+        <li>Множественные очаги у иммуноскомпрометированного животного</li>
+        <li>Повторные заражения в одном домохозяйстве</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">10</span><h3>Итоговая матрица</h3></div>
+  <table class="tb">
+    <thead><tr><th>Стадия</th><th>Что в организме</th><th>Что видит владелец</th><th>Заметность</th><th>Риск для человека</th><th>Вер. пропуска</th></tr></thead>
+    <tbody>
+    <tr><td>0 — Экспозиция</td><td>Споры на шерсти</td><td>Ничего</td><td>0%</td><td>Низкий</td><td>100%</td></tr>
+    <tr><td>1 — Инкубация</td><td>Внедрение в фолликулы</td><td>Едва заметное разрежение</td><td>10%</td><td style="color:#fcd34d;font-weight:700">Средний</td><td>90%</td></tr>
+    <tr><td>2 — Ранние очаги</td><td>Разрушение волоса</td><td>Округлые залысины, чешуйки</td><td>60%</td><td style="color:#fca5a5;font-weight:700">Высокий</td><td>40%</td></tr>
+    <tr><td>3 — Развитая</td><td>Множественные очаги</td><td>Явные проплешины, корочки</td><td>95%</td><td style="color:#fca5a5;font-weight:700">Максимальный</td><td>5%</td></tr>
+    <tr><td>4 — Носительство</td><td>Споры без симптомов</td><td>Ничего — кошка здорова</td><td>1%</td><td style="color:#fcd34d;font-weight:700">Средний (скрытый)</td><td>99%</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="impl">
+  <div class="impl-title"><span class="ico">&#9881;</span><h3>Имплементация в панель: Дерматофития (лишай)</h3></div>
+
+  <div class="impl-grid">
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#6366f1"></span> Data Model — поля для сбора</h4>
+      <ul>
+        <li><code>symptom_alopecia_focal</code> — очаговое облысение (bool + count очагов)</li>
+        <li><code>symptom_scaling</code> — чешуйки / шелушение (bool)</li>
+        <li><code>symptom_broken_hair</code> — обломанные волоски (bool)</li>
+        <li><code>symptom_pruritus</code> — зуд (enum: none | mild | moderate | severe)</li>
+        <li><code>symptom_nail_deform</code> — деформация когтей (bool)</li>
+        <li><code>woods_lamp</code> — результат лампы Вуда (enum: positive | negative | not_done)</li>
+        <li><code>culture_result</code> — посев (enum: positive | negative | pending | not_done)</li>
+        <li><code>species</code> — кошка = выше приоритет</li>
+        <li><code>breed_longhair</code> — длинношёрстная порода (bool)</li>
+        <li><code>age_juvenile</code> — до 1 года (bool)</li>
+        <li><code>source</code> — откуда животное (enum: owner | shelter | street | breeder)</li>
+        <li><code>household_children</code> — есть ли дети в семье (bool)</li>
+        <li><code>household_dermatitis</code> — есть ли поражения кожи у членов семьи (bool)</li>
+      </ul>
+    </div>
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#f59e0b"></span> Risk Score — формула</h4>
+      <table class="score-table">
+        <tr><th>Фактор</th><th>Баллы</th></tr>
+        <tr><td>Кошка</td><td><code>+5</code></td></tr>
+        <tr><td>Котёнок / до 1 года</td><td><code>+10</code></td></tr>
+        <tr><td>Длинношёрстная порода</td><td><code>+5</code></td></tr>
+        <tr><td>Из приюта / с улицы</td><td><code>+15</code></td></tr>
+        <tr><td>Очаговое облысение</td><td><code>+15</code></td></tr>
+        <tr><td>Чешуйки + обломанные волоски</td><td><code>+20</code></td></tr>
+        <tr><td>Лампа Вуда: positive</td><td><code>+30</code></td></tr>
+        <tr><td>Дети в семье</td><td><code>+10</code></td></tr>
+        <tr><td>Поражения кожи у членов семьи</td><td><code>+25</code></td></tr>
+        <tr><td>Несколько животных в доме</td><td><code>+10</code></td></tr>
+      </table>
+      <ul>
+        <li><code>0–14</code> = низкий → стандартный осмотр</li>
+        <li><code>15–34</code> = средний → лампа Вуда обязательна</li>
+        <li><code>35–54</code> = высокий → посев + лечение + памятка</li>
+        <li><code>55+</code> = критический → лечение + проверка всех контактных + семья к дерматологу</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="impl-full" style="margin-top:14px">
+    <h4><span class="dot" style="background:#ef4444"></span> Alert Rules</h4>
+    <ul>
+      <li><strong>Auto-Screen:</strong> <code>IF</code> source = (shelter | street) + species = cat → <code>AUTO</code> добавить в карточку: «Рекомендована лампа Вуда при первом визите»</li>
+      <li><strong>Alert Level 1:</strong> <code>IF</code> woods_lamp = positive → <code>PUSH</code> врачу: «Подтверждена дерматофития» + <code>AUTO</code> генерировать памятку для владельца</li>
+      <li><strong>Alert Level 2:</strong> <code>IF</code> diagnosis(dermatophytosis) + household_children = true → <code>SMS</code> владельцу: «Обратитесь к дерматологу для детей. Инструкция: [ссылка]»</li>
+      <li><strong>Alert Level 3:</strong> <code>IF</code> household_dermatitis = true → <code>PUSH</code> врачу: «Заражение членов семьи! Усилить контроль лечения»</li>
+      <li><strong>Cluster Alert:</strong> <code>IF</code> 3+ случаев из одного приюта/питомника за 30 дней → <code>PUSH</code> эпид-алерт</li>
+    </ul>
+  </div>
+
+  <div class="impl-grid" style="margin-top:14px">
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#22c55e"></span> Dashboard Widgets</h4>
+      <ul>
+        <li><strong>Pie chart:</strong> распределение по породам (из данных BELVET: б/п, Британская, Скоттиш-Фолд...)</li>
+        <li><strong>Bar chart:</strong> случаи лишая по месяцам (сезонность)</li>
+        <li><strong>Treatment Tracker:</strong> пациенты на лечении + дата следующего контрольного посева</li>
+        <li><strong>Source Analysis:</strong> откуда приходят заражённые (приют, улица, заводчик)</li>
+        <li><strong>Family Risk Flag:</strong> список семей с детьми, где есть подтверждённый лишай</li>
+      </ul>
+    </div>
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#06b6d4"></span> Автоматизация</h4>
+      <ul>
+        <li><code>ON diagnosis(dermatophyte)</code> → PDF-памятка: дезинфекция дома, правила гигиены, когда к дерматологу</li>
+        <li><code>ON diagnosis(dermatophyte)</code> → создать schedule: контрольный посев через 4 нед, 8 нед</li>
+        <li><code>ON first_visit + source=shelter + species=cat</code> → автодобавить в план: «Скрининг лампой Вуда»</li>
+        <li><code>CRON(autumn)</code> → акция «Проверка на лишай» → SMS по базе владельцев кошек</li>
+        <li><code>ON culture_result=negative × 2</code> → автосмена статуса «Вылечено» + уведомление владельцу</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DISEASE 4: ТОКСОПЛАЗМОЗ -->
+<!-- ============================================================ -->
+<div class="disease" id="d4">
+<div class="disease-hdr">
+  <h2>4. Токсоплазмоз</h2>
+  <div class="en">Toxoplasmosis &bull; Возбудитель: Toxoplasma gondii (простейшее)</div>
+  <div class="tags">
+    <span class="tag tag-r">Опасен для беременных</span>
+    <span class="tag tag-a">Паразитарный</span>
+    <span class="tag tag-b">Кошки — окончательный хозяин</span>
+    <span class="tag tag-p">One Health: репродуктивный риск</span>
+  </div>
+</div>
+<div class="disease-body">
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">1</span><h3>Почему это важно (One Health)</h3></div>
+  <p style="color:var(--dim);font-size:.9em">Токсоплазма — один из самых распространённых паразитов в мире. Кошки — <strong>единственный окончательный хозяин</strong>, выделяющий ооцисты с фекалиями. Заражение человека обычно бессимптомно, но <strong>для беременных это катастрофа:</strong> врождённый токсоплазмоз вызывает поражение мозга, глаз и гибель плода. Также критически опасен для иммунодефицитных пациентов.</p>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">2</span><h3>Почему опасен для системы мониторинга</h3></div>
+  <div class="g2">
+    <div class="gbox">
+      <h4>Почему легко пропустить</h4>
+      <ul>
+        <li>У 80% кошек инфекция протекает бессимптомно</li>
+        <li>Ооцисты выделяются всего 1–3 недели за всю жизнь</li>
+        <li>Клиника неспецифична — диарея, вялость</li>
+        <li>Владелец не знает, что кошка была заражена</li>
+      </ul>
+    </div>
+    <div class="gbox">
+      <h4>Почему критичен для predictive grid</h4>
+      <ul>
+        <li>Беременная владелица + новая кошка = критический риск</li>
+        <li>Ооцисты устойчивы в среде до 18 месяцев</li>
+        <li>Кошки с доступом на улицу — основной источник</li>
+        <li>Одна кошка за 2 недели выделяет миллионы ооцист</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">3</span><h3>Как животное заражается</h3></div>
+  <div class="alert alert-i">
+    <strong>Основные пути:</strong> Поедание заражённых грызунов, птиц, сырого мяса. Контакт с ооцистами из фекалий другой кошки.<br>
+    <strong>Бытовые сценарии:</strong> Кошка ловит мышей на даче, ест сырое мясо (хозяин даёт «натуралку»), копается в земле (ооцисты в почве).<br>
+    <strong>Факторы риска:</strong> Свободный выгул, охота на грызунов, сырое мясо в рационе, контакт с другими кошками.<br>
+    <strong>Важно:</strong> Котята и молодые кошки при первом заражении выделяют максимум ооцист.
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">4</span><h3>Disease Progression Model</h3></div>
+
+  <div class="stage stage-0">
+    <h4>Стадия 0 — Заражение <span class="tag tag-g">Риск: нет</span></h4>
+    <p><strong>Что происходит:</strong> Кошка проглотила тканевые цисты (мышь) или ооцисты (почва). Паразит в кишечнике.</p>
+    <p><strong>Что видит владелец:</strong> Ничего. Кошка принесла мышь — «нормальное поведение».</p>
+  </div>
+
+  <div class="stage stage-1">
+    <h4>Стадия 1 — Кишечная фаза (3–10 дней после заражения) <span class="tag tag-r">Риск: КРИТИЧЕСКИЙ</span></h4>
+    <p><strong>Что происходит:</strong> Половое размножение токсоплазмы в кишечнике кошки. Образование ооцист. Начинается выделение с фекалиями.</p>
+    <ul>
+      <li>Возможна лёгкая диарея (1–2 дня) — чаще НИЧЕГО</li>
+      <li>Аппетит нормальный, активность нормальная</li>
+    </ul>
+    <div class="risk-line risk-high"><strong>ПАРАДОКС:</strong> Кошка выглядит абсолютно здоровой, но выделяет <strong>миллионы ооцист ежедневно</strong> в течение 1–3 недель. Ооцисты становятся заразными через 1–5 дней после попадания во внешнюю среду (споруляция). Вероятность пропуска: <strong>99%</strong>.</div>
+  </div>
+
+  <div class="stage stage-2">
+    <h4>Стадия 2 — Внекишечная фаза (параллельно) <span class="tag tag-a">Риск: снижается</span></h4>
+    <p><strong>Что происходит:</strong> Паразит распространяется по органам, формирует тканевые цисты (мозг, мышцы). У большинства кошек — бессимптомно.</p>
+    <p><strong>У иммуноскомпрометированных кошек:</strong></p>
+    <ul>
+      <li>Лихорадка, вялость</li>
+      <li>Увеит (воспаление глаз) — помутнение, слезотечение, изменение цвета радужки</li>
+      <li>Пневмония — кашель, одышка</li>
+      <li>Гепатит — желтушность</li>
+      <li>Неврологические признаки — судороги, атаксия (редко)</li>
+    </ul>
+    <div class="risk-line risk-low">Выделение ооцист обычно прекращается через 1–3 недели. Прямой заразности через фекалии больше нет. Но ооцисты, уже попавшие в среду, остаются опасными.</div>
+  </div>
+
+  <div class="stage stage-5">
+    <h4>Стадия 3 — Латентная инфекция (пожизненно)</h4>
+    <p><strong>Что происходит:</strong> Тканевые цисты в мозге и мышцах. Кошка — пожизненный носитель, но <strong>повторное выделение ооцист крайне редко</strong> (только при тяжёлом иммунодефиците).</p>
+    <div class="risk-line risk-none">Заразность через фекалии: <strong>практически нулевая</strong>. Кошка, переболевшая токсоплазмозом, парадоксально безопаснее «чистой» кошки, которая может заразиться впервые.</div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">5</span><h3>Практическая симптоматика для владельца</h3></div>
+  <div class="alert alert-w">
+    <strong>Главная проблема:</strong> У подавляющего большинства кошек симптомов НЕТ. Именно в этом опасность — невозможно определить «на глаз», выделяет ли кошка ооцисты прямо сейчас.
+  </div>
+  <div class="sym">
+    <div class="sym-item"><strong>Лёгкая форма</strong><span>Кратковременная диарея (1–2 дня), лёгкое снижение аппетита — проходит само</span></div>
+    <div class="sym-item"><strong>Глаза (увеит)</strong><span>Помутнение глаза, слезотечение, зрачки разного размера, изменение цвета радужки</span></div>
+    <div class="sym-item"><strong>Дыхание</strong><span>Кашель, одышка — только при тяжёлой форме</span></div>
+    <div class="sym-item"><strong>Неврология</strong><span>Судороги, шаткая походка, наклон головы — крайне редко</span></div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">7</span><h3>Когда животное опасно для человека</h3></div>
+  <div class="alert alert-r">
+    <strong>Когда кошка заразна?</strong> Только 1–3 недели при первом заражении (выделение ооцист с калом).<br>
+    <strong>Через что?</strong> Фекалии → контакт с лотком, почвой, немытыми руками. Ооцисты заразны через 1–5 дней после выделения (нужна споруляция).<br>
+    <strong>Выглядит ли кошка больной?</strong> <span style="color:#fca5a5;font-weight:700">Почти всегда НЕТ. Кошка здорова, но выделяет миллионы ооцист.</span><br>
+    <strong>Можно ли заразиться, погладив кошку?</strong> Нет. Только через фекалии (лоток, почва).<br>
+    <strong>Правило лотка:</strong> Если лоток убирается ежедневно — риск минимален (ооцисты не успевают споруляцию).<br>
+    <strong>Кто в группе риска?</strong> Беременные (первичное заражение!), ВИЧ+, пациенты на иммуносупрессии.
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">8</span><h3>Красные флаги для системы</h3></div>
+  <div class="g3">
+    <div class="gbox" style="border-color:rgba(245,158,11,.3)">
+      <h4 style="color:#fcd34d">Ранние предикторы</h4>
+      <ul>
+        <li>Новый котёнок/кошка в доме с беременной</li>
+        <li>Кошка с доступом на улицу + охотится</li>
+        <li>Сырое мясо в рационе кошки</li>
+      </ul>
+    </div>
+    <div class="gbox" style="border-color:rgba(249,115,22,.3)">
+      <h4 style="color:#fb923c">Средние сигналы</h4>
+      <ul>
+        <li>Увеит у кошки (проверить на токсоплазмоз)</li>
+        <li>Владелец — беременная женщина + кошка с диареей</li>
+        <li>Новая кошка из приюта + диарея 1–3 дня</li>
+      </ul>
+    </div>
+    <div class="gbox" style="border-color:rgba(239,68,68,.3)">
+      <h4 style="color:#fca5a5">HIGH-RISK</h4>
+      <ul>
+        <li>Подтверждённый токсоплазмоз у кошки + беременная владелица</li>
+        <li>Подтверждённый токсоплазмоз + иммуноскомпрометированный владелец</li>
+        <li>Генерализованная форма у кошки — маркер иммунодефицита</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">10</span><h3>Итоговая матрица</h3></div>
+  <table class="tb">
+    <thead><tr><th>Стадия</th><th>Что в организме</th><th>Что видит владелец</th><th>Заметность</th><th>Риск для человека</th><th>Вер. пропуска</th></tr></thead>
+    <tbody>
+    <tr><td>0 — Заражение</td><td>Паразит в кишечнике</td><td>Кошка поймала мышь</td><td>30%</td><td>Нет</td><td>70%</td></tr>
+    <tr><td>1 — Кишечная фаза</td><td>Выделение ооцист</td><td>Ничего (или лёгкая диарея)</td><td>5%</td><td style="color:#fca5a5;font-weight:700">КРИТИЧЕСКИЙ</td><td>99%</td></tr>
+    <tr><td>2 — Внекишечная</td><td>Цисты в органах</td><td>Увеит, вялость (редко)</td><td>15%</td><td>Снижается</td><td>85%</td></tr>
+    <tr><td>3 — Латентная</td><td>Цисты пожизненно</td><td>Ничего</td><td>0%</td><td>Практически нулевой</td><td>100%</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="impl">
+  <div class="impl-title"><span class="ico">&#9881;</span><h3>Имплементация в панель: Токсоплазмоз</h3></div>
+
+  <div class="impl-grid">
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#6366f1"></span> Data Model — поля для сбора</h4>
+      <ul>
+        <li><code>species</code> — только кошки релевантны как окончательный хозяин</li>
+        <li><code>outdoor_access</code> — доступ на улицу (bool)</li>
+        <li><code>hunts_rodents</code> — ловит грызунов/птиц (bool)</li>
+        <li><code>raw_meat_diet</code> — сырое мясо в рационе (bool)</li>
+        <li><code>symptom_uveitis</code> — увеит / воспаление глаз (bool)</li>
+        <li><code>symptom_diarrhea_acute</code> — острая диарея (bool + duration)</li>
+        <li><code>symptom_respiratory</code> — кашель, одышка (bool)</li>
+        <li><code>fiv_felv_status</code> — FIV/FeLV статус (enum: positive | negative | unknown)</li>
+        <li><code>owner_pregnant</code> — беременная владелица (bool) ← <strong>КРИТИЧЕСКОЕ ПОЛЕ</strong></li>
+        <li><code>owner_immunocompromised</code> — иммунодефицит у владельца (bool)</li>
+        <li><code>new_cat</code> — новая кошка в доме (bool + дата появления)</li>
+        <li><code>toxo_serology</code> — серология (IgG/IgM) (enum: IgM+ | IgG+ | negative | not_done)</li>
+      </ul>
+    </div>
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#f59e0b"></span> Risk Score — формула</h4>
+      <table class="score-table">
+        <tr><th>Фактор</th><th>Баллы</th></tr>
+        <tr><td>Кошка с уличным доступом</td><td><code>+10</code></td></tr>
+        <tr><td>Ловит грызунов</td><td><code>+15</code></td></tr>
+        <tr><td>Сырое мясо в рационе</td><td><code>+10</code></td></tr>
+        <tr><td>Новая кошка (&lt;3 мес в доме)</td><td><code>+15</code></td></tr>
+        <tr><td>Увеит</td><td><code>+20</code></td></tr>
+        <tr><td>IgM-позитивная (острая инфекция)</td><td><code>+30</code></td></tr>
+        <tr><td>Владелица беременна</td><td><code>+35</code> (множитель!)</td></tr>
+        <tr><td>Владелец иммуноскомпрометирован</td><td><code>+30</code></td></tr>
+        <tr><td>FIV/FeLV-позитивная</td><td><code>+10</code></td></tr>
+      </table>
+      <ul>
+        <li><code>0–19</code> = низкий → информирование</li>
+        <li><code>20–39</code> = средний → рекомендовать серологию</li>
+        <li><code>40–59</code> = высокий → тест обязателен + памятка</li>
+        <li><code>60+</code> = критический → СРОЧНО: тест кошки + направление владелицы к гинекологу</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="impl-full" style="margin-top:14px">
+    <h4><span class="dot" style="background:#ef4444"></span> Alert Rules</h4>
+    <ul>
+      <li><strong>Pregnancy Alert:</strong> <code>IF</code> owner_pregnant = true + species = cat → <code>AUTO</code> баннер в карточке: «Владелица беременна! Рекомендован тест на токсоплазмоз кошки»</li>
+      <li><strong>Acute Alert:</strong> <code>IF</code> toxo_serology = IgM+ → <code>PUSH</code> врачу: «Острый токсоплазмоз! Кошка сейчас выделяет ооцисты» + <code>AUTO</code> памятка по гигиене лотка</li>
+      <li><strong>Critical Alert:</strong> <code>IF</code> toxo_serology = IgM+ + owner_pregnant = true → <code>URGENT</code> уведомление: «Срочно: беременная владелица + активный токсоплазмоз. Направить к гинекологу СЕГОДНЯ»</li>
+      <li><strong>New Cat Alert:</strong> <code>IF</code> new_cat = true + owner_pregnant = true → <code>PUSH</code> при регистрации: «Новая кошка + беременная. Рекомендован немедленный тест»</li>
+    </ul>
+  </div>
+
+  <div class="impl-grid" style="margin-top:14px">
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#22c55e"></span> Dashboard Widgets</h4>
+      <ul>
+        <li><strong>Priority List:</strong> кошки в семьях с беременными — отдельная вкладка</li>
+        <li><strong>Serology Tracker:</strong> статус тестирования кошек из группы риска</li>
+        <li><strong>Risk Profile:</strong> кошки с уличным доступом + охота + без серологии</li>
+        <li><strong>New Cat Monitor:</strong> недавно зарегистрированные кошки (первые 3 мес — окно риска)</li>
+      </ul>
+    </div>
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#06b6d4"></span> Автоматизация</h4>
+      <ul>
+        <li><code>ON registration(cat)</code> → вопрос в анкете: «Есть ли беременные в семье?»</li>
+        <li><code>ON owner_pregnant=true</code> → автогенерация PDF: «Токсоплазмоз и беременность: что нужно знать»</li>
+        <li><code>ON diagnosis(toxoplasma_acute)</code> → SMS: «Правила: убирайте лоток ежедневно в перчатках. Беременным НЕ убирать лоток»</li>
+        <li><code>ON registration(cat) + outdoor=true</code> → рекомендация в плане: «Серология на токсоплазмоз»</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DISEASE 5: САЛЬМОНЕЛЛЁЗ -->
+<!-- ============================================================ -->
+<div class="disease" id="d5">
+<div class="disease-hdr">
+  <h2>5. Сальмонеллёз</h2>
+  <div class="en">Salmonellosis &bull; Возбудитель: Salmonella spp. (бактерия, >2500 серотипов)</div>
+  <div class="tags">
+    <span class="tag tag-r">Высокая заразность</span>
+    <span class="tag tag-a">Бактериальный</span>
+    <span class="tag tag-b">Все виды + рептилии</span>
+    <span class="tag tag-p">One Health: пищевая безопасность</span>
+  </div>
+</div>
+<div class="disease-body">
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">1</span><h3>Почему это важно (One Health)</h3></div>
+  <p style="color:var(--dim);font-size:.9em">Сальмонелла — один из самых распространённых пищевых зоонозов в мире. Домашние животные (особенно те, кого кормят сырым мясом — BARF-диета) могут выделять сальмонеллу с фекалиями, заражая владельцев. Рептилии и черепахи — носители в 90% случаев. Собаки и кошки чаще бессимптомные носители.</p>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">4</span><h3>Disease Progression Model</h3></div>
+
+  <div class="stage stage-1">
+    <h4>Стадия 1 — Колонизация (6–72 часа) <span class="tag tag-a">Риск: средний</span></h4>
+    <p><strong>Что происходит:</strong> Сальмонелла заселяет кишечник. У большинства взрослых животных — бессимптомное носительство.</p>
+    <p><strong>Что видит владелец:</strong> Ничего. Животное выделяет бактерию с фекалиями.</p>
+    <div class="risk-line risk-med">Заразность: <strong>средняя</strong> — фекалии уже содержат сальмонеллу. Вероятность пропуска: <strong>95%</strong>.</div>
+  </div>
+
+  <div class="stage stage-2">
+    <h4>Стадия 2 — Энтерит (день 1–5) <span class="tag tag-r">Риск: высокий</span></h4>
+    <ul>
+      <li><strong>Диарея</strong> — водянистая, слизистая, возможно с кровью</li>
+      <li><strong>Рвота</strong></li>
+      <li><strong>Лихорадка</strong> — 39.5–41°C</li>
+      <li><strong>Отказ от еды</strong></li>
+      <li><strong>Болезненность живота</strong></li>
+      <li><strong>Обезвоживание</strong> — особенно опасно для щенков/котят</li>
+    </ul>
+    <div class="risk-line risk-high">Заразность: <strong>высокая</strong> — массивное выделение с диареей. Убирать фекалии только в перчатках.</div>
+  </div>
+
+  <div class="stage stage-4">
+    <h4>Стадия 3 — Септицемия (у ослабленных) <span class="tag tag-r">Критическая</span></h4>
+    <ul>
+      <li>Бактерия в крови → поражение печени, селезёнки, лёгких</li>
+      <li>Высокая лихорадка → гипотермия (плохой прогноз)</li>
+      <li>Шок, коллапс</li>
+      <li>Щенки и котята: смертность до 50%</li>
+    </ul>
+  </div>
+
+  <div class="stage stage-5">
+    <h4>Стадия 4 — Хроническое носительство <span class="tag tag-a">Риск: средний (скрытый)</span></h4>
+    <p>Животное клинически здорово, но выделяет сальмонеллу с фекалиями <strong>до 6 недель</strong> после выздоровления. Некоторые — <strong>месяцами</strong>.</p>
+    <div class="risk-line risk-med">Владелец расслабился: «уже выздоровела». А бактерия всё ещё в кале.</div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">7</span><h3>Когда животное опасно для человека</h3></div>
+  <div class="alert alert-r">
+    <strong>Основной путь:</strong> Фекально-оральный. Контакт с фекалиями, немытые руки после уборки лотка, облизывание лица собакой.<br>
+    <strong>BARF-фактор:</strong> Собаки на сыроедческой диете — носители сальмонеллы в 30–50% случаев. Миска с сырым мясом → контаминация кухни.<br>
+    <strong>Рептилии:</strong> 90% черепах и ящериц — носители. Дети, трогающие черепаху и потом тянущие руки в рот — классический сценарий.
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">10</span><h3>Итоговая матрица</h3></div>
+  <table class="tb">
+    <thead><tr><th>Стадия</th><th>Что в организме</th><th>Что видит владелец</th><th>Заметность</th><th>Риск для человека</th><th>Вер. пропуска</th></tr></thead>
+    <tbody>
+    <tr><td>1 — Колонизация</td><td>Бактерия в кишечнике</td><td>Ничего</td><td>0%</td><td style="color:#fcd34d">Средний</td><td>95%</td></tr>
+    <tr><td>2 — Энтерит</td><td>Воспаление кишечника</td><td>Диарея, рвота, лихорадка</td><td>80%</td><td style="color:#fca5a5;font-weight:700">Высокий</td><td>20%</td></tr>
+    <tr><td>3 — Септицемия</td><td>Бактерия в крови</td><td>Шок, коллапс</td><td>95%</td><td>Высокий</td><td>5%</td></tr>
+    <tr><td>4 — Носительство</td><td>Выделение без симптомов</td><td>Ничего — «выздоровела»</td><td>0%</td><td style="color:#fcd34d">Средний (скрытый)</td><td>99%</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="impl">
+  <div class="impl-title"><span class="ico">&#9881;</span><h3>Имплементация в панель: Сальмонеллёз</h3></div>
+
+  <div class="impl-grid">
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#6366f1"></span> Data Model — поля для сбора</h4>
+      <ul>
+        <li><code>symptom_diarrhea</code> — диарея (enum: none | watery | mucous | bloody)</li>
+        <li><code>symptom_vomiting</code> — рвота (bool + frequency)</li>
+        <li><code>symptom_fever</code> — лихорадка >39.5°C (bool + value)</li>
+        <li><code>symptom_anorexia</code> — отказ от еды (bool + days)</li>
+        <li><code>diet_raw</code> — BARF / сырое мясо (bool) ← <strong>ключевой фактор</strong></li>
+        <li><code>species_exotic</code> — рептилии, черепахи, птицы (bool)</li>
+        <li><code>age_juvenile</code> — щенок/котёнок (bool)</li>
+        <li><code>household_children</code> — дети в семье (bool)</li>
+        <li><code>household_elderly</code> — пожилые в семье (bool)</li>
+        <li><code>culture_salmonella</code> — посев на сальмонеллу (enum: positive | negative | pending | not_done)</li>
+        <li><code>multi_pet_household</code> — несколько животных в доме (bool)</li>
+      </ul>
+    </div>
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#f59e0b"></span> Risk Score — формула</h4>
+      <table class="score-table">
+        <tr><th>Фактор</th><th>Баллы</th></tr>
+        <tr><td>BARF / сырое мясо</td><td><code>+20</code></td></tr>
+        <tr><td>Рептилия / черепаха</td><td><code>+25</code></td></tr>
+        <tr><td>Щенок / котёнок</td><td><code>+10</code></td></tr>
+        <tr><td>Диарея (водянистая)</td><td><code>+10</code></td></tr>
+        <tr><td>Диарея с кровью</td><td><code>+20</code></td></tr>
+        <tr><td>Рвота + лихорадка</td><td><code>+15</code></td></tr>
+        <tr><td>Дети в семье</td><td><code>+15</code></td></tr>
+        <tr><td>Пожилые в семье</td><td><code>+10</code></td></tr>
+        <tr><td>Посев: positive</td><td><code>+30</code></td></tr>
+      </table>
+      <ul>
+        <li><code>0–19</code> = низкий → стандартный</li>
+        <li><code>20–39</code> = средний → рекомендовать посев + гигиену</li>
+        <li><code>40–59</code> = высокий → посев обязателен + памятка</li>
+        <li><code>60+</code> = критический → лечение + изоляция от детей + гигиена кухни</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="impl-full" style="margin-top:14px">
+    <h4><span class="dot" style="background:#ef4444"></span> Alert Rules</h4>
+    <ul>
+      <li><strong>BARF Alert:</strong> <code>IF</code> diet_raw = true → <code>AUTO</code> баннер в карточке: «BARF-диета: повышен риск сальмонеллёза. Рекомендован периодический посев кала»</li>
+      <li><strong>Reptile Alert:</strong> <code>IF</code> species_exotic = true + household_children = true → <code>AUTO</code> памятка: «Рептилии — носители сальмонеллы. Правила гигиены для семей с детьми»</li>
+      <li><strong>Positive Alert:</strong> <code>IF</code> culture_salmonella = positive → <code>PUSH</code> врачу + <code>SMS</code> владельцу: «Подтверждена сальмонелла. Мойте руки после контакта. Дети и пожилые — минимум контакта»</li>
+      <li><strong>Cluster:</strong> <code>IF</code> 3+ случаев salmonella_positive за 14 дней → <code>PUSH</code> эпид-алерт: «Возможный общий источник (корм? вода?)»</li>
+    </ul>
+  </div>
+
+  <div class="impl-grid" style="margin-top:14px">
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#22c55e"></span> Dashboard Widgets</h4>
+      <ul>
+        <li><strong>BARF Registry:</strong> список животных на сыроедческой диете + дата последнего посева</li>
+        <li><strong>Reptile Registry:</strong> рептилии/черепахи в базе + статус семьи (дети?)</li>
+        <li><strong>Outbreak Tracker:</strong> timeline подтверждённых случаев с поиском общего источника</li>
+        <li><strong>Recovery Monitor:</strong> пациенты после сальмонеллёза + статус контрольного посева (6 нед)</li>
+      </ul>
+    </div>
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#06b6d4"></span> Автоматизация</h4>
+      <ul>
+        <li><code>ON registration + diet_raw=true</code> → автодобавление тега «BARF» + рекомендация посева каждые 6 мес</li>
+        <li><code>ON diagnosis(salmonella)</code> → PDF: «Сальмонелла у питомца: правила для семьи»</li>
+        <li><code>ON diagnosis(salmonella)</code> → schedule: контрольный посев через 6 недель</li>
+        <li><code>ON registration(reptile)</code> → автоматическая памятка: «90% рептилий — носители сальмонеллы»</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DISEASE 6: КАМПИЛОБАКТЕРИОЗ -->
+<!-- ============================================================ -->
+<div class="disease" id="d6">
+<div class="disease-hdr">
+  <h2>6. Кампилобактериоз</h2>
+  <div class="en">Campylobacteriosis &bull; Возбудитель: Campylobacter jejuni, C. coli (бактерия)</div>
+  <div class="tags">
+    <span class="tag tag-a">Бактериальный</span>
+    <span class="tag tag-b">Собаки, кошки, птицы</span>
+    <span class="tag tag-p">One Health: кишечные инфекции</span>
+  </div>
+</div>
+<div class="disease-body">
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">1</span><h3>Почему это важно</h3></div>
+  <p style="color:var(--dim);font-size:.9em">Кампилобактер — <strong>ведущая причина бактериальной диареи у людей</strong> в мире. Домашние животные (особенно щенки и котята до 6 месяцев) — значимый источник заражения. Носительство у здоровых собак — до 47%, у кошек — до 45%. Инфекционная доза для человека крайне мала — менее 500 бактерий.</p>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">4</span><h3>Disease Progression Model</h3></div>
+
+  <div class="stage stage-1">
+    <h4>Стадия 1 — Носительство (бессимптомное) <span class="tag tag-a">Риск: средний</span></h4>
+    <p><strong>У взрослых животных:</strong> В большинстве случаев — бессимптомное носительство. Бактерия в кишечнике, выделяется с фекалиями.</p>
+    <div class="risk-line risk-med">Заразность: <strong>средняя</strong>. Здоровая собака может быть источником кампилобактера для всей семьи. Вероятность пропуска: <strong>99%</strong>.</div>
+  </div>
+
+  <div class="stage stage-2">
+    <h4>Стадия 2 — Энтерит (у щенков/котят, 1–7 дней) <span class="tag tag-r">Риск: высокий</span></h4>
+    <ul>
+      <li><strong>Водянистая диарея</strong> — часто со слизью, возможно с кровью</li>
+      <li><strong>Тенезмы</strong> — частые позывы, «тужится», но выделений мало</li>
+      <li><strong>Вялость</strong>, снижение активности</li>
+      <li><strong>Лихорадка</strong> — умеренная</li>
+      <li><strong>Снижение аппетита</strong></li>
+      <li><strong>Боль в животе</strong> — скулит при прикосновении, поза «молитвы»</li>
+    </ul>
+    <div class="risk-line risk-high">Массивное выделение бактерий. Особенно опасно в семьях с маленькими детьми — диарея у щенка + ребёнок на полу = классический сценарий.</div>
+  </div>
+
+  <div class="stage stage-5">
+    <h4>Стадия 3 — Выздоровление / персистирующее носительство</h4>
+    <p>Энтерит проходит за 5–15 дней, но выделение бактерий продолжается <strong>до 4 месяцев</strong>.</p>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">7</span><h3>Когда животное опасно для человека</h3></div>
+  <div class="alert alert-r">
+    <strong>Путь:</strong> Фекально-оральный. Контакт с фекалиями, облизывание лица, контаминация рук.<br>
+    <strong>Особенность:</strong> Инфекционная доза <strong>менее 500 бактерий</strong> — достаточно не помыть руки после уборки за щенком.<br>
+    <strong>Группы риска:</strong> Дети до 5 лет, пожилые, иммуноскомпрометированные.<br>
+    <strong>Осложнение у человека:</strong> синдром Гийена-Барре (аутоиммунный паралич) — редкое, но тяжёлое осложнение кампилобактериоза.
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">10</span><h3>Итоговая матрица</h3></div>
+  <table class="tb">
+    <thead><tr><th>Стадия</th><th>Что в организме</th><th>Что видит владелец</th><th>Заметность</th><th>Риск для человека</th><th>Вер. пропуска</th></tr></thead>
+    <tbody>
+    <tr><td>1 — Носительство</td><td>Бактерия в кишечнике</td><td>Ничего</td><td>0%</td><td style="color:#fcd34d">Средний</td><td>99%</td></tr>
+    <tr><td>2 — Энтерит</td><td>Воспаление толстого кишечника</td><td>Диарея со слизью/кровью, тенезмы</td><td>85%</td><td style="color:#fca5a5;font-weight:700">Высокий</td><td>15%</td></tr>
+    <tr><td>3 — Носительство</td><td>Персистенция в кишечнике</td><td>Ничего</td><td>0%</td><td style="color:#fcd34d">Средний (скрытый)</td><td>99%</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="impl">
+  <div class="impl-title"><span class="ico">&#9881;</span><h3>Имплементация в панель: Кампилобактериоз</h3></div>
+
+  <div class="impl-grid">
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#6366f1"></span> Data Model — поля для сбора</h4>
+      <ul>
+        <li><code>symptom_diarrhea_mucous</code> — диарея со слизью (bool)</li>
+        <li><code>symptom_diarrhea_bloody</code> — диарея с кровью (bool)</li>
+        <li><code>symptom_tenesmus</code> — тенезмы / частые позывы (bool)</li>
+        <li><code>symptom_abdominal_pain</code> — болезненность живота (bool)</li>
+        <li><code>age_juvenile</code> — до 6 мес (bool) ← наивысший риск</li>
+        <li><code>source</code> — приют / заводчик / улица</li>
+        <li><code>household_children_under5</code> — дети до 5 лет (bool)</li>
+        <li><code>culture_campylobacter</code> — посев (enum)</li>
+        <li><code>multi_pet_household</code> — несколько животных (bool)</li>
+      </ul>
+    </div>
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#f59e0b"></span> Risk Score — формула</h4>
+      <table class="score-table">
+        <tr><th>Фактор</th><th>Баллы</th></tr>
+        <tr><td>Щенок/котёнок до 6 мес</td><td><code>+15</code></td></tr>
+        <tr><td>Из приюта / скученное содержание</td><td><code>+10</code></td></tr>
+        <tr><td>Диарея со слизью</td><td><code>+10</code></td></tr>
+        <tr><td>Диарея с кровью + тенезмы</td><td><code>+20</code></td></tr>
+        <tr><td>Дети до 5 лет в семье</td><td><code>+20</code></td></tr>
+        <tr><td>Посев: positive</td><td><code>+25</code></td></tr>
+      </table>
+      <ul>
+        <li><code>0–14</code> = низкий</li>
+        <li><code>15–34</code> = средний → гигиена + мониторинг</li>
+        <li><code>35–54</code> = высокий → посев + изоляция от детей</li>
+        <li><code>55+</code> = критический → лечение + памятка + мониторинг семьи</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="impl-full" style="margin-top:14px">
+    <h4><span class="dot" style="background:#ef4444"></span> Alert Rules</h4>
+    <ul>
+      <li><strong>Puppy + Toddler:</strong> <code>IF</code> age_juvenile + household_children_under5 + (diarrhea_mucous OR diarrhea_bloody) → <code>URGENT</code> «Щенок с диареей + маленький ребёнок. Изолировать. Мыть руки. Не давать ребёнку контакт с калом»</li>
+      <li><strong>Positive:</strong> <code>IF</code> culture_campylobacter = positive → <code>PUSH</code> + <code>SMS</code>: «Выделение бактерии до 4 месяцев после выздоровления. Правила гигиены»</li>
+      <li><strong>Cluster:</strong> <code>IF</code> 3+ случаев из одного приюта/заводчика → <code>PUSH</code> алерт: «Кластер кампилобактера — проверить условия содержания»</li>
+    </ul>
+  </div>
+
+  <div class="impl-grid" style="margin-top:14px">
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#22c55e"></span> Dashboard Widgets</h4>
+      <ul>
+        <li><strong>Puppy Risk Panel:</strong> щенки/котята до 6 мес с диареей + семьи с детьми</li>
+        <li><strong>Source Tracker:</strong> случаи по источнику (приют, заводчик) — поиск кластеров</li>
+        <li><strong>Recovery Monitor:</strong> пациенты после кампилобактериоза (4-мес окно носительства)</li>
+      </ul>
+    </div>
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#06b6d4"></span> Автоматизация</h4>
+      <ul>
+        <li><code>ON registration(puppy) + household_children</code> → памятка: «Щенок + маленький ребёнок: правила гигиены»</li>
+        <li><code>ON diagnosis(campylobacter)</code> → schedule: мониторинг 4 месяца + контрольный посев</li>
+        <li><code>ON diarrhea + age_juvenile</code> → автодобавить в план: «Рассмотреть посев на кампилобактер»</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DISEASE 7: ЭХИНОКОККОЗ -->
+<!-- ============================================================ -->
+<div class="disease" id="d7">
+<div class="disease-hdr">
+  <h2>7. Эхинококкоз</h2>
+  <div class="en">Echinococcosis &bull; Возбудитель: Echinococcus granulosus / E. multilocularis (цестоды)</div>
+  <div class="tags">
+    <span class="tag tag-r">Жизнеугрожающий для человека</span>
+    <span class="tag tag-a">Паразитарный (гельминт)</span>
+    <span class="tag tag-b">Собаки — окончательный хозяин</span>
+    <span class="tag tag-p">One Health: хирургическая проблема</span>
+  </div>
+</div>
+<div class="disease-body">
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">1</span><h3>Почему это важно (One Health)</h3></div>
+  <p style="color:var(--dim);font-size:.9em">Эхинококкоз — один из самых опасных гельминтозов для человека. Собака — окончательный хозяин, выделяет яйца с фекалиями. У человека яйца развиваются в <strong>кисты в печени, лёгких, мозге</strong>, которые растут годами и требуют хирургического удаления. E. multilocularis (альвеолярный эхинококкоз) — <strong>фактически злокачественное паразитарное заболевание</strong> с летальностью до 90% без лечения.</p>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">4</span><h3>Disease Progression Model у собаки</h3></div>
+
+  <div class="stage stage-1">
+    <h4>Стадия 1 — Заражение и созревание (4–7 недель) <span class="tag tag-a">Риск: нарастает</span></h4>
+    <p><strong>Что происходит:</strong> Собака проглотила заражённые внутренности (овца, грызун). Протосколексы прикрепляются к стенке кишечника и развиваются во взрослых червей за 4–7 недель.</p>
+    <p><strong>Что видит владелец:</strong> Абсолютно ничего. Червь всего 3–6 мм — не виден в кале.</p>
+    <div class="risk-line risk-low">Заразность: <strong>нет</strong> пока черви не созрели. Вероятность пропуска: <strong>100%</strong>.</div>
+  </div>
+
+  <div class="stage stage-2">
+    <h4>Стадия 2 — Активное выделение яиц (с 7-й недели, месяцами) <span class="tag tag-r">Риск: МАКСИМАЛЬНЫЙ</span></h4>
+    <p><strong>Что происходит:</strong> Зрелые членики отделяются и выходят с фекалиями. Каждый членик содержит сотни яиц.</p>
+    <ul>
+      <li>У собаки <strong>НЕТ СИМПТОМОВ</strong> — черви малы и не вызывают обструкции</li>
+      <li>Иногда: лёгкий зуд в области ануса (собака «ездит» на попе)</li>
+      <li>Иногда: мелкие белые «зёрнышки» вокруг ануса или на подстилке (членики)</li>
+    </ul>
+    <div class="risk-line risk-high"><strong>ГЛАВНАЯ ПРОБЛЕМА:</strong> Собака полностью здорова, но каждый день контаминирует среду яйцами. Яйца на шерсти (вокруг ануса), на траве, на полу. Погладил собаку → не помыл руки → заражение. Вероятность пропуска: <strong>95%</strong>.</div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">5</span><h3>Практическая симптоматика</h3></div>
+  <div class="alert alert-w">
+    <strong>КЛЮЧЕВАЯ ПРОБЛЕМА:</strong> У собаки практически НЕТ клинических симптомов эхинококкоза. Это «тихий» паразит для собаки, но катастрофический для человека. Единственный способ выявления — регулярная дегельминтизация и исследование кала.
+  </div>
+  <div class="confusion">
+    <h4>Что может заметить владелец (редко)</h4>
+    <ul>
+      <li>«Ёрзание на попе» — но это списывают на анальные железы</li>
+      <li>Мелкие белые частицы в кале или на подстилке — но это путают с рисом или семенами</li>
+      <li>Незначительная диарея (при массивной инвазии) — списывают на еду</li>
+    </ul>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">7</span><h3>Когда собака опасна для человека</h3></div>
+  <div class="alert alert-r">
+    <strong>Когда?</strong> С момента начала выделения яиц (7-я неделя после заражения) и далее непрерывно, пока не проведена дегельминтизация.<br>
+    <strong>Через что?</strong> Яйца в фекалиях → на шерсти → на руках → в рот. Также: яйца на овощах/ягодах с огорода, куда ходила собака.<br>
+    <strong>Выглядит ли собака больной?</strong> <span style="color:#fca5a5;font-weight:700">НЕТ. Собака полностью здорова.</span><br>
+    <strong>Что происходит с человеком?</strong> Яйца → личинки → кисты в печени (70%), лёгких (20%), мозге (10%). Кисты растут <strong>годами бессимптомно</strong>, затем — боль, желтуха, разрыв кисты (анафилактический шок).<br>
+    <strong>Факторы риска:</strong> Сельская местность, собаки с доступом к тушам скота, отсутствие дегельминтизации.
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">10</span><h3>Итоговая матрица</h3></div>
+  <table class="tb">
+    <thead><tr><th>Стадия</th><th>Что в организме собаки</th><th>Что видит владелец</th><th>Заметность</th><th>Риск для человека</th><th>Вер. пропуска</th></tr></thead>
+    <tbody>
+    <tr><td>1 — Созревание</td><td>Черви растут в кишечнике</td><td>Ничего</td><td>0%</td><td>Нет</td><td>100%</td></tr>
+    <tr><td>2 — Выделение яиц</td><td>Членики с яйцами в кале</td><td>Ничего (или «рисинки» в кале)</td><td>5%</td><td style="color:#fca5a5;font-weight:700">МАКСИМАЛЬНЫЙ</td><td>95%</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="impl">
+  <div class="impl-title"><span class="ico">&#9881;</span><h3>Имплементация в панель: Эхинококкоз</h3></div>
+
+  <div class="impl-grid">
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#6366f1"></span> Data Model — поля для сбора</h4>
+      <ul>
+        <li><code>species</code> — собака (окончательный хозяин)</li>
+        <li><code>location_rural</code> — сельская местность / пригород (bool)</li>
+        <li><code>access_livestock</code> — контакт с скотом / тушами (bool)</li>
+        <li><code>access_offal</code> — доступ к внутренностям скота (bool) ← <strong>ключевой фактор</strong></li>
+        <li><code>hunting_dog</code> — охотничья / рабочая собака (bool)</li>
+        <li><code>deworming_date</code> — дата последней дегельминтизации</li>
+        <li><code>deworming_praziquantel</code> — использовался ли празиквантел (bool)</li>
+        <li><code>symptom_scooting</code> — «ёрзание» на попе (bool)</li>
+        <li><code>symptom_proglottids</code> — белые частицы в кале / у ануса (bool)</li>
+        <li><code>fecal_test_echino</code> — копрология на эхинококк (enum)</li>
+        <li><code>household_garden</code> — огород, куда ходит собака (bool)</li>
+      </ul>
+    </div>
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#f59e0b"></span> Risk Score — формула</h4>
+      <table class="score-table">
+        <tr><th>Фактор</th><th>Баллы</th></tr>
+        <tr><td>Сельская местность</td><td><code>+10</code></td></tr>
+        <tr><td>Доступ к тушам / внутренностям скота</td><td><code>+30</code></td></tr>
+        <tr><td>Охотничья собака</td><td><code>+15</code></td></tr>
+        <tr><td>Дегельминтизация >3 мес назад</td><td><code>+15</code></td></tr>
+        <tr><td>Никогда не дегельминтизирована</td><td><code>+25</code></td></tr>
+        <tr><td>Без празиквантела в протоколе</td><td><code>+10</code></td></tr>
+        <tr><td>Огород, куда ходит собака</td><td><code>+10</code></td></tr>
+        <tr><td>Дети в семье</td><td><code>+15</code></td></tr>
+      </table>
+      <ul>
+        <li><code>0–14</code> = низкий → стандартная дегельминтизация</li>
+        <li><code>15–34</code> = средний → дегельминтизация каждые 6 нед + копрология</li>
+        <li><code>35–54</code> = высокий → дегельминтизация каждые 4 нед + памятка</li>
+        <li><code>55+</code> = критический → немедленная дегельминтизация + ограничение доступа к скоту + семья к врачу на УЗИ</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="impl-full" style="margin-top:14px">
+    <h4><span class="dot" style="background:#ef4444"></span> Alert Rules</h4>
+    <ul>
+      <li><strong>Overdue Deworming:</strong> <code>IF</code> deworming_date > 90 дней + (location_rural OR access_livestock) → <code>SMS</code> владельцу: «Необходима дегельминтизация. Эхинококкоз опасен для семьи»</li>
+      <li><strong>High-Risk Profile:</strong> <code>IF</code> access_offal = true + deworming_praziquantel = false → <code>PUSH</code> врачу: «Собака с доступом к тушам без празиквантела. Назначить немедленно»</li>
+      <li><strong>Garden Alert:</strong> <code>IF</code> score ≥ 35 + household_garden = true → <code>SMS</code>: «Не ешьте немытые овощи/ягоды с огорода, куда ходит собака. Яйца эхинококка на траве/плодах»</li>
+      <li><strong>Family Alert:</strong> <code>IF</code> fecal_test_echino = positive → <code>URGENT</code>: «Эхинококкоз! Рекомендовать всей семье УЗИ печени»</li>
+    </ul>
+  </div>
+
+  <div class="impl-grid" style="margin-top:14px">
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#22c55e"></span> Dashboard Widgets</h4>
+      <ul>
+        <li><strong>Deworming Compliance:</strong> % собак с актуальной дегельминтизацией (празиквантел)</li>
+        <li><strong>High-Risk Registry:</strong> собаки из сельской местности + доступ к скоту</li>
+        <li><strong>Overdue List:</strong> собаки с просроченной дегельминтизацией + телефон владельца</li>
+        <li><strong>Map:</strong> географическое распределение собак из группы риска</li>
+      </ul>
+    </div>
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#06b6d4"></span> Автоматизация</h4>
+      <ul>
+        <li><code>CRON(every 6 weeks)</code> → SMS-напоминание для группы риска: «Пора дегельминтизировать собаку»</li>
+        <li><code>ON registration(dog) + rural</code> → вопрос: «Есть ли доступ к тушам скота?»</li>
+        <li><code>ON deworming</code> → записать препарат + проверить: содержит ли празиквантел?</li>
+        <li><code>ON diagnosis(echinococcosis)</code> → PDF-памятка: «Эхинококкоз: что должна знать семья» + направление на УЗИ</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DISEASE 8: ЛЯМБЛИОЗ -->
+<!-- ============================================================ -->
+<div class="disease" id="d8">
+<div class="disease-hdr">
+  <h2>8. Лямблиоз</h2>
+  <div class="en">Giardiasis &bull; Возбудитель: Giardia duodenalis (простейшее)</div>
+  <div class="tags">
+    <span class="tag tag-a">Паразитарный</span>
+    <span class="tag tag-b">Собаки, кошки</span>
+    <span class="tag tag-p">17 случаев в базе BELVET</span>
+  </div>
+</div>
+<div class="disease-body">
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">1</span><h3>Почему это важно</h3></div>
+  <p style="color:var(--dim);font-size:.9em">Лямблиоз — один из самых частых кишечных паразитозов у домашних животных и людей. Распространённость у собак — 5–36%, у кошек — 5–15%. Цисты чрезвычайно устойчивы в окружающей среде (месяцы в воде и почве). Зоонозный потенциал зависит от генотипа (assemblage): A и B — зоонозные, C-H — видоспецифичные.</p>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">4</span><h3>Disease Progression Model</h3></div>
+
+  <div class="stage stage-1">
+    <h4>Стадия 1 — Колонизация (5–14 дней) <span class="tag tag-a">Риск: средний</span></h4>
+    <p><strong>Что происходит:</strong> Цисты проглочены, в тонком кишечнике превращаются в трофозоиты, прикрепляются к слизистой.</p>
+    <p><strong>Что видит владелец:</strong> Ничего или лёгкое вздутие живота.</p>
+    <div class="risk-line risk-med">Выделение цист начинается через 5–14 дней. Заразность: <strong>средняя</strong>.</div>
+  </div>
+
+  <div class="stage stage-2">
+    <h4>Стадия 2 — Энтерит <span class="tag tag-r">Риск: высокий</span></h4>
+    <ul>
+      <li><strong>Хроническая диарея</strong> — мягкий, «коровий» кал, иногда со слизью</li>
+      <li><strong>Стеаторея</strong> — жирный, блестящий, зловонный стул (нарушение всасывания жиров)</li>
+      <li><strong>Метеоризм</strong> — вздутие, урчание в животе</li>
+      <li><strong>Потеря веса</strong> — при хорошем аппетите (мальабсорбция)</li>
+      <li><strong>Тусклая шерсть</strong> — дефицит нутриентов</li>
+      <li><strong>Перемежающаяся диарея</strong> — то нормальный стул, то диарея (характерный паттерн)</li>
+    </ul>
+    <div class="risk-line risk-high">Массивное выделение цист. Характерный паттерн «то лучше, то хуже» заставляет владельца ждать, а не обращаться к врачу.</div>
+  </div>
+
+  <div class="stage stage-5">
+    <h4>Стадия 3 — Хроническая инфекция</h4>
+    <p>Без лечения может персистировать <strong>месяцами и годами</strong>. Прогрессирующая потеря веса, ухудшение шерсти, периодическая диарея. Особенно тяжело у щенков и котят.</p>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">5</span><h3>Практическая симптоматика</h3></div>
+  <div class="confusion">
+    <h4>Что владелец ошибочно считает «ничего страшного»</h4>
+    <ul>
+      <li>«Просто чувствительный желудок» — а это хроническая мальабсорбция</li>
+      <li>«Иногда жидкий стул — нормально для породы» — перемежающаяся диарея = классика лямблиоза</li>
+      <li>«Худая, но ест хорошо — такая конституция» — потеря веса при сохранённом аппетите</li>
+      <li>«Газы — наверно, корм не подходит» — зловонный метеоризм = маркер мальабсорбции</li>
+    </ul>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">7</span><h3>Когда животное опасно</h3></div>
+  <div class="alert alert-r">
+    <strong>Путь:</strong> Фекально-оральный. Цисты в фекалиях → на шерсти → на руках → в рот. Также через загрязнённую воду.<br>
+    <strong>Важно:</strong> Не все генотипы зоонозные. Assemblage A и B (встречаются и у людей, и у животных) — зоонозные. Assemblage C, D (собаки) и F (кошки) — обычно видоспецифичны.<br>
+    <strong>Практически:</strong> Относиться к каждому случаю как к потенциально зоонозному — генотипирование в рутинной практике не делается.
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">10</span><h3>Итоговая матрица</h3></div>
+  <table class="tb">
+    <thead><tr><th>Стадия</th><th>Что в организме</th><th>Что видит владелец</th><th>Заметность</th><th>Риск для человека</th><th>Вер. пропуска</th></tr></thead>
+    <tbody>
+    <tr><td>1 — Колонизация</td><td>Прикрепление к слизистой</td><td>Ничего / лёгкое вздутие</td><td>5%</td><td>Средний</td><td>95%</td></tr>
+    <tr><td>2 — Энтерит</td><td>Мальабсорбция</td><td>Жирная диарея, вздутие, потеря веса</td><td>60%</td><td style="color:#fca5a5;font-weight:700">Высокий</td><td>40%</td></tr>
+    <tr><td>3 — Хроническая</td><td>Персистенция</td><td>«То лучше, то хуже», худеет</td><td>40%</td><td>Средний</td><td>60%</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="impl">
+  <div class="impl-title"><span class="ico">&#9881;</span><h3>Имплементация в панель: Лямблиоз</h3></div>
+
+  <div class="impl-grid">
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#6366f1"></span> Data Model — поля для сбора</h4>
+      <ul>
+        <li><code>symptom_diarrhea_chronic</code> — хроническая диарея >7 дней (bool)</li>
+        <li><code>symptom_diarrhea_intermittent</code> — перемежающаяся (то норма, то диарея) (bool)</li>
+        <li><code>symptom_steatorrhea</code> — жирный блестящий кал (bool)</li>
+        <li><code>symptom_flatulence</code> — метеоризм / вздутие (bool)</li>
+        <li><code>symptom_weight_loss</code> — потеря веса (bool + % от нормы)</li>
+        <li><code>appetite_preserved</code> — аппетит сохранён при потере веса (bool) ← характерный признак</li>
+        <li><code>symptom_coat_dull</code> — тусклая шерсть (bool)</li>
+        <li><code>age_juvenile</code> — щенок/котёнок (bool)</li>
+        <li><code>source</code> — приют / заводчик / улица</li>
+        <li><code>giardia_test</code> — SNAP-тест / ИФА / микроскопия (enum)</li>
+        <li><code>treatment_response</code> — ответ на метронидазол/фенбендазол (enum)</li>
+        <li><code>household_children</code> — дети в семье (bool)</li>
+        <li><code>water_source</code> — пьёт из луж / водоёмов (bool)</li>
+      </ul>
+    </div>
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#f59e0b"></span> Risk Score — формула</h4>
+      <table class="score-table">
+        <tr><th>Фактор</th><th>Баллы</th></tr>
+        <tr><td>Хроническая диарея >7 дней</td><td><code>+10</code></td></tr>
+        <tr><td>Перемежающаяся диарея</td><td><code>+15</code></td></tr>
+        <tr><td>Стеаторея (жирный кал)</td><td><code>+20</code></td></tr>
+        <tr><td>Потеря веса + сохранённый аппетит</td><td><code>+20</code></td></tr>
+        <tr><td>Метеоризм + вздутие</td><td><code>+10</code></td></tr>
+        <tr><td>Котёнок/щенок</td><td><code>+10</code></td></tr>
+        <tr><td>Из приюта</td><td><code>+10</code></td></tr>
+        <tr><td>Пьёт из луж</td><td><code>+5</code></td></tr>
+        <tr><td>Дети в семье</td><td><code>+10</code></td></tr>
+        <tr><td>Тест: positive</td><td><code>+25</code></td></tr>
+      </table>
+      <ul>
+        <li><code>0–14</code> = низкий</li>
+        <li><code>15–34</code> = средний → SNAP-тест рекомендован</li>
+        <li><code>35–54</code> = высокий → тест обязателен + лечение</li>
+        <li><code>55+</code> = критический → лечение + дезинфекция среды + гигиена семьи</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="impl-full" style="margin-top:14px">
+    <h4><span class="dot" style="background:#ef4444"></span> Alert Rules</h4>
+    <ul>
+      <li><strong>Pattern Recognition:</strong> <code>IF</code> diarrhea_intermittent = true + weight_loss + appetite_preserved → <code>PUSH</code> врачу: «Классический паттерн лямблиоза. Рекомендован SNAP-тест»</li>
+      <li><strong>Treatment Failure:</strong> <code>IF</code> giardia_test = positive + treatment_response = poor после 10 дней → <code>PUSH</code>: «Неэффективное лечение. Проверить: дезинфекция среды? Реинфекция? Другой протокол?»</li>
+      <li><strong>Child Risk:</strong> <code>IF</code> giardia_test = positive + household_children = true → <code>SMS</code>: «Лямблии у питомца. Мойте руки после контакта. При диарее у ребёнка — к педиатру»</li>
+      <li><strong>Reinfection:</strong> <code>IF</code> giardia_test = positive повторно в течение 3 мес → <code>PUSH</code>: «Реинфекция. Необходима дезинфекция среды + лечение всех контактных животных»</li>
+    </ul>
+  </div>
+
+  <div class="impl-grid" style="margin-top:14px">
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#22c55e"></span> Dashboard Widgets</h4>
+      <ul>
+        <li><strong>Chronic Diarrhea Board:</strong> все пациенты с диареей >7 дней без диагноза → проверить на лямблии</li>
+        <li><strong>Treatment Tracker:</strong> пациенты на лечении + дата контрольного теста</li>
+        <li><strong>Weight Chart:</strong> кривая веса пациента (мальабсорбция видна как плато/снижение)</li>
+        <li><strong>Reinfection Monitor:</strong> повторные случаи в одном домохозяйстве</li>
+      </ul>
+    </div>
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#06b6d4"></span> Автоматизация</h4>
+      <ul>
+        <li><code>ON diarrhea_chronic + no_diagnosis(7 days)</code> → автодобавить в план: «Рассмотреть тест на лямблии»</li>
+        <li><code>ON diagnosis(giardia)</code> → PDF: «Лямблиоз: правила дезинфекции дома (паровая чистка, мытьё мисок кипятком)»</li>
+        <li><code>ON treatment_start(giardia)</code> → schedule: контрольный SNAP через 5–7 дней после лечения</li>
+        <li><code>ON diagnosis(giardia) + multi_pet</code> → рекомендация: «Тестировать и лечить ВСЕХ животных в доме одновременно»</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DISEASE 9: БРУЦЕЛЛЁЗ -->
+<!-- ============================================================ -->
+<div class="disease" id="d9">
+<div class="disease-hdr">
+  <h2>9. Бруцеллёз</h2>
+  <div class="en">Brucellosis &bull; Возбудитель: Brucella canis (собаки), B. abortus, B. melitensis</div>
+  <div class="tags">
+    <span class="tag tag-r">Особо опасная инфекция</span>
+    <span class="tag tag-a">Бактериальный</span>
+    <span class="tag tag-b">Собаки (B. canis)</span>
+    <span class="tag tag-p">One Health: репродуктивный + системный</span>
+  </div>
+</div>
+<div class="disease-body">
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">1</span><h3>Почему это важно</h3></div>
+  <p style="color:var(--dim);font-size:.9em">Бруцеллёз — <strong>особо опасная инфекция</strong>, подлежащая обязательному уведомлению. B. canis поражает собак и передаётся человеку. У собак — аборты, бесплодие, дискоспондилит. У человека — волнообразная лихорадка, поражение суставов, эндокардит. Лечение длительное и не всегда успешное. В питомниках может вызвать «репродуктивную катастрофу».</p>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">4</span><h3>Disease Progression Model</h3></div>
+
+  <div class="stage stage-1">
+    <h4>Стадия 1 — Бактериемия (1–4 недели после заражения) <span class="tag tag-a">Риск: средний</span></h4>
+    <p><strong>Что происходит:</strong> Бактерия в крови, распространяется к органам-мишеням (половые органы, межпозвоночные диски, глаза).</p>
+    <ul>
+      <li>Лёгкая лихорадка (часто не замечают)</li>
+      <li>Лимфаденопатия — увеличение лимфоузлов</li>
+      <li>Вялость</li>
+    </ul>
+    <div class="risk-line risk-med">Бактерия в крови. Заразность через выделения: <strong>средняя</strong>. Вероятность пропуска: <strong>85%</strong>.</div>
+  </div>
+
+  <div class="stage stage-3">
+    <h4>Стадия 2 — Репродуктивная фаза <span class="tag tag-r">Риск: высокий</span></h4>
+    <p><strong>У сук:</strong></p>
+    <ul>
+      <li><strong>Аборт</strong> на 45–55 день беременности (классический признак)</li>
+      <li>Мертворождение, рождение слабых щенков</li>
+      <li>Гнойные выделения из влагалища после аборта</li>
+      <li>Бесплодие</li>
+    </ul>
+    <p><strong>У кобелей:</strong></p>
+    <ul>
+      <li>Орхит/эпидидимит — увеличение, болезненность семенников</li>
+      <li>Атрофия семенников (хроническая стадия)</li>
+      <li>Бесплодие</li>
+      <li>Простатит</li>
+    </ul>
+    <div class="risk-line risk-high"><strong>Абортированный материал, выделения</strong> — концентрированный источник бактерий. Владелец, помогающий при родах без перчаток — классический сценарий заражения.</div>
+  </div>
+
+  <div class="stage stage-4">
+    <h4>Стадия 3 — Системная / хроническая <span class="tag tag-r">Риск: средний</span></h4>
+    <ul>
+      <li><strong>Дискоспондилит</strong> — боль в спине, скованность, нежелание двигаться</li>
+      <li><strong>Увеит</strong> — воспаление глаз</li>
+      <li><strong>Хроническая усталость</strong></li>
+      <li><strong>Лимфаденопатия</strong> — увеличенные лимфоузлы прощупываются</li>
+    </ul>
+    <div class="risk-line risk-med">Бактериемия может сохраняться <strong>годами</strong>. Собака выглядит «просто уставшей», но заразна.</div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">7</span><h3>Когда животное опасно</h3></div>
+  <div class="alert alert-r">
+    <strong>Через что:</strong> Контакт с абортированным материалом, вагинальными/препуциальными выделениями, мочой, кровью. Слизистые оболочки, повреждённая кожа.<br>
+    <strong>Когда максимально опасна:</strong> Аборт — массивный выброс бактерий.<br>
+    <strong>Может ли выглядеть здоровой?</strong> <span style="color:#fca5a5;font-weight:700">ДА. Хроническая бактериемия без явных симптомов.</span><br>
+    <strong>Особый риск:</strong> Заводчики, помогающие при родах/абортах без защиты. Ветперсонал.<br>
+    <strong>У человека:</strong> Волнообразная лихорадка, артрит, эндокардит, менингит. Лечение: 6+ недель антибиотиков.
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">10</span><h3>Итоговая матрица</h3></div>
+  <table class="tb">
+    <thead><tr><th>Стадия</th><th>Что в организме</th><th>Что видит владелец</th><th>Заметность</th><th>Риск для человека</th><th>Вер. пропуска</th></tr></thead>
+    <tbody>
+    <tr><td>1 — Бактериемия</td><td>Бактерия в крови</td><td>Вялость, лёгкая лихорадка</td><td>15%</td><td>Средний</td><td>85%</td></tr>
+    <tr><td>2 — Репродуктивная</td><td>Аборт, орхит</td><td>Аборт, выделения, бесплодие</td><td>90%</td><td style="color:#fca5a5;font-weight:700">Максимальный</td><td>10%</td></tr>
+    <tr><td>3 — Хроническая</td><td>Персистирующая инфекция</td><td>Боль в спине, усталость</td><td>30%</td><td style="color:#fcd34d">Средний (скрытый)</td><td>70%</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="impl">
+  <div class="impl-title"><span class="ico">&#9881;</span><h3>Имплементация в панель: Бруцеллёз</h3></div>
+
+  <div class="impl-grid">
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#6366f1"></span> Data Model — поля для сбора</h4>
+      <ul>
+        <li><code>species</code> — собака (B. canis)</li>
+        <li><code>breeding_status</code> — используется в разведении (bool)</li>
+        <li><code>symptom_abortion</code> — аборт (bool + срок беременности)</li>
+        <li><code>symptom_stillbirth</code> — мертворождение (bool)</li>
+        <li><code>symptom_orchitis</code> — увеличение/боль семенников (bool)</li>
+        <li><code>symptom_testicular_atrophy</code> — атрофия семенников (bool)</li>
+        <li><code>symptom_vaginal_discharge</code> — выделения (bool)</li>
+        <li><code>symptom_infertility</code> — бесплодие (bool)</li>
+        <li><code>symptom_discospondylitis</code> — боль в спине / скованность (bool)</li>
+        <li><code>symptom_uveitis</code> — увеит (bool)</li>
+        <li><code>symptom_lymphadenopathy</code> — увеличение лимфоузлов (bool)</li>
+        <li><code>brucella_serology</code> — серология (enum)</li>
+        <li><code>kennel_origin</code> — из питомника (bool + название)</li>
+        <li><code>owner_is_breeder</code> — владелец-заводчик (bool)</li>
+      </ul>
+    </div>
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#f59e0b"></span> Risk Score — формула</h4>
+      <table class="score-table">
+        <tr><th>Фактор</th><th>Баллы</th></tr>
+        <tr><td>Используется в разведении</td><td><code>+15</code></td></tr>
+        <tr><td>Из питомника</td><td><code>+10</code></td></tr>
+        <tr><td>Аборт на 45–55 день</td><td><code>+35</code></td></tr>
+        <tr><td>Мертворождение / слабые щенки</td><td><code>+25</code></td></tr>
+        <tr><td>Орхит / эпидидимит</td><td><code>+25</code></td></tr>
+        <tr><td>Бесплодие</td><td><code>+15</code></td></tr>
+        <tr><td>Дискоспондилит</td><td><code>+20</code></td></tr>
+        <tr><td>Увеит</td><td><code>+10</code></td></tr>
+        <tr><td>Серология: positive</td><td><code>+35</code></td></tr>
+      </table>
+      <ul>
+        <li><code>0–14</code> = низкий</li>
+        <li><code>15–34</code> = средний → серология рекомендована перед вязкой</li>
+        <li><code>35–59</code> = высокий → серология обязательна + изоляция от других собак</li>
+        <li><code>60+</code> = критический → <strong>ОСОБО ОПАСНАЯ ИНФЕКЦИЯ</strong> → уведомление госоргана + карантин питомника</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="impl-full" style="margin-top:14px">
+    <h4><span class="dot" style="background:#ef4444"></span> Alert Rules — ОСОБО ОПАСНАЯ ИНФЕКЦИЯ</h4>
+    <ul>
+      <li><strong>Abortion Alert:</strong> <code>IF</code> symptom_abortion + breeding_status → <code>URGENT</code> «Аборт у племенной суки. Обязателен тест на бруцеллёз. НЕ ДОПУСКАТЬ помощь без перчаток»</li>
+      <li><strong>Orchitis Alert:</strong> <code>IF</code> symptom_orchitis + breeding_status → <code>PUSH</code>: «Орхит у племенного кобеля. Исключить бруцеллёз перед вязкой»</li>
+      <li><strong>Confirmed Alert:</strong> <code>IF</code> brucella_serology = positive → <code>IMMEDIATE</code> блокировка: «БРУЦЕЛЛЁЗ. Особо опасная инфекция. Уведомить госорган. Карантин. Информировать владельца о риске»</li>
+      <li><strong>Kennel Alert:</strong> <code>IF</code> brucella_positive + kennel_origin → <code>URGENT</code>: «Бруцеллёз из питомника [название]. Проверить всех собак из этого питомника в базе»</li>
+      <li><strong>Breeder Safety:</strong> <code>IF</code> brucella_positive + owner_is_breeder → <code>SMS</code>: «Бруцеллёз подтверждён. Не помогайте при родах без перчаток. Обратитесь к инфекционисту»</li>
+    </ul>
+  </div>
+
+  <div class="impl-grid" style="margin-top:14px">
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#22c55e"></span> Dashboard Widgets</h4>
+      <ul>
+        <li><strong>Breeding Registry:</strong> все племенные собаки + дата последней серологии на бруцеллу</li>
+        <li><strong>Abortion Log:</strong> все случаи абортов → автоматический пометка «проверить бруцеллёз»</li>
+        <li><strong>Kennel Network:</strong> граф связей питомников → если один положительный, подсветить все связанные</li>
+        <li><strong>Quarantine Tracker:</strong> собаки на карантине + статус лечения</li>
+      </ul>
+    </div>
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#06b6d4"></span> Автоматизация</h4>
+      <ul>
+        <li><code>ON breeding_consult</code> → автодобавить: «Серология на бруцеллу обязательна перед вязкой»</li>
+        <li><code>ON abortion(dog)</code> → автоматический протокол: «Собрать материал на бруцеллу. Перчатки обязательны»</li>
+        <li><code>ON diagnosis(brucella)</code> → автогенерация формы уведомления госоргана (PDF)</li>
+        <li><code>ON diagnosis(brucella)</code> → автопоиск: «Все собаки из питомника [X] в базе → пометить для проверки»</li>
+        <li><code>CRON(yearly)</code> → напоминание заводчикам: «Ежегодная проверка на бруцеллёз»</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DISEASE 10: КРИПТОСПОРИДИОЗ -->
+<!-- ============================================================ -->
+<div class="disease" id="d10">
+<div class="disease-hdr">
+  <h2>10. Криптоспоридиоз</h2>
+  <div class="en">Cryptosporidiosis &bull; Возбудитель: Cryptosporidium parvum, C. felis, C. canis (простейшее)</div>
+  <div class="tags">
+    <span class="tag tag-r">Опасен для иммуноскомпрометированных</span>
+    <span class="tag tag-a">Паразитарный</span>
+    <span class="tag tag-b">Кошки, собаки</span>
+    <span class="tag tag-p">67 случаев в базе BELVET</span>
+  </div>
+</div>
+<div class="disease-body">
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">1</span><h3>Почему это важно</h3></div>
+  <p style="color:var(--dim);font-size:.9em">Криптоспоридиоз — <strong>4-е по частоте зоонозное заболевание</strong> в базе BELVET (67 животных). Ооцисты устойчивы к хлорированию воды и большинству дезинфектантов. Для иммунокомпетентных людей — самоограничивающаяся диарея. Для ВИЧ-позитивных, детей, пожилых — <strong>жизнеугрожающая хроническая диарея</strong> с тяжёлым обезвоживанием. Эффективного лечения нет.</p>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">4</span><h3>Disease Progression Model</h3></div>
+
+  <div class="stage stage-1">
+    <h4>Стадия 1 — Инкубация (2–10 дней) <span class="tag tag-a">Риск: нарастает</span></h4>
+    <p><strong>Что происходит:</strong> Ооцисты проглочены, спорозоиты внедряются в эпителий кишечника. Начинается бесполый, затем половой цикл размножения.</p>
+    <p><strong>Что видит владелец:</strong> Ничего.</p>
+    <div class="risk-line risk-low">Выделение ооцист начинается ещё в инкубации. Вероятность пропуска: <strong>100%</strong>.</div>
+  </div>
+
+  <div class="stage stage-2">
+    <h4>Стадия 2 — Острая фаза (5–14 дней) <span class="tag tag-r">Риск: высокий</span></h4>
+    <ul>
+      <li><strong>Водянистая диарея</strong> — профузная, без крови (обычно)</li>
+      <li><strong>Снижение аппетита</strong></li>
+      <li><strong>Вялость</strong></li>
+      <li><strong>Обезвоживание</strong> — быстрое, особенно у котят/щенков</li>
+      <li><strong>Лихорадка</strong> — умеренная или отсутствует</li>
+      <li><strong>Потеря веса</strong></li>
+    </ul>
+    <div class="risk-line risk-high">Массивное выделение ооцист. <strong>Ооцисты заразны сразу при выделении</strong> (в отличие от токсоплазмы). Достаточно 10 ооцист для заражения человека.</div>
+  </div>
+
+  <div class="stage stage-3">
+    <h4>Стадия 3 — Хроническая / у иммуноскомпрометированных <span class="tag tag-r">Тяжёлая</span></h4>
+    <ul>
+      <li>Хроническая диарея — недели и месяцы</li>
+      <li>Прогрессирующая кахексия</li>
+      <li>Вовлечение желчных протоков (у кошек)</li>
+      <li>У котят с FIV/FeLV — жизнеугрожающее течение</li>
+    </ul>
+  </div>
+
+  <div class="stage stage-5">
+    <h4>Стадия 4 — Выздоровление / носительство</h4>
+    <p>У иммунокомпетентных — самоограничивающееся за 1–4 недели. Выделение ооцист продолжается <strong>ещё 2–3 недели после исчезновения симптомов</strong>.</p>
+    <div class="risk-line risk-med">«Уже выздоровела, диарея прошла» — а ооцисты ещё выделяются.</div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">5</span><h3>Практическая симптоматика</h3></div>
+  <div class="confusion">
+    <h4>Что владелец ошибочно считает «ничего страшного»</h4>
+    <ul>
+      <li>«Просто понос от смены корма» — но водянистая диарея >2 дней у котёнка — сигнал</li>
+      <li>«Котёнок привыкает к новому дому» — стресс усугубляет, но не объясняет профузную диарею</li>
+      <li>«Уже лучше, стул нормализовался» — выделение ооцист ещё продолжается 2–3 недели</li>
+    </ul>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">7</span><h3>Когда животное опасно</h3></div>
+  <div class="alert alert-r">
+    <strong>Путь:</strong> Фекально-оральный. Ооцисты в фекалиях → лоток → руки → рот.<br>
+    <strong>Особенность:</strong> Ооцисты <strong>устойчивы к хлору</strong> и большинству бытовых дезинфектантов. Обычная уборка не убивает их.<br>
+    <strong>Инфекционная доза:</strong> 10–30 ооцист — ничтожно мало.<br>
+    <strong>Группы риска:</strong> Дети до 5 лет, ВИЧ+, онкобольные, пожилые, беременные.<br>
+    <strong>У человека:</strong> Водянистая диарея 1–2 недели (у здоровых). У иммуноскомпрометированных — хроническая, потенциально смертельная диарея. <strong>Специфического лечения нет.</strong>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">8</span><h3>Красные флаги для системы</h3></div>
+  <div class="g3">
+    <div class="gbox" style="border-color:rgba(245,158,11,.3)">
+      <h4 style="color:#fcd34d">Ранние предикторы</h4>
+      <ul>
+        <li>Водянистая диарея у котёнка/щенка из приюта</li>
+        <li>Диарея + иммуноскомпрометированный владелец</li>
+        <li>Кластер диарей в одном питомнике</li>
+      </ul>
+    </div>
+    <div class="gbox" style="border-color:rgba(249,115,22,.3)">
+      <h4 style="color:#fb923c">Средние сигналы</h4>
+      <ul>
+        <li>Подтверждённый криптоспоридиоз + дети в семье</li>
+        <li>Диарея, не отвечающая на стандартную терапию</li>
+        <li>Хроническая диарея у FIV/FeLV+ кошки</li>
+      </ul>
+    </div>
+    <div class="gbox" style="border-color:rgba(239,68,68,.3)">
+      <h4 style="color:#fca5a5">HIGH-RISK</h4>
+      <ul>
+        <li>Криптоспоридиоз у питомца ВИЧ+ владельца</li>
+        <li>Вспышка в приюте/питомнике</li>
+        <li>Криптоспоридиоз у питомца + диарея у ребёнка в семье</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title"><span class="sec-num">10</span><h3>Итоговая матрица</h3></div>
+  <table class="tb">
+    <thead><tr><th>Стадия</th><th>Что в организме</th><th>Что видит владелец</th><th>Заметность</th><th>Риск для человека</th><th>Вер. пропуска</th></tr></thead>
+    <tbody>
+    <tr><td>1 — Инкубация</td><td>Внедрение в эпителий</td><td>Ничего</td><td>0%</td><td>Низкий (выделение начинается)</td><td>100%</td></tr>
+    <tr><td>2 — Острая</td><td>Разрушение эпителия</td><td>Водянистая диарея, обезвоживание</td><td>80%</td><td style="color:#fca5a5;font-weight:700">Высокий</td><td>20%</td></tr>
+    <tr><td>3 — Хроническая</td><td>Персистенция</td><td>Кахексия, хроническая диарея</td><td>70%</td><td>Высокий</td><td>30%</td></tr>
+    <tr><td>4 — Носительство</td><td>Выделение ооцист</td><td>«Уже здорова»</td><td>0%</td><td style="color:#fcd34d">Средний (скрытый)</td><td>99%</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="impl">
+  <div class="impl-title"><span class="ico">&#9881;</span><h3>Имплементация в панель: Криптоспоридиоз</h3></div>
+
+  <div class="impl-grid">
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#6366f1"></span> Data Model — поля для сбора</h4>
+      <ul>
+        <li><code>symptom_diarrhea_watery</code> — водянистая профузная диарея (bool)</li>
+        <li><code>symptom_dehydration</code> — обезвоживание (enum: none | mild | moderate | severe)</li>
+        <li><code>symptom_weight_loss</code> — потеря веса (bool)</li>
+        <li><code>symptom_anorexia</code> — отказ от еды (bool)</li>
+        <li><code>age_juvenile</code> — котёнок/щенок (bool)</li>
+        <li><code>fiv_felv_status</code> — FIV/FeLV у кошек (enum)</li>
+        <li><code>source</code> — приют / улица / заводчик</li>
+        <li><code>crypto_test</code> — ИФА / ПЦР / микроскопия (enum)</li>
+        <li><code>owner_immunocompromised</code> — ВИЧ / онко / иммуносупрессия у владельца (bool)</li>
+        <li><code>household_children</code> — дети в семье (bool)</li>
+        <li><code>household_elderly</code> — пожилые (bool)</li>
+        <li><code>multi_pet_household</code> — несколько животных (bool)</li>
+        <li><code>treatment_response</code> — ответ на терапию (enum)</li>
+      </ul>
+    </div>
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#f59e0b"></span> Risk Score — формула</h4>
+      <table class="score-table">
+        <tr><th>Фактор</th><th>Баллы</th></tr>
+        <tr><td>Котёнок / щенок</td><td><code>+10</code></td></tr>
+        <tr><td>Из приюта / с улицы</td><td><code>+10</code></td></tr>
+        <tr><td>FIV/FeLV-позитивная кошка</td><td><code>+15</code></td></tr>
+        <tr><td>Водянистая диарея</td><td><code>+10</code></td></tr>
+        <tr><td>Обезвоживание moderate+</td><td><code>+15</code></td></tr>
+        <tr><td>Тест: positive</td><td><code>+25</code></td></tr>
+        <tr><td>Владелец иммуноскомпрометирован</td><td><code>+35</code> (множитель!)</td></tr>
+        <tr><td>Дети в семье</td><td><code>+15</code></td></tr>
+        <tr><td>Пожилые в семье</td><td><code>+10</code></td></tr>
+        <tr><td>Не отвечает на стандартную терапию</td><td><code>+15</code></td></tr>
+      </table>
+      <ul>
+        <li><code>0–14</code> = низкий</li>
+        <li><code>15–34</code> = средний → тест рекомендован + гигиена</li>
+        <li><code>35–54</code> = высокий → тест + лечение + усиленная гигиена</li>
+        <li><code>55+</code> = критический → ИЗОЛЯЦИЯ от уязвимых + спецдезинфекция + консультация инфекциониста для владельца</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="impl-full" style="margin-top:14px">
+    <h4><span class="dot" style="background:#ef4444"></span> Alert Rules</h4>
+    <ul>
+      <li><strong>Immunocompromised Owner:</strong> <code>IF</code> crypto_test = positive + owner_immunocompromised = true → <code>URGENT</code> «КРИТИЧНО: криптоспоридиоз + иммуноскомпрометированный владелец. Специфического лечения нет. Минимизировать контакт. Перчатки при уборке. Направить владельца к инфекционисту»</li>
+      <li><strong>Child Alert:</strong> <code>IF</code> crypto_test = positive + household_children = true → <code>SMS</code>: «Криптоспоридиоз у питомца. Дети — в группе риска. Мыть руки. При диарее у ребёнка — к педиатру немедленно»</li>
+      <li><strong>Treatment Failure:</strong> <code>IF</code> diarrhea_watery > 14 дней + стандартная терапия неэффективна → <code>PUSH</code>: «Рассмотреть криптоспоридиоз. Стандартные антибиотики не действуют»</li>
+      <li><strong>Shelter Cluster:</strong> <code>IF</code> 3+ случаев водянистой диареи из одного приюта → <code>PUSH</code> эпид-алерт: «Возможная вспышка криптоспоридиоза. Хлорирование НЕ убивает ооцисты!»</li>
+      <li><strong>Post-Recovery:</strong> <code>IF</code> diagnosis(crypto) + симптомы прошли → <code>AUTO</code> уведомление: «Выделение ооцист ещё 2–3 недели. Продолжать гигиену»</li>
+    </ul>
+  </div>
+
+  <div class="impl-grid" style="margin-top:14px">
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#22c55e"></span> Dashboard Widgets</h4>
+      <ul>
+        <li><strong>Vulnerable Owner Registry:</strong> питомцы, чьи владельцы иммуноскомпрометированы — отдельная вкладка с повышенным мониторингом</li>
+        <li><strong>Shelter Outbreak Board:</strong> случаи диареи по приютам/питомникам — выявление кластеров</li>
+        <li><strong>Recovery Timeline:</strong> пациенты после крипто + обратный отсчёт 3 недели (период постинфекционного выделения)</li>
+        <li><strong>FIV/FeLV + Crypto:</strong> кошки с иммунодефицитом + криптоспоридиоз — группа тяжёлого течения</li>
+        <li><strong>Diarrhea DDx Board:</strong> все пациенты с водянистой диареей >5 дней без диагноза → «Проверить крипто?»</li>
+      </ul>
+    </div>
+    <div class="impl-box">
+      <h4><span class="dot" style="background:#06b6d4"></span> Автоматизация</h4>
+      <ul>
+        <li><code>ON registration + owner_immunocompromised=true</code> → автотег: «Уязвимый владелец» → повышенный мониторинг всех зоонозов</li>
+        <li><code>ON diagnosis(crypto)</code> → PDF-памятка: «Криптоспоридиоз: хлорка не помогает! Используйте паровую чистку, аммиак 5%, перекись 3%»</li>
+        <li><code>ON diagnosis(crypto)</code> → schedule: мониторинг 3 недели после выздоровления</li>
+        <li><code>ON diarrhea_watery + age_juvenile + no_response(antibiotics, 5 days)</code> → автосуггестия: «Тест на криптоспоридиоз»</li>
+        <li><code>ON diagnosis(crypto) + multi_pet</code> → «Тестировать всех животных в доме»</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+
+<div class="sec" style="background:linear-gradient(135deg,#1a0a2e,#2d1b4e)">
+  <h2 style="border:none;padding:0;margin-bottom:16px">Сводная таблица: все 10 заболеваний</h2>
+  <table class="tb">
+    <thead><tr><th>#</th><th>Заболевание</th><th>Тип</th><th>Симптомы у животного</th><th>Опасность для человека</th><th>Скрытая заразность</th></tr></thead>
+    <tbody>
+    <tr><td>1</td><td><strong>Лептоспироз</strong></td><td>Бактериальный</td><td>Рвота, желтуха, ОПН</td><td style="color:#fca5a5">Печень + почки</td><td style="color:#fcd34d">До 6 мес после выздоровления</td></tr>
+    <tr><td>2</td><td><strong>Бешенство</strong></td><td>Вирусный</td><td>Агрессия / паралич</td><td style="color:#fca5a5">Летальность 100%</td><td style="color:#fcd34d">За 3–10 дней до симптомов</td></tr>
+    <tr><td>3</td><td><strong>Дерматофития</strong></td><td>Грибковый</td><td>Округлые залысины</td><td style="color:#fca5a5">Лишай у владельцев</td><td style="color:#fcd34d">Бессимптомное носительство</td></tr>
+    <tr><td>4</td><td><strong>Токсоплазмоз</strong></td><td>Паразитарный</td><td>Обычно бессимптомно</td><td style="color:#fca5a5">Угроза плоду беременной</td><td style="color:#fcd34d">1–3 нед выделения без симптомов</td></tr>
+    <tr><td>5</td><td><strong>Сальмонеллёз</strong></td><td>Бактериальный</td><td>Диарея / бессимптомно</td><td style="color:#fca5a5">Тяжёлый энтерит</td><td style="color:#fcd34d">Носительство до 6 нед</td></tr>
+    <tr><td>6</td><td><strong>Кампилобактериоз</strong></td><td>Бактериальный</td><td>Диарея / бессимптомно</td><td style="color:#fca5a5">С-м Гийена-Барре</td><td style="color:#fcd34d">Носительство до 4 мес</td></tr>
+    <tr><td>7</td><td><strong>Эхинококкоз</strong></td><td>Паразитарный</td><td>Бессимптомно</td><td style="color:#fca5a5">Кисты в печени/мозге</td><td style="color:#fcd34d">Собака полностью здорова</td></tr>
+    <tr><td>8</td><td><strong>Лямблиоз</strong></td><td>Паразитарный</td><td>Хроническая диарея</td><td style="color:#fca5a5">Диарея, особенно у детей</td><td style="color:#fcd34d">Перемежающееся течение</td></tr>
+    <tr><td>9</td><td><strong>Бруцеллёз</strong></td><td>Бактериальный</td><td>Аборты, орхит</td><td style="color:#fca5a5">Волнообразная лихорадка</td><td style="color:#fcd34d">Хроническая бактериемия</td></tr>
+    <tr><td>10</td><td><strong>Криптоспоридиоз</strong></td><td>Паразитарный</td><td>Водянистая диарея</td><td style="color:#fca5a5">Смертельно при ВИЧ</td><td style="color:#fcd34d">Выделение 2–3 нед после</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="ft">
+  BELVET Disease Progression Models &bull; Veterinary Zoonosis Surveillance &bull; Clinical Intelligence Brief<br>
+  Документ подготовлен для системы раннего предупреждения &bull; 2026
+</div>
+
+</div>
+</body>
+</html>
