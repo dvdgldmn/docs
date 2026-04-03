@@ -41,7 +41,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 <div class="hdr">
   <h1>Churn Analysis — Анализ оттока</h1>
   <div class="sub">Alfavet: когорты, удержание, сегменты риска</div>
-  <div class="meta">03.04.2026 21:27 &bull; 16,465 клиентов с визитами</div>
+  <div class="meta">03.04.2026 21:39 &bull; 16,465 клиентов с визитами</div>
 </div>
 
 <div class="kpi-row">
@@ -95,6 +95,33 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 <div class="sec">
   <h2><span class="n">5</span> Тренд оттока (месяц последнего визита)</h2>
   <div class="cb"><canvas id="c_churn_trend" style="max-height:350px;"></canvas></div>
+</div>
+
+<!-- Методология -->
+<div class="sec">
+  <h2><span class="n">M</span> Методология</h2>
+  <div class="g2">
+    <div class="cb">
+      <h3 style="text-align:left;color:#c4b5fd;">Определения</h3>
+      <div style="font-size:.85em;line-height:1.8;">
+        <b>Когорта</b> — группа клиентов, зарегистрированных в одном месяце.<br>
+        <b>Активный клиент</b> — имел хотя бы 1 визит в рассматриваемом периоде.<br>
+        <b>Отток &gt;180д</b> — последний визит более 180 дней назад от 01.04.2026.<br>
+        <b>Отток &gt;365д</b> — последний визит более 365 дней назад.<br>
+        <b>Новый клиент (в месяце)</b> — первый визит приходится на этот месяц.<br>
+        <b>Повторный</b> — имел визиты ранее.
+      </div>
+    </div>
+    <div class="cb">
+      <h3 style="text-align:left;color:#c4b5fd;">Формулы</h3>
+      <div style="font-size:.85em;line-height:1.8;">
+        <b>Retention M+N</b> = кол-во клиентов когорты с визитом на N-й месяц после регистрации / размер когорты × 100%<br><br>
+        <b>Медиана интервала</b> = серединное значение всех промежутков между последовательными визитами одного клиента (дней).<br><br>
+        <b>Churn rate по сегменту</b> = кол-во «ушедших» (>365д) в сегменте / общее кол-во в сегменте × 100%<br><br>
+        <code style="color:#67e8f9;">Удержание (год) = 1 − churn_365 / total_with_visits</code>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="footer">Alfavet Churn Dashboard &bull; 2026</div>

@@ -103,7 +103,7 @@
 <div class="header">
   <h1>ALFAVET — Комплексный Дашборд</h1>
   <div class="sub">Ветеринарная аналитика: клиенты, животные, выручка, врачи</div>
-  <div class="meta">Сгенерировано: 03.04.2026 21:31 &bull; База: vetdb</div>
+  <div class="meta">Сгенерировано: 03.04.2026 21:39 &bull; База: vetdb</div>
 </div>
 
 <!-- KPI -->
@@ -248,6 +248,38 @@
       <div style="color:var(--dim);font-size:.85em;">15,290 из 31,071</div>
       <div class="progress"><div class="fill" style="width:49%;background:linear-gradient(90deg,#6366f1,#a78bfa);"></div></div>
     </div>
+  </div>
+</div>
+
+<!-- 10. Методология -->
+<div class="section">
+  <h2><span class="n">M</span> Методология и формулы расчётов</h2>
+  <div class="g2">
+    <div class="cb">
+      <h3 style="text-align:left;color:#a5b4fc;">Финансовые метрики</h3>
+      <div style="font-size:.85em;line-height:1.8;">
+        <b>LTV (Lifetime Value)</b> = сумма всех транзакций клиента (услуги + товары) за всё время.<br>
+        <code style="color:#67e8f9;">LTV = SUM(medical_records_services.total) + SUM(inventory.sales.total)</code><br><br>
+        <b>Средний чек</b> = общая выручка / количество визитов с ненулевым счётом.<br>
+        <code style="color:#67e8f9;">avg_check = total_revenue / count(appointments WHERE invoice_sum > 0)</code><br><br>
+        <b>Выручка</b> делится на услуги (cost_price = 0) и товары (cost_price > 0).<br>
+        <b>Прибыль</b> = выручка − себестоимость (поле profit в БД).
+      </div>
+    </div>
+    <div class="cb">
+      <h3 style="text-align:left;color:#a5b4fc;">Клиентские метрики</h3>
+      <div style="font-size:.85em;line-height:1.8;">
+        <b>Удержание (Retention)</b> = % клиентов с 2+ визитами от всех клиентов с визитами.<br>
+        <code style="color:#67e8f9;">retention = returning / (single + returning) × 100%</code><br><br>
+        <b>Отток (Churn)</b> = % клиентов, чей последний визит был > 365 дней назад (от клиентов 2022+).<br>
+        <code style="color:#67e8f9;">churn = count(last_visit > 365d ago) / count(clients with visits in 2022+)</code><br><br>
+        <b>Мультипитомцы</b> = клиенты с 2 и более животными в профиле.<br>
+        <b>Возраст</b> = (01.04.2026 − дата рождения) / 365.25 дней.
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:14px;padding:12px;background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.2);border-radius:8px;font-size:.82em;color:#a5b4fc;">
+    <b>Источник данных:</b> PostgreSQL (vetdb) — схемы clinic, inventory, public. Валюта: AZN (₼). Дата отсечки: 01.04.2026.
   </div>
 </div>
 

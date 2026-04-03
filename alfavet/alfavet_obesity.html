@@ -41,7 +41,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 <div class="hdr">
   <h1>Факторы риска ожирения у собак</h1>
   <div class="sub">Alfavet: вес, породы, стерилизация, коморбидности</div>
-  <div class="meta">03.04.2026 20:20 &bull; 12,283 собак</div>
+  <div class="meta">03.04.2026 21:39 &bull; 12,283 собак</div>
 </div>
 
 <div class="kpi-row">
@@ -108,6 +108,34 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 <div class="sec">
   <h2><span class="n">5</span> Возраст vs Вес (ожирение выделено)</h2>
   <div class="cb"><canvas id="c_scatter" style="max-height:420px;"></canvas></div>
+</div>
+
+<!-- Методология -->
+<div class="sec">
+  <h2><span class="n">M</span> Методология</h2>
+  <div class="g2">
+    <div class="cb">
+      <h3 style="text-align:left;color:#a5b4fc;">Расчёт набора веса</h3>
+      <div style="font-size:.85em;line-height:1.8;">
+        <b>Источник веса</b> — таблица medical_record_vitals (вес при каждом визите).<br>
+        Все взвешивания сортируются по дате, отбрасываются аномальные (> лимита по размеру породы).<br><br>
+        <b>Набор веса (%)</b>:<br>
+        <code style="color:#67e8f9;">weight_change = (последний_вес − первый_вес) / первый_вес × 100%</code><br><br>
+        <b>Порог риска</b>: прирост > 15% при наличии 2+ взвешиваний и интервале ≥ 30 дней.<br>
+        Учитываются только животные старше 1 года (исключаем рост щенков).
+      </div>
+    </div>
+    <div class="cb">
+      <h3 style="text-align:left;color:#a5b4fc;">Классификация по размеру породы</h3>
+      <div style="font-size:.85em;line-height:1.8;">
+        <b>Малые</b> (лимит ≤25 кг): шпиц, йоркширский, чихуахуа, той, пекинес, ши-тцу, бишон...<br>
+        <b>Средние</b> (≤50 кг): пудель, кокер, бигль, корги, бульдог, мопс...<br>
+        <b>Крупные</b> (≤120 кг): овчарка, лабрадор, хаски, алабай, кане-корсо, ротвейлер...<br><br>
+        <b>Стерилизация</b> определяется по полю sex (castrated/sterilized) + поиск ключевых слов в диагнозах: кастра, стерил, овариогистер, орхиэктом.<br><br>
+        <b>Диагноз «ожирение»</b> — поиск подстроки «ожир» в поле diagnosis.
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="footer">Alfavet Obesity Dashboard &bull; 2026</div>

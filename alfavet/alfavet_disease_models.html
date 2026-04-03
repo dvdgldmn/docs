@@ -36,7 +36,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 <div class="hdr">
   <h1>Disease Progression Models</h1>
   <div class="sub">Alfavet: стадирование, алерты, рецидивы для 10 заболеваний</div>
-  <div class="meta">03.04.2026 20:29</div>
+  <div class="meta">03.04.2026 21:39</div>
 </div>
 
 <div class="kpi-row">
@@ -507,6 +507,31 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
         </div>
       </div>
     </div>
+
+<!-- Рекомендации по внедрению -->
+<div class="sec">
+  <h2>Рекомендации по внедрению алерт-системы</h2>
+  <div class="g2">
+    <div class="cb" style="border-left:3px solid #ec4899;">
+      <h3 style="text-align:left;color:#f9a8d4;">Логика алертов</h3>
+      <div style="font-size:.85em;line-height:1.8;">
+        <b>При постановке диагноза:</b> система автоматически показывает карточку болезни со стадией и рекомендациями.<br><br>
+        <b>Рецидив-алерт:</b> если пациент имел этот диагноз ранее — предупреждение о возможной прогрессии.<br><br>
+        <b>Породный риск:</b> при регистрации животного — список болезней с повышенным риском для данной породы.<br><br>
+        <b>Зоонозный флаг:</b> красный индикатор для болезней с высоким риском передачи человеку.
+      </div>
+    </div>
+    <div class="cb" style="border-left:3px solid #6366f1;">
+      <h3 style="text-align:left;color:#a5b4fc;">Метрики эффективности</h3>
+      <div style="font-size:.85em;line-height:1.8;">
+        <b>% рецидивов</b> — отслеживать снижение после внедрения протоколов наблюдения.<br><br>
+        <b>Время до диагноза</b> — от первого симптома до постановки диагноза (дней).<br><br>
+        <b>Compliance владельцев</b> — % выполнения рекомендаций (повторные визиты, анализы).<br><br>
+        <b>Переход между стадиями</b> — мониторить, уменьшается ли % пациентов, переходящих в тяжёлую стадию.
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="footer">Alfavet Disease Models Dashboard &bull; 2026</div>
 </div>
