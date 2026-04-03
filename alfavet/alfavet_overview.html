@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alfavet — Комплексный дашборд</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0f1117; --card: #1a1d27; --brd: #2a2d3a;
+    --txt: #e4e4e7; --dim: #9ca3af;
+    --accent: #6366f1; --cyan: #06b6d4; --green: #22c55e;
+    --amber: #f59e0b; --red: #ef4444; --pink: #ec4899;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color:var(--txt); line-height:1.6; }
+  .container { max-width:1440px; margin:0 auto; padding:20px; }
+
+  .header {
+    background:linear-gradient(135deg,#1e1b4b 0%,#312e81 50%,#1e1b4b 100%);
+    border:1px solid var(--brd); border-radius:16px; padding:40px;
+    margin-bottom:30px; text-align:center; position:relative; overflow:hidden;
+  }
+  .header::before {
+    content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%;
+    background:radial-gradient(circle at 30% 50%,rgba(99,102,241,.15) 0%,transparent 50%),
+               radial-gradient(circle at 70% 50%,rgba(139,92,246,.1) 0%,transparent 50%);
+    animation:pulse 8s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+  .header h1 {
+    font-size:2.2em; font-weight:700;
+    background:linear-gradient(135deg,#c7d2fe,#e0e7ff);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    position:relative; z-index:1;
+  }
+  .header .sub { color:#a5b4fc; font-size:1.1em; margin-top:8px; position:relative; z-index:1; }
+  .header .meta { color:var(--dim); margin-top:12px; font-size:.9em; position:relative; z-index:1; }
+
+  .kpi-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin-bottom:28px; }
+  .kpi {
+    background:var(--card); border:1px solid var(--brd); border-radius:12px;
+    padding:18px; text-align:center; transition:transform .2s,box-shadow .2s;
+  }
+  .kpi:hover { transform:translateY(-2px); box-shadow:0 8px 25px rgba(0,0,0,.3); }
+  .kpi .v { font-size:1.9em; font-weight:700; margin-bottom:2px; }
+  .kpi .l { color:var(--dim); font-size:.8em; text-transform:uppercase; letter-spacing:.5px; }
+  .kpi.purple .v { color:#a78bfa; }
+  .kpi.blue .v { color:#67e8f9; }
+  .kpi.amber .v { color:#fcd34d; }
+  .kpi.red .v { color:#fca5a5; }
+  .kpi.green .v { color:#86efac; }
+  .kpi.pink .v { color:#f9a8d4; }
+
+  .section {
+    background:var(--card); border:1px solid var(--brd); border-radius:12px;
+    padding:24px; margin-bottom:24px;
+  }
+  .section h2 {
+    font-size:1.3em; margin-bottom:20px; padding-bottom:12px;
+    border-bottom:1px solid var(--brd); display:flex; align-items:center; gap:10px;
+  }
+  .section h2 .n {
+    background:linear-gradient(135deg,#6366f1,#8b5cf6); color:#fff;
+    width:30px; height:30px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center; font-size:.85em; flex-shrink:0;
+  }
+
+  .g2 { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+  .g3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; }
+  @media(max-width:900px) { .g2,.g3 { grid-template-columns:1fr; } }
+
+  .cb {
+    background:rgba(255,255,255,.02); border:1px solid var(--brd);
+    border-radius:10px; padding:20px; position:relative;
+  }
+  .cb h3 { font-size:.95em; color:var(--dim); margin-bottom:15px; text-align:center; }
+  .cb canvas { max-height:350px; }
+
+  table.dt { width:100%; border-collapse:collapse; font-size:.88em; }
+  table.dt th {
+    background:rgba(99,102,241,.15); color:#a5b4fc; padding:10px 12px;
+    text-align:left; font-weight:600; font-size:.82em; text-transform:uppercase; letter-spacing:.5px;
+  }
+  table.dt td { padding:9px 12px; border-bottom:1px solid var(--brd); }
+  table.dt tr:hover td { background:rgba(99,102,241,.05); }
+
+  .badge { display:inline-block; padding:2px 8px; border-radius:6px; font-size:.8em; font-weight:600; }
+  .br { background:rgba(239,68,68,.15); color:#fca5a5; }
+  .bg { background:rgba(34,197,94,.15); color:#86efac; }
+  .ba { background:rgba(245,158,11,.15); color:#fcd34d; }
+  .bb { background:rgba(6,182,212,.15); color:#67e8f9; }
+
+  .footer { text-align:center; color:var(--dim); font-size:.8em; padding:30px; border-top:1px solid var(--brd); margin-top:30px; }
+
+  .progress { height:8px; background:rgba(255,255,255,.1); border-radius:4px; margin:6px 0; overflow:hidden; }
+  .progress .fill { height:100%; border-radius:4px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>ALFAVET — Комплексный Дашборд</h1>
+  <div class="sub">Ветеринарная аналитика: клиенты, животные, выручка, врачи</div>
+  <div class="meta">Сгенерировано: 03.04.2026 16:51 &bull; База: vetdb</div>
+</div>
+
+<!-- KPI -->
+<div class="kpi-row">
+  <div class="kpi purple"><div class="v">16,952</div><div class="l">Клиенты</div></div>
+  <div class="kpi blue"><div class="v">31,071</div><div class="l">Животные</div></div>
+  <div class="kpi green"><div class="v">12,283</div><div class="l">Собаки</div></div>
+  <div class="kpi amber"><div class="v">18,577</div><div class="l">Кошки</div></div>
+  <div class="kpi pink"><div class="v">111,416</div><div class="l">Визиты</div></div>
+  <div class="kpi red"><div class="v">94,867</div><div class="l">Медзаписи</div></div>
+</div>
+<div class="kpi-row">
+  <div class="kpi green"><div class="v">11.1M</div><div class="l">Общая выручка</div></div>
+  <div class="kpi amber"><div class="v">10.7M</div><div class="l">Прибыль</div></div>
+  <div class="kpi blue"><div class="v">8.2M</div><div class="l">Выручка (услуги)</div></div>
+  <div class="kpi purple"><div class="v">2.9M</div><div class="l">Выручка (товары)</div></div>
+  <div class="kpi pink"><div class="v">75</div><div class="l">Ср. чек</div></div>
+  <div class="kpi green"><div class="v">62%</div><div class="l">Удержание</div></div>
+</div>
+
+<!-- 1. Рост клиентской базы -->
+<div class="section">
+  <h2><span class="n">1</span> Рост клиентской базы</h2>
+  <div class="g2">
+    <div class="cb"><h3>Регистрации по годам</h3><canvas id="c_reg"></canvas></div>
+    <div class="cb"><h3>Визиты по месяцам</h3><canvas id="c_visits"></canvas></div>
+  </div>
+</div>
+
+<!-- 2. Структура -->
+<div class="section">
+  <h2><span class="n">2</span> Структура пациентов</h2>
+  <div class="g3">
+    <div class="cb"><h3>Виды</h3><canvas id="c_species"></canvas></div>
+    <div class="cb"><h3>Пол</h3><canvas id="c_sex"></canvas></div>
+    <div class="cb"><h3>Статусы визитов</h3><canvas id="c_appt"></canvas></div>
+  </div>
+</div>
+
+<!-- 3. Породы -->
+<div class="section">
+  <h2><span class="n">3</span> Топ пород</h2>
+  <div class="g2">
+    <div class="cb"><h3>Собаки — топ 15</h3><canvas id="c_dbreed"></canvas></div>
+    <div class="cb"><h3>Кошки — топ 15</h3><canvas id="c_cbreed"></canvas></div>
+  </div>
+</div>
+
+<!-- 4. Возраст -->
+<div class="section">
+  <h2><span class="n">4</span> Возрастное распределение</h2>
+  <div class="g2">
+    <div class="cb"><h3>Собаки</h3><canvas id="c_age_d"></canvas></div>
+    <div class="cb"><h3>Кошки</h3><canvas id="c_age_c"></canvas></div>
+  </div>
+</div>
+
+<!-- 5. Выручка -->
+<div class="section">
+  <h2><span class="n">5</span> Выручка</h2>
+  <div class="g2">
+    <div class="cb"><h3>Услуги + Товары (помесячно)</h3><canvas id="c_rev"></canvas></div>
+    <div class="cb"><h3>Выручка: собаки vs кошки</h3><canvas id="c_rev_sp"></canvas></div>
+  </div>
+</div>
+
+<!-- 6. LTV -->
+<div class="section">
+  <h2><span class="n">6</span> LTV клиентов</h2>
+  <div class="g2">
+    <div class="cb">
+      <h3>Сегментация по LTV</h3><canvas id="c_ltv"></canvas>
+    </div>
+    <div class="cb" style="display:flex;flex-direction:column;justify-content:center;">
+      <h3>Ключевые метрики</h3>
+      <table class="dt">
+        <tr><td>Средний LTV</td><td style="text-align:right;font-weight:700;color:#a78bfa">856</td></tr>
+        <tr><td>Медианный LTV</td><td style="text-align:right;font-weight:700;color:#67e8f9">154</td></tr>
+        <tr><td>Мультипитомцы (2+ животных)</td><td style="text-align:right;font-weight:700;color:#86efac">3,883 (22.9%)</td></tr>
+        <tr><td>Удержание клиентов</td><td style="text-align:right;font-weight:700;color:#fcd34d">62.0%</td></tr>
+        <tr><td>Отток (>365 дней)</td><td style="text-align:right;font-weight:700;color:#fca5a5">64.8%</td></tr>
+        <tr><td>Смертность питомцев</td><td style="text-align:right;font-weight:700;color:#fca5a5">1,050 (3.4%)</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- 7. Врачи -->
+<div class="section">
+  <h2><span class="n">7</span> Врачи</h2>
+  <div class="g2">
+    <div class="cb"><h3>Топ-10 по выручке</h3><canvas id="c_doc_rev"></canvas></div>
+    <div class="cb"><h3>Топ-10 по медзаписям</h3><canvas id="c_doc_rec"></canvas></div>
+  </div>
+</div>
+
+<!-- 8. Топ услуг и продуктов -->
+<div class="section">
+  <h2><span class="n">8</span> Топ услуг и товаров</h2>
+  <div class="g2">
+    <div class="cb">
+      <h3>Услуги — топ 10 по выручке</h3>
+      <table class="dt">
+        <tr><th>Услуга</th><th style="text-align:right">Кол-во</th><th style="text-align:right">Выручка</th></tr>
+        <tr><td>Qan analizi biokimyevi (1 gosterici)</td><td style="text-align:right">7,501</td><td style="text-align:right">2,890,274</td></tr><tr><td>Kliniki muayine, diaqnozun qoyulmasi və teyinati</td><td style="text-align:right">10,922</td><td style="text-align:right">414,075</td></tr><tr><td>Qisirlashdirilma - dishi pishik</td><td style="text-align:right">2,551</td><td style="text-align:right">271,130</td></tr><tr><td>Qan analizi umumi</td><td style="text-align:right">11,079</td><td style="text-align:right">267,736</td></tr><tr><td>Nobivac DHPPI+LR</td><td style="text-align:right">5,382</td><td style="text-align:right">245,405</td></tr><tr><td>E/d, d/a inyeksiya</td><td style="text-align:right">14,196</td><td style="text-align:right">240,768</td></tr><tr><td>Qan (1 ml)</td><td style="text-align:right">6</td><td style="text-align:right">233,560</td></tr><tr><td>Nobivac Tricat + Nobivac Rabies</td><td style="text-align:right">4,680</td><td style="text-align:right">199,665</td></tr><tr><td>Tehlil uchun bioloji materialin goturulmesi (qan)</td><td style="text-align:right">5,530</td><td style="text-align:right">163,100</td></tr><tr><td>Qisirlashdirilma - erkek pishik</td><td style="text-align:right">1,914</td><td style="text-align:right">142,350</td></tr>
+      </table>
+    </div>
+    <div class="cb">
+      <h3>Товары — топ 10 по выручке</h3>
+      <table class="dt">
+        <tr><th>Товар</th><th style="text-align:right">Кол-во</th><th style="text-align:right">Выручка</th></tr>
+        <tr><td>CANINA PETVITAL DERM-CAPS 40G/100STK</td><td style="text-align:right">123</td><td style="text-align:right">245,142</td></tr><tr><td>CANINA CANHYDROX GAG 600G</td><td style="text-align:right">47</td><td style="text-align:right">195,523</td></tr><tr><td>Ipakitine (300 gr)</td><td style="text-align:right">132</td><td style="text-align:right">173,788</td></tr><tr><td>6 mg (100 tab)</td><td style="text-align:right">38</td><td style="text-align:right">148,452</td></tr><tr><td>Power System 500 ml</td><td style="text-align:right">944</td><td style="text-align:right">146,322</td></tr><tr><td>GIM CAT VITAMIN THREATS NUTRI BIOTIN BITES 425G</td><td style="text-align:right">7</td><td style="text-align:right">103,765</td></tr><tr><td>CANINA PETVITAL BIOTIN-TABS 100 G</td><td style="text-align:right">60</td><td style="text-align:right">95,887</td></tr><tr><td>RC G-I CAT POUCH 85G</td><td style="text-align:right">143</td><td style="text-align:right">78,704</td></tr><tr><td>Katozal 10% 100ml.</td><td style="text-align:right">1,111</td><td style="text-align:right">75,629</td></tr><tr><td>CANINA PETVITAL VITAMIN-TABS 100 G</td><td style="text-align:right">43</td><td style="text-align:right">69,037</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- 9. Качество данных -->
+<div class="section">
+  <h2><span class="n">9</span> Качество данных</h2>
+  <div class="g3">
+    <div class="cb" style="text-align:center;">
+      <h3>Дата рождения</h3>
+      <div style="font-size:2em;font-weight:700;color:#86efac;">84%</div>
+      <div style="color:var(--dim);font-size:.85em;">26,085 из 31,071</div>
+      <div class="progress"><div class="fill" style="width:84%;background:linear-gradient(90deg,#22c55e,#86efac);"></div></div>
+    </div>
+    <div class="cb" style="text-align:center;">
+      <h3>Вес в профиле</h3>
+      <div style="font-size:2em;font-weight:700;color:#67e8f9;">59%</div>
+      <div style="color:var(--dim);font-size:.85em;">18,247 из 31,071</div>
+      <div class="progress"><div class="fill" style="width:59%;background:linear-gradient(90deg,#06b6d4,#67e8f9);"></div></div>
+    </div>
+    <div class="cb" style="text-align:center;">
+      <h3>Порода известна</h3>
+      <div style="font-size:2em;font-weight:700;color:#a78bfa;">49%</div>
+      <div style="color:var(--dim);font-size:.85em;">15,290 из 31,071</div>
+      <div class="progress"><div class="fill" style="width:49%;background:linear-gradient(90deg,#6366f1,#a78bfa);"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  Alfavet Analytics Dashboard &bull; Данные из PostgreSQL (vetdb) &bull; 2026
+</div>
+
+</div>
+
+<script>
+var D = {"species": {"labels": ["Другое", "Собаки", "Кошки", "Птицы", "Грызуны", "Кролик", "Сервал", "Шакал", "Лиса", "Морская свинка", "Каракал", "Хорёк", "Лев", "Камышовый кот", "Обезьяна", "Лошадь", "Рептилии", "Медведь", "Морские львы"], "values": [96, 12283, 18577, 22, 25, 25, 2, 1, 3, 10, 1, 1, 1, 2, 2, 1, 5, 12, 2]}, "sex": {"labels": ["Неизвестно", "Самец", "Самка", "Кастрирован"], "values": [7116, 11303, 9703, 2949]}, "top_dog_breeds": {"labels": ["Немецкая овчарка", "Шпиц померанский", "Пудель", "Йоркширский терьер", "Сибирский хаски", "Пекинес", "Метис", "Мальтийская болонка", "Лабрадор-ретривер", "Тойпудель", "Чихуахуа", "Золотистый ретривер", "Алабай", "Мальтипу", "Питбультерьер"], "values": [811, 729, 649, 610, 555, 531, 411, 289, 278, 246, 230, 188, 186, 182, 167]}, "top_cat_breeds": {"labels": ["Шотландская вислоухая", "Британская короткошерстная", "Метис", "Шотландская короткошёрстная", "Неизвестно", "Сиамская", "Персидская", "Турецкая ангора", "Мейн Кун", "Бенгальская", "Канадский сфинкс", "Ангорская", "Русская голубая", "Тайская", "Британская"], "values": [1745, 1205, 772, 660, 300, 225, 172, 119, 115, 114, 101, 93, 85, 81, 71]}, "age_dogs": {"labels": ["< 1 года", "1–3 года", "3–8 лет", "8+ лет", "Неизвестно"], "values": [172, 922, 5068, 4562, 1559]}, "age_cats": {"labels": ["< 1 года", "1–3 года", "3–8 лет", "8+ лет", "Неизвестно"], "values": [416, 2301, 8220, 4342, 3298]}, "reg_years": {"labels": ["2012", "2013", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026"], "values": [1, 1, 526, 974, 1925, 2063, 2327, 2342, 2018, 1838, 1409, 1232, 295]}, "rev_timeline": {"labels": ["2023-05", "2023-06", "2023-07", "2023-08", "2023-09", "2023-10", "2023-11", "2023-12", "2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04"], "svc": [98804.73, 75379.93, 88786.84, 1816099.88, 123294.55, 99185.84, 77703.05, 95531.74, 97230.23, 200911.57, 96851.78, 124973.05, 117496.97, 110999.36, 181701.85, 93835.08, 100260.38, 81848.69, 85711.74, 73849.55, 78030.22, 72668.36, 83088.93, 73979.14, 73677.17, 70230.14, 64515.29, 64803.34, 59214.85, 74985.92, 66207.11, 59978.22, 79676.03, 56901.55, 68419.95, 3423.0], "prod": [82054.7, 87299.11, 95693.09, 70149.91, 92818.32, 70087.58, 27657.09, 39995.47, 35887.58, 24292.13, 76338.79, 57714.97, 49793.56, 47172.08, 92961.31, 49585.06, 55494.29, 71572.5, 38729.78, 37980.6, 42652.94, 63330.97, 37629.74, 51314.73, 160306.65, 55109.28, 38646.7, 57535.96, 78361.54, 70176.68, 68601.43, 46088.68, 45941.6, 31330.5, 42468.66, 3477.9]}, "visits_timeline": {"labels": ["2023-05", "2023-06", "2023-07", "2023-08", "2023-09", "2023-10", "2023-11", "2023-12", "2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12", "2026-01", "2026-02", "2026-03", "2026-04"], "values": [1445, 1311, 1330, 1388, 1535, 1375, 1193, 1219, 1245, 1183, 1210, 1346, 1433, 1364, 1294, 1214, 1156, 1286, 1266, 1226, 1203, 1155, 1289, 1332, 1351, 1253, 1184, 1214, 1224, 1320, 1231, 1132, 1127, 1089, 1182, 184]}, "ltv_segs": {"labels": ["0", "1–100", "101–500", "501–1000", "1001–5000", "5000+"], "values": [0, 5169, 4868, 1448, 1325, 168]}, "appt_status": {"labels": ["save", "deleted", "accepted", "directed", "delayed"], "values": [111, 9007, 93225, 2, 9071]}, "rev_species": {"labels": ["Собаки", "Кошки", "Другое"], "values": [4323441, 3595096, 3185340]}, "top_docs_rev": {"labels": [], "values": []}, "top_docs_rec": {"labels": [], "values": []}};
+var COLORS = ['#6366f1','#06b6d4','#22c55e','#f59e0b','#ef4444','#ec4899','#8b5cf6','#14b8a6','#f97316','#64748b','#a855f7','#0ea5e9','#84cc16','#e11d48','#facc15'];
+Chart.defaults.color = '#9ca3af';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+
+function bar(id, labels, datasets, opts) {
+  new Chart(document.getElementById(id), {
+    type:'bar', data:{labels, datasets},
+    options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:datasets.length>1}}, scales:{y:{beginAtZero:true}}, ...opts}
+  });
+}
+function doughnut(id, labels, data, colors) {
+  new Chart(document.getElementById(id), {
+    type:'doughnut', data:{labels, datasets:[{data, backgroundColor:colors||COLORS, borderWidth:0}]},
+    options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'right',labels:{padding:12,font:{size:11}}}}, cutout:'55%'}
+  });
+}
+function hbar(id, labels, data, color) {
+  new Chart(document.getElementById(id), {
+    type:'bar', data:{labels, datasets:[{data, backgroundColor:color||'#6366f1', borderRadius:4}]},
+    options:{responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{beginAtZero:true}}}
+  });
+}
+
+// 1. Registrations
+bar('c_reg', D.reg_years.labels, [{label:'Клиенты', data:D.reg_years.values, backgroundColor:'#6366f1', borderRadius:4}]);
+// Visits
+bar('c_visits', D.visits_timeline.labels, [{label:'Визиты', data:D.visits_timeline.values, backgroundColor:'#06b6d4', borderRadius:3}]);
+// 2. Species, Sex, Appointments
+doughnut('c_species', D.species.labels, D.species.values);
+doughnut('c_sex', D.sex.labels, D.sex.values, ['#6366f1','#ec4899','#f59e0b','#64748b']);
+doughnut('c_appt', D.appt_status.labels, D.appt_status.values, ['#22c55e','#6366f1','#ef4444','#f59e0b','#64748b']);
+// 3. Breeds
+hbar('c_dbreed', D.top_dog_breeds.labels, D.top_dog_breeds.values, '#6366f1');
+hbar('c_cbreed', D.top_cat_breeds.labels, D.top_cat_breeds.values, '#ec4899');
+// 4. Age
+bar('c_age_d', D.age_dogs.labels, [{label:'Собаки', data:D.age_dogs.values, backgroundColor:'#6366f1', borderRadius:4}]);
+bar('c_age_c', D.age_cats.labels, [{label:'Кошки', data:D.age_cats.values, backgroundColor:'#ec4899', borderRadius:4}]);
+// 5. Revenue
+new Chart(document.getElementById('c_rev'), {
+  type:'bar', data:{labels:D.rev_timeline.labels, datasets:[
+    {label:'Услуги', data:D.rev_timeline.svc, backgroundColor:'#6366f1', borderRadius:3},
+    {label:'Товары', data:D.rev_timeline.prod, backgroundColor:'#06b6d4', borderRadius:3}
+  ]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:true}}, scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true}}}
+});
+doughnut('c_rev_sp', D.rev_species.labels, D.rev_species.values, ['#6366f1','#ec4899','#64748b']);
+// 6. LTV
+bar('c_ltv', D.ltv_segs.labels, [{label:'Клиенты', data:D.ltv_segs.values, backgroundColor:COLORS, borderRadius:4}]);
+// 7. Doctors
+hbar('c_doc_rev', D.top_docs_rev.labels, D.top_docs_rev.values, '#22c55e');
+hbar('c_doc_rec', D.top_docs_rec.labels, D.top_docs_rec.values, '#f59e0b');
+</script>
+</body>
+</html>

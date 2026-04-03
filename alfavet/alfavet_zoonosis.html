@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alfavet — Зоонозные болезни</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--brd:#2a2d3a;--txt:#e4e4e7;--dim:#9ca3af}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.6}
+.c{max-width:1440px;margin:0 auto;padding:20px}
+.hdr{background:linear-gradient(135deg,#3b0a0a,#5c1a1a,#3b0a0a);border:1px solid var(--brd);border-radius:16px;padding:40px;margin-bottom:28px;text-align:center}
+.hdr h1{font-size:2.1em;font-weight:700;background:linear-gradient(135deg,#fca5a5,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr .sub{color:#fca5a5;margin-top:6px}.hdr .meta{color:var(--dim);margin-top:10px;font-size:.88em}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:24px}
+.kpi{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:16px;text-align:center}
+.kpi .v{font-size:1.8em;font-weight:700}.kpi .l{color:var(--dim);font-size:.78em;text-transform:uppercase}
+.kpi.red .v{color:#fca5a5}.kpi.amber .v{color:#fcd34d}.kpi.blue .v{color:#67e8f9}.kpi.purple .v{color:#a78bfa}.kpi.green .v{color:#86efac}
+.sec{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:24px;margin-bottom:22px}
+.sec h2{font-size:1.25em;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:10px}
+.sec h2 .n{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;min-width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.82em}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}.g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+@media(max-width:900px){.g2,.g4{grid-template-columns:1fr}}
+.cb{background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;padding:16px}
+.cb h3{font-size:.9em;color:var(--dim);margin-bottom:12px;text-align:center}
+.cb canvas{max-height:350px}
+.tb{width:100%;border-collapse:collapse;font-size:.84em}
+.tb th{background:rgba(239,68,68,.1);color:#fca5a5;padding:8px 10px;text-align:left;font-weight:600;font-size:.78em;text-transform:uppercase}
+.tb td{padding:7px 10px;border-bottom:1px solid var(--brd)}
+.tb tr:hover td{background:rgba(239,68,68,.03)}
+.badge{display:inline-block;padding:2px 7px;border-radius:5px;font-size:.76em;font-weight:600}
+.br{background:rgba(239,68,68,.15);color:#fca5a5}.bg{background:rgba(34,197,94,.15);color:#86efac}
+.ba{background:rgba(245,158,11,.15);color:#fcd34d}.bb{background:rgba(6,182,212,.15);color:#67e8f9}
+.footer{text-align:center;color:var(--dim);font-size:.8em;padding:30px;border-top:1px solid var(--brd);margin-top:30px}
+</style>
+</head>
+<body>
+<div class="c">
+
+<div class="hdr">
+  <h1>Зоонозные болезни</h1>
+  <div class="sub">Alfavet: анализ заболеваний, опасных для владельцев</div>
+  <div class="meta">03.04.2026 16:59 &bull; 31,071 животных &bull; 94,867 медзаписей</div>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi red"><div class="v">15</div><div class="l">Зоонозов найдено</div></div>
+  <div class="kpi amber"><div class="v">2144</div><div class="l">Животных</div></div>
+  <div class="kpi blue"><div class="v">2878</div><div class="l">Записей</div></div>
+  <div class="kpi purple"><div class="v">1208</div><div class="l">Грибковые</div></div>
+  <div class="kpi green"><div class="v">608</div><div class="l">Паразитарные</div></div>
+</div>
+
+<!-- 1. Overview -->
+<div class="sec">
+  <h2><span class="n">1</span> Обзор</h2>
+  <div class="g2">
+    <div class="cb"><h3>Количество животных по зоонозам</h3><canvas id="c_bar"></canvas></div>
+    <div class="cb"><h3>По группам</h3><canvas id="c_pie"></canvas></div>
+  </div>
+</div>
+
+<!-- 2. Full table -->
+<div class="sec">
+  <h2><span class="n">2</span> Полная таблица зоонозов</h2>
+  <table class="tb">
+    <tr><th>Болезнь</th><th>Опасность</th><th>Группа</th><th>Путь передачи</th><th>Записей</th><th>Животных</th><th>Собаки/Кошки</th></tr>
+    <tr>
+      <td><b>микроспория</b></td>
+      <td><span class="badge br">Высокий</span></td>
+      <td>Грибковые</td>
+      <td>Контакт с кожей/шерстью</td>
+      <td>1508</td>
+      <td>1153</td>
+      <td>176 / 1331</td>
+    </tr><tr>
+      <td><b>эрлихиоз</b></td>
+      <td><span class="badge bg">Низкий</span></td>
+      <td>Клещевые</td>
+      <td>Через клещей</td>
+      <td>300</td>
+      <td>271</td>
+      <td>300 / 0</td>
+    </tr><tr>
+      <td><b>демодекоз</b></td>
+      <td><span class="badge bg">Низкий</span></td>
+      <td>Паразитарные</td>
+      <td>Контакт (минимальный риск)</td>
+      <td>286</td>
+      <td>262</td>
+      <td>271 / 15</td>
+    </tr><tr>
+      <td><b>хламидиоз</b></td>
+      <td><span class="badge ba">Средний</span></td>
+      <td>Бактериальные</td>
+      <td>Выделения</td>
+      <td>226</td>
+      <td>218</td>
+      <td>0 / 226</td>
+    </tr><tr>
+      <td><b>саркоптоз</b></td>
+      <td><span class="badge br">Высокий</span></td>
+      <td>Паразитарные</td>
+      <td>Контакт с кожей</td>
+      <td>199</td>
+      <td>187</td>
+      <td>165 / 34</td>
+    </tr><tr>
+      <td><b>лямблиоз</b></td>
+      <td><span class="badge ba">Средний</span></td>
+      <td>Паразитарные</td>
+      <td>Фекально-оральный</td>
+      <td>98</td>
+      <td>91</td>
+      <td>44 / 54</td>
+    </tr><tr>
+      <td><b>анаплазмоз</b></td>
+      <td><span class="badge bg">Низкий</span></td>
+      <td>Клещевые</td>
+      <td>Через клещей</td>
+      <td>62</td>
+      <td>62</td>
+      <td>62 / 0</td>
+    </tr><tr>
+      <td><b>дерматофитоз</b></td>
+      <td><span class="badge br">Высокий</span></td>
+      <td>Грибковые</td>
+      <td>Контакт</td>
+      <td>58</td>
+      <td>55</td>
+      <td>41 / 17</td>
+    </tr><tr>
+      <td><b>нотоэдроз</b></td>
+      <td><span class="badge br">Высокий</span></td>
+      <td>Паразитарные</td>
+      <td>Контакт</td>
+      <td>45</td>
+      <td>44</td>
+      <td>0 / 44</td>
+    </tr><tr>
+      <td><b>бартонеллёз</b></td>
+      <td><span class="badge ba">Средний</span></td>
+      <td>Бактериальные</td>
+      <td>Царапина, укус</td>
+      <td>32</td>
+      <td>21</td>
+      <td>1 / 31</td>
+    </tr><tr>
+      <td><b>бабезиоз</b></td>
+      <td><span class="badge bg">Низкий</span></td>
+      <td>Клещевые</td>
+      <td>Через клещей (не прямой)</td>
+      <td>25</td>
+      <td>22</td>
+      <td>24 / 1</td>
+    </tr><tr>
+      <td><b>токсоплазмоз</b></td>
+      <td><span class="badge ba">Средний</span></td>
+      <td>Паразитарные</td>
+      <td>Фекалии (кошки)</td>
+      <td>14</td>
+      <td>14</td>
+      <td>1 / 13</td>
+    </tr><tr>
+      <td><b>дипилидиоз</b></td>
+      <td><span class="badge ba">Средний</span></td>
+      <td>Паразитарные</td>
+      <td>Через блох</td>
+      <td>10</td>
+      <td>10</td>
+      <td>0 / 10</td>
+    </tr><tr>
+      <td><b>стафилококковая инф.</b></td>
+      <td><span class="badge ba">Средний</span></td>
+      <td>Бактериальные</td>
+      <td>Контакт</td>
+      <td>8</td>
+      <td>8</td>
+      <td>6 / 2</td>
+    </tr><tr>
+      <td><b>лептоспироз</b></td>
+      <td><span class="badge br">Высокий</span></td>
+      <td>Бактериальные</td>
+      <td>Моча → слизистые, ранки</td>
+      <td>7</td>
+      <td>7</td>
+      <td>6 / 1</td>
+    </tr>
+  </table>
+</div>
+
+<!-- 3. Groups -->
+<div class="sec">
+  <h2><span class="n">3</span> По группам</h2>
+  <div class="g4">
+    <div class="cb" style="border-left:3px solid #ef4444;">
+      <h3 style="text-align:left;color:#ef4444;">Грибковые</h3>
+      <div style="font-size:1.3em;font-weight:700;color:#ef4444;margin:6px 0;">1187 животных</div>
+      <div style="margin:4px 0;font-size:.88em;">микроспория: <b>1508</b> записей, <b>1153</b> животных</div><div style="margin:4px 0;font-size:.88em;">дерматофитоз: <b>58</b> записей, <b>55</b> животных</div>
+    </div>
+    <div class="cb" style="border-left:3px solid #f59e0b;">
+      <h3 style="text-align:left;color:#f59e0b;">Бактериальные</h3>
+      <div style="font-size:1.3em;font-weight:700;color:#f59e0b;margin:6px 0;">254 животных</div>
+      <div style="margin:4px 0;font-size:.88em;">хламидиоз: <b>226</b> записей, <b>218</b> животных</div><div style="margin:4px 0;font-size:.88em;">бартонеллёз: <b>32</b> записей, <b>21</b> животных</div><div style="margin:4px 0;font-size:.88em;">стафилококковая инф.: <b>8</b> записей, <b>8</b> животных</div><div style="margin:4px 0;font-size:.88em;">лептоспироз: <b>7</b> записей, <b>7</b> животных</div>
+    </div>
+    <div class="cb" style="border-left:3px solid #06b6d4;">
+      <h3 style="text-align:left;color:#06b6d4;">Паразитарные</h3>
+      <div style="font-size:1.3em;font-weight:700;color:#06b6d4;margin:6px 0;">540 животных</div>
+      <div style="margin:4px 0;font-size:.88em;">демодекоз: <b>286</b> записей, <b>262</b> животных</div><div style="margin:4px 0;font-size:.88em;">саркоптоз: <b>199</b> записей, <b>187</b> животных</div><div style="margin:4px 0;font-size:.88em;">лямблиоз: <b>98</b> записей, <b>91</b> животных</div><div style="margin:4px 0;font-size:.88em;">нотоэдроз: <b>45</b> записей, <b>44</b> животных</div><div style="margin:4px 0;font-size:.88em;">токсоплазмоз: <b>14</b> записей, <b>14</b> животных</div><div style="margin:4px 0;font-size:.88em;">дипилидиоз: <b>10</b> записей, <b>10</b> животных</div>
+    </div>
+    <div class="cb" style="border-left:3px solid #8b5cf6;">
+      <h3 style="text-align:left;color:#8b5cf6;">Клещевые</h3>
+      <div style="font-size:1.3em;font-weight:700;color:#8b5cf6;margin:6px 0;">290 животных</div>
+      <div style="margin:4px 0;font-size:.88em;">эрлихиоз: <b>300</b> записей, <b>271</b> животных</div><div style="margin:4px 0;font-size:.88em;">анаплазмоз: <b>62</b> записей, <b>62</b> животных</div><div style="margin:4px 0;font-size:.88em;">бабезиоз: <b>25</b> записей, <b>22</b> животных</div>
+    </div></div>
+</div>
+
+<!-- 4. Trend -->
+<div class="sec">
+  <h2><span class="n">4</span> Тренд по кварталам</h2>
+  <div class="cb"><canvas id="c_trend" style="max-height:350px;"></canvas></div>
+</div>
+
+<!-- 5. Breeds at risk -->
+<div class="sec">
+  <h2><span class="n">5</span> Породы в зоне риска</h2>
+  <table class="tb"><tr><th>Порода</th><th>Зоонозов</th><th>Основные болезни</th></tr><tr><td>б/п</td><td>1504</td><td>микроспория (828), хламидиоз (198), эрлихиоз (108)</td></tr><tr><td>Шотландская вислоухая</td><td>186</td><td>микроспория (161), хламидиоз (9), лямблиоз (5)</td></tr><tr><td>Британская короткошерстная</td><td>143</td><td>микроспория (125), токсоплазмоз (4), хламидиоз (4)</td></tr><tr><td>Немецкая овчарка</td><td>98</td><td>эрлихиоз (39), демодекоз (26), саркоптоз (12)</td></tr><tr><td>Шотландская короткошёрстная</td><td>80</td><td>микроспория (72), хламидиоз (4), саркоптоз (2)</td></tr><tr><td>Метис</td><td>72</td><td>микроспория (46), демодекоз (6), саркоптоз (4)</td></tr><tr><td>Йоркширский терьер</td><td>46</td><td>микроспория (16), демодекоз (15), саркоптоз (6)</td></tr><tr><td>Пудель</td><td>40</td><td>микроспория (15), эрлихиоз (8), лямблиоз (6)</td></tr><tr><td>Лабрадор-ретривер</td><td>40</td><td>эрлихиоз (16), демодекоз (13), саркоптоз (6)</td></tr><tr><td>Сибирский хаски</td><td>34</td><td>эрлихиоз (13), микроспория (7), саркоптоз (5)</td></tr></table>
+</div>
+
+<div class="footer">Alfavet Zoonosis Dashboard &bull; 2026</div>
+</div>
+
+<script>
+Chart.defaults.color = '#9ca3af';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+var COLORS = ['#ef4444','#f59e0b','#06b6d4','#8b5cf6','#22c55e','#ec4899','#6366f1','#14b8a6','#f97316','#64748b'];
+
+// Bar
+var bar_labels = ["микроспория", "эрлихиоз", "демодекоз", "хламидиоз", "саркоптоз", "лямблиоз", "анаплазмоз", "дерматофитоз", "нотоэдроз", "бабезиоз", "бартонеллёз", "токсоплазмоз", "дипилидиоз", "стафилококковая инф.", "лептоспироз"];
+var bar_values = [1153, 271, 262, 218, 187, 91, 62, 55, 44, 22, 21, 14, 10, 8, 7];
+new Chart(document.getElementById('c_bar'), {
+  type:'bar', data:{labels:bar_labels, datasets:[{data:bar_values, backgroundColor:COLORS, borderRadius:4}]},
+  options:{responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{beginAtZero:true}}}
+});
+
+// Pie
+var grp_labels = ["Грибковые", "Бактериальные", "Паразитарные", "Клещевые"];
+var grp_values = [1208, 254, 608, 355];
+new Chart(document.getElementById('c_pie'), {
+  type:'doughnut', data:{labels:grp_labels, datasets:[{data:grp_values, backgroundColor:['#ef4444','#f59e0b','#06b6d4','#8b5cf6'], borderWidth:0}]},
+  options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'right'}}, cutout:'50%'}
+});
+
+// Trend
+var trend_labels = ["2023-Q2", "2023-Q3", "2023-Q4", "2024-Q1", "2024-Q2", "2024-Q3", "2024-Q4", "2025-Q1", "2025-Q2", "2025-Q3", "2025-Q4", "2026-Q1"];
+var trend_datasets = [];
+var trend_colors = ['#ef4444','#f59e0b','#06b6d4','#8b5cf6','#22c55e'];
+["микроспория", "эрлихиоз", "демодекоз", "хламидиоз", "саркоптоз"].forEach(function(disease, i) {
+  trend_datasets.push({
+    label: disease,
+    data: trend_labels.map(function(q) { return ({"2023-Q2": {"микроспория": 39, "дерматофитоз": 1, "лептоспироз": 1, "лямблиоз": 4, "демодекоз": 14, "саркоптоз": 15, "нотоэдроз": 2, "бабезиоз": 2, "эрлихиоз": 1, "хламидиоз": 8}, "2023-Q3": {"микроспория": 102, "дерматофитоз": 2, "лямблиоз": 3, "демодекоз": 15, "саркоптоз": 13, "нотоэдроз": 4, "бабезиоз": 1, "эрлихиоз": 4, "анаплазмоз": 1, "хламидиоз": 6, "дипилидиоз": 1}, "2023-Q4": {"микроспория": 85, "дерматофитоз": 2, "лептоспироз": 1, "лямблиоз": 10, "демодекоз": 4, "саркоптоз": 8, "нотоэдроз": 2, "бабезиоз": 1, "эрлихиоз": 3, "хламидиоз": 6}, "2024-Q1": {"микроспория": 56, "дерматофитоз": 2, "бартонеллёз": 1, "лямблиоз": 5, "демодекоз": 4, "саркоптоз": 6, "нотоэдроз": 2, "эрлихиоз": 3, "хламидиоз": 1, "стафилококковая инф.": 1, "дипилидиоз": 1}, "2024-Q2": {"микроспория": 46, "дерматофитоз": 1, "токсоплазмоз": 1, "лямблиоз": 4, "демодекоз": 4, "саркоптоз": 4, "нотоэдроз": 3, "бабезиоз": 1, "эрлихиоз": 7, "хламидиоз": 2, "дипилидиоз": 1}, "2024-Q3": {"микроспория": 111, "дерматофитоз": 1, "бартонеллёз": 2, "лямблиоз": 6, "демодекоз": 6, "саркоптоз": 6, "эрлихиоз": 6}, "2024-Q4": {"микроспория": 65, "дерматофитоз": 2, "лямблиоз": 9, "демодекоз": 2, "саркоптоз": 1, "эрлихиоз": 1, "хламидиоз": 1}, "2025-Q1": {"микроспория": 70, "дерматофитоз": 2, "лямблиоз": 7, "демодекоз": 1, "саркоптоз": 1, "эрлихиоз": 3, "хламидиоз": 5}, "2025-Q2": {"микроспория": 71, "дерматофитоз": 4, "лептоспироз": 1, "лямблиоз": 5, "демодекоз": 1, "саркоптоз": 1, "нотоэдроз": 1, "эрлихиоз": 2, "хламидиоз": 6}, "2025-Q3": {"микроспория": 59, "дерматофитоз": 3, "лептоспироз": 2, "лямблиоз": 3, "саркоптоз": 1, "нотоэдроз": 1, "бабезиоз": 1, "эрлихиоз": 5, "анаплазмоз": 2, "хламидиоз": 3}, "2025-Q4": {"микроспория": 69, "лептоспироз": 1, "лямблиоз": 3, "демодекоз": 2, "саркоптоз": 2, "нотоэдроз": 1, "бабезиоз": 5, "эрлихиоз": 1, "анаплазмоз": 3}, "2026-Q1": {"микроспория": 59, "лямблиоз": 1, "демодекоз": 1, "саркоптоз": 4, "хламидиоз": 2}}[q] || {})[disease] || 0; }),
+    borderColor: trend_colors[i],
+    backgroundColor: 'transparent',
+    tension: 0.3,
+    borderWidth: 2,
+  });
+});
+new Chart(document.getElementById('c_trend'), {
+  type:'line', data:{labels:trend_labels, datasets:trend_datasets},
+  options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{labels:{font:{size:10}}}}, scales:{y:{beginAtZero:true}}}
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alfavet — Породы: проблемы, сервисы, чек</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--brd:#2a2d3a;--txt:#e4e4e7;--dim:#9ca3af}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.6}
+.c{max-width:1440px;margin:0 auto;padding:20px}
+.hdr{background:linear-gradient(135deg,#1a2e0a,#1e4a1e,#1a2e0a);border:1px solid var(--brd);border-radius:16px;padding:40px;margin-bottom:28px;text-align:center}
+.hdr h1{font-size:2.1em;font-weight:700;background:linear-gradient(135deg,#fcd34d,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr .sub{color:#fcd34d;margin-top:6px}.hdr .meta{color:var(--dim);margin-top:10px;font-size:.88em}
+.sec{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:24px;margin-bottom:22px}
+.sec h2{font-size:1.25em;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:10px}
+.sec h2 .n{background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;min-width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.82em}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+@media(max-width:900px){.g2,.g3{grid-template-columns:1fr}}
+.cb{background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;padding:16px}
+.cb h3{font-size:.9em;color:var(--dim);margin-bottom:12px;text-align:center}
+.cb canvas{max-height:400px}
+.tb{width:100%;border-collapse:collapse;font-size:.84em}
+.tb th{background:rgba(245,158,11,.1);color:#fcd34d;padding:8px 10px;text-align:left;font-weight:600;font-size:.78em;text-transform:uppercase}
+.tb td{padding:7px 10px;border-bottom:1px solid var(--brd)}
+.tb tr:hover td{background:rgba(245,158,11,.03)}
+.badge{display:inline-block;padding:2px 7px;border-radius:5px;font-size:.76em;font-weight:600}
+.br{background:rgba(239,68,68,.15);color:#fca5a5}.bg{background:rgba(34,197,94,.15);color:#86efac}
+.ba{background:rgba(245,158,11,.15);color:#fcd34d}.bb{background:rgba(6,182,212,.15);color:#67e8f9}
+.footer{text-align:center;color:var(--dim);font-size:.8em;padding:30px;border-top:1px solid var(--brd);margin-top:30px}
+details summary{padding:6px 0}
+</style>
+</head>
+<body>
+<div class="c">
+
+<div class="hdr">
+  <h1>Породы: проблемы, сервисы, чек</h1>
+  <div class="sub">Alfavet: топ пород по здоровью и бизнес-показателям</div>
+  <div class="meta">03.04.2026 20:27</div>
+</div>
+
+<!-- Сравнение -->
+<div class="sec">
+  <h2><span class="n">1</span> Сравнение пород: выручка и средний чек</h2>
+  <div class="g2">
+    <div class="cb"><h3>Общая выручка по породам</h3><canvas id="c_rev"></canvas></div>
+    <div class="cb"><h3>Средний чек на визит</h3><canvas id="c_avg"></canvas></div>
+  </div>
+</div>
+
+<h2 style="font-size:1.4em;margin:30px 0 16px;padding-left:8px;color:#86efac;">Собаки — топ 10</h2>
+
+    <div class="sec">
+      <h2 style="font-size:1.15em;">Метис <span style="color:var(--dim);font-size:.7em;margin-left:auto;">1183 животных</span></h2>
+      <div class="g3" style="margin-bottom:14px;">
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#86efac;">285,101</div><div style="color:var(--dim);font-size:.78em;">Выручка</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#67e8f9;">67</div><div style="color:var(--dim);font-size:.78em;">Ср. чек</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#a78bfa;">241</div><div style="color:var(--dim);font-size:.78em;">Выручка/животное</div></div>
+      </div>
+      <div style="margin-bottom:10px;"><b style="font-size:.85em;color:var(--dim);">Основные проблемы:</b><br><span class="badge bb" style="margin:2px;">Дерматология (9)</span> <span class="badge bb" style="margin:2px;">Офтальмология (7)</span> <span class="badge bb" style="margin:2px;">Стоматология (4)</span> <span class="badge bb" style="margin:2px;">Онкология (3)</span> <span class="badge bb" style="margin:2px;">ЛОР/Респираторные (2)</span> </div>
+      <details><summary style="cursor:pointer;color:#a5b4fc;font-size:.88em;">Топ услуг</summary><table class="tb"><tr><th>Услуга</th><th style="text-align:right">Выручка</th></tr><tr><td>Qan analizi biokimyevi (1 gosterici)</td><td style="text-align:right">44,578</td></tr><tr><td>E/d, d/a inyeksiya</td><td style="text-align:right">12,246</td></tr><tr><td>Qisirlashdirilma - dishi pishik</td><td style="text-align:right">11,419</td></tr><tr><td>Kliniki muayine, diaqnozun qoyulmasi və teyin</td><td style="text-align:right">9,900</td></tr><tr><td>Nobivac Tricat + Nobivac Rabies</td><td style="text-align:right">8,870</td></tr></table></details>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">Немецкая овчарка <span style="color:var(--dim);font-size:.7em;margin-left:auto;">811 животных</span></h2>
+      <div class="g3" style="margin-bottom:14px;">
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#86efac;">205,043</div><div style="color:var(--dim);font-size:.78em;">Выручка</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#67e8f9;">77</div><div style="color:var(--dim);font-size:.78em;">Ср. чек</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#a78bfa;">253</div><div style="color:var(--dim);font-size:.78em;">Выручка/животное</div></div>
+      </div>
+      <div style="margin-bottom:10px;"><b style="font-size:.85em;color:var(--dim);">Основные проблемы:</b><br><span class="badge bb" style="margin:2px;">ЛОР/Респираторные (14)</span> <span class="badge bb" style="margin:2px;">Дерматология (13)</span> <span class="badge bb" style="margin:2px;">Онкология (10)</span> <span class="badge bb" style="margin:2px;">Ортопедия (6)</span> <span class="badge bb" style="margin:2px;">ЖКТ (5)</span> </div>
+      <details><summary style="cursor:pointer;color:#a5b4fc;font-size:.88em;">Топ услуг</summary><table class="tb"><tr><th>Услуга</th><th style="text-align:right">Выручка</th></tr><tr><td>Qan analizi biokimyevi (1 gosterici)</td><td style="text-align:right">55,503</td></tr><tr><td>Canvit Biocal Plus</td><td style="text-align:right">15,380</td></tr><tr><td>Nobivac DHPPI+LR</td><td style="text-align:right">12,485</td></tr><tr><td>Mastektomiya 1 vəzi (31-40 kq)</td><td style="text-align:right">7,120</td></tr><tr><td>Kliniki muayine, diaqnozun qoyulmasi və teyin</td><td style="text-align:right">6,675</td></tr></table></details>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">Шпиц померанский <span style="color:var(--dim);font-size:.7em;margin-left:auto;">729 животных</span></h2>
+      <div class="g3" style="margin-bottom:14px;">
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#86efac;">216,960</div><div style="color:var(--dim);font-size:.78em;">Выручка</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#67e8f9;">56</div><div style="color:var(--dim);font-size:.78em;">Ср. чек</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#a78bfa;">298</div><div style="color:var(--dim);font-size:.78em;">Выручка/животное</div></div>
+      </div>
+      <div style="margin-bottom:10px;"><b style="font-size:.85em;color:var(--dim);">Основные проблемы:</b><br><span class="badge bb" style="margin:2px;">Офтальмология (5)</span> <span class="badge bb" style="margin:2px;">ЛОР/Респираторные (4)</span> <span class="badge bb" style="margin:2px;">Дерматология (4)</span> <span class="badge bb" style="margin:2px;">Аллергология (3)</span> <span class="badge bb" style="margin:2px;">ЖКТ (2)</span> </div>
+      <details><summary style="cursor:pointer;color:#a5b4fc;font-size:.88em;">Топ услуг</summary><table class="tb"><tr><th>Услуга</th><th style="text-align:right">Выручка</th></tr><tr><td>Qan analizi biokimyevi (1 gosterici)</td><td style="text-align:right">36,663</td></tr><tr><td>PetMedin 1.25 həb</td><td style="text-align:right">21,747</td></tr><tr><td>Nobivac DHPPI+LR</td><td style="text-align:right">17,080</td></tr><tr><td>Kliniki muayine, diaqnozun qoyulmasi və teyin</td><td style="text-align:right">8,350</td></tr><tr><td>E/d, d/a inyeksiya</td><td style="text-align:right">7,227</td></tr></table></details>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">Пудель <span style="color:var(--dim);font-size:.7em;margin-left:auto;">649 животных</span></h2>
+      <div class="g3" style="margin-bottom:14px;">
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#86efac;">229,036</div><div style="color:var(--dim);font-size:.78em;">Выручка</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#67e8f9;">73</div><div style="color:var(--dim);font-size:.78em;">Ср. чек</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#a78bfa;">353</div><div style="color:var(--dim);font-size:.78em;">Выручка/животное</div></div>
+      </div>
+      <div style="margin-bottom:10px;"><b style="font-size:.85em;color:var(--dim);">Основные проблемы:</b><br><span class="badge bb" style="margin:2px;">ЛОР/Респираторные (13)</span> <span class="badge bb" style="margin:2px;">Офтальмология (13)</span> <span class="badge bb" style="margin:2px;">Онкология (5)</span> <span class="badge bb" style="margin:2px;">ЖКТ (3)</span> <span class="badge bb" style="margin:2px;">Аллергология (2)</span> </div>
+      <details><summary style="cursor:pointer;color:#a5b4fc;font-size:.88em;">Топ услуг</summary><table class="tb"><tr><th>Услуга</th><th style="text-align:right">Выручка</th></tr><tr><td>Qan analizi biokimyevi (1 gosterici)</td><td style="text-align:right">45,041</td></tr><tr><td>Nobivac DHPPI+LR</td><td style="text-align:right">16,950</td></tr><tr><td>Mastektomiya 1 vəzi (1-10 kq)</td><td style="text-align:right">9,630</td></tr><tr><td>Agiz boshlugunun sanasiyasi (1-10 kg)</td><td style="text-align:right">7,280</td></tr><tr><td>Kliniki muayine, diaqnozun qoyulmasi və teyin</td><td style="text-align:right">6,325</td></tr></table></details>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">Йоркширский терьер <span style="color:var(--dim);font-size:.7em;margin-left:auto;">610 животных</span></h2>
+      <div class="g3" style="margin-bottom:14px;">
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#86efac;">228,724</div><div style="color:var(--dim);font-size:.78em;">Выручка</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#67e8f9;">65</div><div style="color:var(--dim);font-size:.78em;">Ср. чек</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#a78bfa;">375</div><div style="color:var(--dim);font-size:.78em;">Выручка/животное</div></div>
+      </div>
+      <div style="margin-bottom:10px;"><b style="font-size:.85em;color:var(--dim);">Основные проблемы:</b><br><span class="badge bb" style="margin:2px;">Офтальмология (12)</span> <span class="badge bb" style="margin:2px;">Дерматология (11)</span> <span class="badge bb" style="margin:2px;">ЛОР/Респираторные (8)</span> <span class="badge bb" style="margin:2px;">Стоматология (5)</span> <span class="badge bb" style="margin:2px;">Ортопедия (4)</span> </div>
+      <details><summary style="cursor:pointer;color:#a5b4fc;font-size:.88em;">Топ услуг</summary><table class="tb"><tr><th>Услуга</th><th style="text-align:right">Выручка</th></tr><tr><td>Qan analizi biokimyevi (1 gosterici)</td><td style="text-align:right">54,765</td></tr><tr><td>Nobivac DHPPI+LR</td><td style="text-align:right">16,030</td></tr><tr><td>Qan (1 ml)</td><td style="text-align:right">16,000</td></tr><tr><td>Agiz boshlugunun sanasiyasi (1-10 kg)</td><td style="text-align:right">12,470</td></tr><tr><td>Mastektomiya 1 vəzi (1-10 kq)</td><td style="text-align:right">8,400</td></tr></table></details>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">Сибирский хаски <span style="color:var(--dim);font-size:.7em;margin-left:auto;">555 животных</span></h2>
+      <div class="g3" style="margin-bottom:14px;">
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#86efac;">128,223</div><div style="color:var(--dim);font-size:.78em;">Выручка</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#67e8f9;">80</div><div style="color:var(--dim);font-size:.78em;">Ср. чек</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#a78bfa;">231</div><div style="color:var(--dim);font-size:.78em;">Выручка/животное</div></div>
+      </div>
+      <div style="margin-bottom:10px;"><b style="font-size:.85em;color:var(--dim);">Основные проблемы:</b><br><span class="badge bb" style="margin:2px;">Дерматология (4)</span> <span class="badge bb" style="margin:2px;">Онкология (4)</span> <span class="badge bb" style="margin:2px;">ЛОР/Респираторные (3)</span> <span class="badge bb" style="margin:2px;">Офтальмология (3)</span> </div>
+      <details><summary style="cursor:pointer;color:#a5b4fc;font-size:.88em;">Топ услуг</summary><table class="tb"><tr><th>Услуга</th><th style="text-align:right">Выручка</th></tr><tr><td>Qan analizi biokimyevi (1 gosterici)</td><td style="text-align:right">50,544</td></tr><tr><td>Nobivac DHPPI+LR</td><td style="text-align:right">6,165</td></tr><tr><td>Qan analizi umumi</td><td style="text-align:right">5,992</td></tr><tr><td>Kliniki muayine, diaqnozun qoyulmasi və teyin</td><td style="text-align:right">5,375</td></tr><tr><td>Qanin goturulmesi, zerdabin ve yanashi senedl</td><td style="text-align:right">5,320</td></tr></table></details>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">Пекинес <span style="color:var(--dim);font-size:.7em;margin-left:auto;">531 животных</span></h2>
+      <div class="g3" style="margin-bottom:14px;">
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#86efac;">141,998</div><div style="color:var(--dim);font-size:.78em;">Выручка</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#67e8f9;">62</div><div style="color:var(--dim);font-size:.78em;">Ср. чек</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#a78bfa;">267</div><div style="color:var(--dim);font-size:.78em;">Выручка/животное</div></div>
+      </div>
+      <div style="margin-bottom:10px;"><b style="font-size:.85em;color:var(--dim);">Основные проблемы:</b><br><span class="badge bb" style="margin:2px;">Офтальмология (7)</span> <span class="badge bb" style="margin:2px;">ЛОР/Респираторные (6)</span> <span class="badge bb" style="margin:2px;">Дерматология (6)</span> <span class="badge bb" style="margin:2px;">Ортопедия (3)</span> <span class="badge bb" style="margin:2px;">Аллергология (2)</span> </div>
+      <details><summary style="cursor:pointer;color:#a5b4fc;font-size:.88em;">Топ услуг</summary><table class="tb"><tr><th>Услуга</th><th style="text-align:right">Выручка</th></tr><tr><td>Qan analizi biokimyevi (1 gosterici)</td><td style="text-align:right">30,133</td></tr><tr><td>Nobivac DHPPI+LR</td><td style="text-align:right">10,170</td></tr><tr><td>PetMedin 5 mg heb</td><td style="text-align:right">6,000</td></tr><tr><td>Kliniki muayine, diaqnozun qoyulmasi və teyin</td><td style="text-align:right">5,150</td></tr><tr><td>E/d, d/a inyeksiya</td><td style="text-align:right">3,944</td></tr></table></details>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">Мальтийская болонка <span style="color:var(--dim);font-size:.7em;margin-left:auto;">290 животных</span></h2>
+      <div class="g3" style="margin-bottom:14px;">
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#86efac;">129,431</div><div style="color:var(--dim);font-size:.78em;">Выручка</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#67e8f9;">69</div><div style="color:var(--dim);font-size:.78em;">Ср. чек</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#a78bfa;">446</div><div style="color:var(--dim);font-size:.78em;">Выручка/животное</div></div>
+      </div>
+      <div style="margin-bottom:10px;"><b style="font-size:.85em;color:var(--dim);">Основные проблемы:</b><br><span class="badge bb" style="margin:2px;">ЛОР/Респираторные (4)</span> <span class="badge bb" style="margin:2px;">Дерматология (4)</span> <span class="badge bb" style="margin:2px;">Аллергология (2)</span> <span class="badge bb" style="margin:2px;">Офтальмология (1)</span> <span class="badge bb" style="margin:2px;">Стоматология (1)</span> </div>
+      <details><summary style="cursor:pointer;color:#a5b4fc;font-size:.88em;">Топ услуг</summary><table class="tb"><tr><th>Услуга</th><th style="text-align:right">Выручка</th></tr><tr><td>Qan analizi biokimyevi (1 gosterici)</td><td style="text-align:right">23,092</td></tr><tr><td>PetMedin 5 mg heb</td><td style="text-align:right">15,414</td></tr><tr><td>Nobivac DHPPI+LR</td><td style="text-align:right">10,790</td></tr><tr><td>Kliniki muayine, diaqnozun qoyulmasi və teyin</td><td style="text-align:right">5,050</td></tr><tr><td>Agiz boshlugunun sanasiyasi (1-10 kg)</td><td style="text-align:right">4,040</td></tr></table></details>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">Лабрадор-ретривер <span style="color:var(--dim);font-size:.7em;margin-left:auto;">278 животных</span></h2>
+      <div class="g3" style="margin-bottom:14px;">
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#86efac;">221,130</div><div style="color:var(--dim);font-size:.78em;">Выручка</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#67e8f9;">182</div><div style="color:var(--dim);font-size:.78em;">Ср. чек</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#a78bfa;">795</div><div style="color:var(--dim);font-size:.78em;">Выручка/животное</div></div>
+      </div>
+      <div style="margin-bottom:10px;"><b style="font-size:.85em;color:var(--dim);">Основные проблемы:</b><br><span class="badge bb" style="margin:2px;">Дерматология (5)</span> <span class="badge bb" style="margin:2px;">ЛОР/Респираторные (5)</span> <span class="badge bb" style="margin:2px;">ЖКТ (4)</span> <span class="badge bb" style="margin:2px;">Онкология (3)</span> <span class="badge bb" style="margin:2px;">Урология (1)</span> </div>
+      <details><summary style="cursor:pointer;color:#a5b4fc;font-size:.88em;">Топ услуг</summary><table class="tb"><tr><th>Услуга</th><th style="text-align:right">Выручка</th></tr><tr><td>Qan (1 ml)</td><td style="text-align:right">112,000</td></tr><tr><td>Qan analizi biokimyevi (1 gosterici)</td><td style="text-align:right">24,480</td></tr><tr><td>Nobivac DHPPI+LR</td><td style="text-align:right">5,620</td></tr><tr><td>Дюфалайт</td><td style="text-align:right">3,785</td></tr><tr><td>Kliniki muayine, diaqnozun qoyulmasi və teyin</td><td style="text-align:right">3,675</td></tr></table></details>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">Тойпудель <span style="color:var(--dim);font-size:.7em;margin-left:auto;">246 животных</span></h2>
+      <div class="g3" style="margin-bottom:14px;">
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#86efac;">79,503</div><div style="color:var(--dim);font-size:.78em;">Выручка</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#67e8f9;">56</div><div style="color:var(--dim);font-size:.78em;">Ср. чек</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#a78bfa;">323</div><div style="color:var(--dim);font-size:.78em;">Выручка/животное</div></div>
+      </div>
+      <div style="margin-bottom:10px;"><b style="font-size:.85em;color:var(--dim);">Основные проблемы:</b><br><span class="badge bb" style="margin:2px;">Кардиология (1)</span> <span class="badge bb" style="margin:2px;">ЛОР/Респираторные (1)</span> </div>
+      <details><summary style="cursor:pointer;color:#a5b4fc;font-size:.88em;">Топ услуг</summary><table class="tb"><tr><th>Услуга</th><th style="text-align:right">Выручка</th></tr><tr><td>Qan analizi biokimyevi (1 gosterici)</td><td style="text-align:right">13,157</td></tr><tr><td>Nobivac DHPPI+LR</td><td style="text-align:right">7,930</td></tr><tr><td>Nobivac DHPPi+L</td><td style="text-align:right">4,710</td></tr><tr><td>Kliniki muayine, diaqnozun qoyulmasi və teyin</td><td style="text-align:right">3,025</td></tr><tr><td>Kliniki muayine, diaqnozun qoyulmasi və teyin</td><td style="text-align:right">2,705</td></tr></table></details>
+    </div>
+
+<h2 style="font-size:1.4em;margin:30px 0 16px;padding-left:8px;color:#ec4899;">Кошки — топ 10</h2>
+
+    <div class="sec">
+      <h2 style="font-size:1.15em;">Шотландская вислоухая <span style="color:var(--dim);font-size:.7em;margin-left:auto;">1745 животных</span></h2>
+      <div class="g3" style="margin-bottom:14px;">
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#86efac;">370,003</div><div style="color:var(--dim);font-size:.78em;">Выручка</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#67e8f9;">47</div><div style="color:var(--dim);font-size:.78em;">Ср. чек</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#a78bfa;">212</div><div style="color:var(--dim);font-size:.78em;">Выручка/животное</div></div>
+      </div>
+      <div style="margin-bottom:10px;"><b style="font-size:.85em;color:var(--dim);">Основные проблемы:</b><br><span class="badge bb" style="margin:2px;">Дерматология (15)</span> <span class="badge bb" style="margin:2px;">Офтальмология (7)</span> <span class="badge bb" style="margin:2px;">ЛОР/Респираторные (3)</span> <span class="badge bb" style="margin:2px;">Аллергология (2)</span> <span class="badge bb" style="margin:2px;">Ортопедия (1)</span> </div>
+      <details><summary style="cursor:pointer;color:#a5b4fc;font-size:.88em;">Топ услуг</summary><table class="tb"><tr><th>Услуга</th><th style="text-align:right">Выручка</th></tr><tr><td>Qan analizi biokimyevi (1 gosterici)</td><td style="text-align:right">54,089</td></tr><tr><td>Nobivac Tricat + Nobivac Rabies</td><td style="text-align:right">36,730</td></tr><tr><td>Qisirlashdirilma - dishi pishik</td><td style="text-align:right">19,857</td></tr><tr><td>Qisirlashdirilma - erkek pishik</td><td style="text-align:right">16,975</td></tr><tr><td>Kliniki muayine, diaqnozun qoyulmasi və teyin</td><td style="text-align:right">16,375</td></tr></table></details>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">Британская короткошерстная <span style="color:var(--dim);font-size:.7em;margin-left:auto;">1205 животных</span></h2>
+      <div class="g3" style="margin-bottom:14px;">
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#86efac;">288,484</div><div style="color:var(--dim);font-size:.78em;">Выручка</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#67e8f9;">55</div><div style="color:var(--dim);font-size:.78em;">Ср. чек</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#a78bfa;">239</div><div style="color:var(--dim);font-size:.78em;">Выручка/животное</div></div>
+      </div>
+      <div style="margin-bottom:10px;"><b style="font-size:.85em;color:var(--dim);">Основные проблемы:</b><br><span class="badge bb" style="margin:2px;">Дерматология (12)</span> <span class="badge bb" style="margin:2px;">Офтальмология (9)</span> <span class="badge bb" style="margin:2px;">ЛОР/Респираторные (3)</span> <span class="badge bb" style="margin:2px;">Стоматология (2)</span> <span class="badge bb" style="margin:2px;">Урология (1)</span> </div>
+      <details><summary style="cursor:pointer;color:#a5b4fc;font-size:.88em;">Топ услуг</summary><table class="tb"><tr><th>Услуга</th><th style="text-align:right">Выручка</th></tr><tr><td>Qan analizi biokimyevi (1 gosterici)</td><td style="text-align:right">41,171</td></tr><tr><td>Nobivac Tricat + Nobivac Rabies</td><td style="text-align:right">22,890</td></tr><tr><td>PetMedin 2.5 mg heb</td><td style="text-align:right">17,200</td></tr><tr><td>Qisirlashdirilma - erkek pishik</td><td style="text-align:right">13,092</td></tr><tr><td>Qisirlashdirilma - dishi pishik</td><td style="text-align:right">12,312</td></tr></table></details>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">Метис <span style="color:var(--dim);font-size:.7em;margin-left:auto;">1183 животных</span></h2>
+      <div class="g3" style="margin-bottom:14px;">
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#86efac;">285,101</div><div style="color:var(--dim);font-size:.78em;">Выручка</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#67e8f9;">67</div><div style="color:var(--dim);font-size:.78em;">Ср. чек</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#a78bfa;">241</div><div style="color:var(--dim);font-size:.78em;">Выручка/животное</div></div>
+      </div>
+      <div style="margin-bottom:10px;"><b style="font-size:.85em;color:var(--dim);">Основные проблемы:</b><br><span class="badge bb" style="margin:2px;">Дерматология (9)</span> <span class="badge bb" style="margin:2px;">Офтальмология (7)</span> <span class="badge bb" style="margin:2px;">Стоматология (4)</span> <span class="badge bb" style="margin:2px;">Онкология (3)</span> <span class="badge bb" style="margin:2px;">ЛОР/Респираторные (2)</span> </div>
+      <details><summary style="cursor:pointer;color:#a5b4fc;font-size:.88em;">Топ услуг</summary><table class="tb"><tr><th>Услуга</th><th style="text-align:right">Выручка</th></tr><tr><td>Qan analizi biokimyevi (1 gosterici)</td><td style="text-align:right">44,578</td></tr><tr><td>E/d, d/a inyeksiya</td><td style="text-align:right">12,246</td></tr><tr><td>Qisirlashdirilma - dishi pishik</td><td style="text-align:right">11,419</td></tr><tr><td>Kliniki muayine, diaqnozun qoyulmasi və teyin</td><td style="text-align:right">9,900</td></tr><tr><td>Nobivac Tricat + Nobivac Rabies</td><td style="text-align:right">8,870</td></tr></table></details>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">Шотландская короткошёрстная <span style="color:var(--dim);font-size:.7em;margin-left:auto;">660 животных</span></h2>
+      <div class="g3" style="margin-bottom:14px;">
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#86efac;">134,849</div><div style="color:var(--dim);font-size:.78em;">Выручка</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#67e8f9;">46</div><div style="color:var(--dim);font-size:.78em;">Ср. чек</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#a78bfa;">204</div><div style="color:var(--dim);font-size:.78em;">Выручка/животное</div></div>
+      </div>
+      <div style="margin-bottom:10px;"><b style="font-size:.85em;color:var(--dim);">Основные проблемы:</b><br><span class="badge bb" style="margin:2px;">Дерматология (3)</span> <span class="badge bb" style="margin:2px;">Офтальмология (2)</span> <span class="badge bb" style="margin:2px;">ЖКТ (1)</span> <span class="badge bb" style="margin:2px;">ЛОР/Респираторные (1)</span> </div>
+      <details><summary style="cursor:pointer;color:#a5b4fc;font-size:.88em;">Топ услуг</summary><table class="tb"><tr><th>Услуга</th><th style="text-align:right">Выручка</th></tr><tr><td>Qan analizi biokimyevi (1 gosterici)</td><td style="text-align:right">18,193</td></tr><tr><td>Nobivac Tricat + Nobivac Rabies</td><td style="text-align:right">14,240</td></tr><tr><td>Qisirlashdirilma - dishi pishik</td><td style="text-align:right">9,050</td></tr><tr><td>Qisirlashdirilma - erkek pishik</td><td style="text-align:right">7,102</td></tr><tr><td>E/d, d/a inyeksiya</td><td style="text-align:right">5,932</td></tr></table></details>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">Мальтийская болонка <span style="color:var(--dim);font-size:.7em;margin-left:auto;">290 животных</span></h2>
+      <div class="g3" style="margin-bottom:14px;">
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#86efac;">129,431</div><div style="color:var(--dim);font-size:.78em;">Выручка</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#67e8f9;">69</div><div style="color:var(--dim);font-size:.78em;">Ср. чек</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#a78bfa;">446</div><div style="color:var(--dim);font-size:.78em;">Выручка/животное</div></div>
+      </div>
+      <div style="margin-bottom:10px;"><b style="font-size:.85em;color:var(--dim);">Основные проблемы:</b><br><span class="badge bb" style="margin:2px;">ЛОР/Респираторные (4)</span> <span class="badge bb" style="margin:2px;">Дерматология (4)</span> <span class="badge bb" style="margin:2px;">Аллергология (2)</span> <span class="badge bb" style="margin:2px;">Офтальмология (1)</span> <span class="badge bb" style="margin:2px;">Стоматология (1)</span> </div>
+      <details><summary style="cursor:pointer;color:#a5b4fc;font-size:.88em;">Топ услуг</summary><table class="tb"><tr><th>Услуга</th><th style="text-align:right">Выручка</th></tr><tr><td>Qan analizi biokimyevi (1 gosterici)</td><td style="text-align:right">23,092</td></tr><tr><td>PetMedin 5 mg heb</td><td style="text-align:right">15,414</td></tr><tr><td>Nobivac DHPPI+LR</td><td style="text-align:right">10,790</td></tr><tr><td>Kliniki muayine, diaqnozun qoyulmasi və teyin</td><td style="text-align:right">5,050</td></tr><tr><td>Agiz boshlugunun sanasiyasi (1-10 kg)</td><td style="text-align:right">4,040</td></tr></table></details>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">Сиамская <span style="color:var(--dim);font-size:.7em;margin-left:auto;">225 животных</span></h2>
+      <div class="g3" style="margin-bottom:14px;">
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#86efac;">43,472</div><div style="color:var(--dim);font-size:.78em;">Выручка</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#67e8f9;">58</div><div style="color:var(--dim);font-size:.78em;">Ср. чек</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#a78bfa;">193</div><div style="color:var(--dim);font-size:.78em;">Выручка/животное</div></div>
+      </div>
+      <div style="margin-bottom:10px;"><b style="font-size:.85em;color:var(--dim);">Основные проблемы:</b><br><span class="badge bb" style="margin:2px;">Онкология (5)</span> <span class="badge bb" style="margin:2px;">Стоматология (3)</span> <span class="badge bb" style="margin:2px;">Дерматология (1)</span> <span class="badge bb" style="margin:2px;">Офтальмология (1)</span> </div>
+      <details><summary style="cursor:pointer;color:#a5b4fc;font-size:.88em;">Топ услуг</summary><table class="tb"><tr><th>Услуга</th><th style="text-align:right">Выручка</th></tr><tr><td>Qan analizi biokimyevi (1 gosterici)</td><td style="text-align:right">9,769</td></tr><tr><td>Nobivac Tricat + Nobivac Rabies</td><td style="text-align:right">2,345</td></tr><tr><td>Qisirlashdirilma - dishi pishik</td><td style="text-align:right">2,132</td></tr><tr><td>E/d, d/a inyeksiya</td><td style="text-align:right">1,739</td></tr><tr><td>Kliniki muayine, diaqnozun qoyulmasi və teyin</td><td style="text-align:right">1,550</td></tr></table></details>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">Персидская <span style="color:var(--dim);font-size:.7em;margin-left:auto;">172 животных</span></h2>
+      <div class="g3" style="margin-bottom:14px;">
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#86efac;">30,324</div><div style="color:var(--dim);font-size:.78em;">Выручка</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#67e8f9;">51</div><div style="color:var(--dim);font-size:.78em;">Ср. чек</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#a78bfa;">176</div><div style="color:var(--dim);font-size:.78em;">Выручка/животное</div></div>
+      </div>
+      <div style="margin-bottom:10px;"><b style="font-size:.85em;color:var(--dim);">Основные проблемы:</b><br><span class="badge bb" style="margin:2px;">Офтальмология (7)</span> <span class="badge bb" style="margin:2px;">Дерматология (4)</span> <span class="badge bb" style="margin:2px;">Онкология (4)</span> <span class="badge bb" style="margin:2px;">Стоматология (2)</span> <span class="badge bb" style="margin:2px;">Ортопедия (1)</span> </div>
+      <details><summary style="cursor:pointer;color:#a5b4fc;font-size:.88em;">Топ услуг</summary><table class="tb"><tr><th>Услуга</th><th style="text-align:right">Выручка</th></tr><tr><td>Qan analizi biokimyevi (1 gosterici)</td><td style="text-align:right">8,071</td></tr><tr><td>Nobivac Tricat + Nobivac Rabies</td><td style="text-align:right">1,410</td></tr><tr><td>Kliniki muayine, diaqnozun qoyulmasi və teyin</td><td style="text-align:right">1,400</td></tr><tr><td>E/d, d/a inyeksiya</td><td style="text-align:right">1,274</td></tr><tr><td>Kliniki muayine, diaqnozun qoyulmasi və teyin</td><td style="text-align:right">955</td></tr></table></details>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">Турецкая ангора <span style="color:var(--dim);font-size:.7em;margin-left:auto;">119 животных</span></h2>
+      <div class="g3" style="margin-bottom:14px;">
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#86efac;">16,453</div><div style="color:var(--dim);font-size:.78em;">Выручка</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#67e8f9;">51</div><div style="color:var(--dim);font-size:.78em;">Ср. чек</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#a78bfa;">138</div><div style="color:var(--dim);font-size:.78em;">Выручка/животное</div></div>
+      </div>
+      <div style="margin-bottom:10px;"><b style="font-size:.85em;color:var(--dim);">Основные проблемы:</b><br><span class="badge bb" style="margin:2px;">Дерматология (3)</span> <span class="badge bb" style="margin:2px;">Стоматология (1)</span> </div>
+      <details><summary style="cursor:pointer;color:#a5b4fc;font-size:.88em;">Топ услуг</summary><table class="tb"><tr><th>Услуга</th><th style="text-align:right">Выручка</th></tr><tr><td>Qan analizi biokimyevi (1 gosterici)</td><td style="text-align:right">2,457</td></tr><tr><td>Qisirlashdirilma - dishi pishik</td><td style="text-align:right">1,154</td></tr><tr><td>Qisirlashdirilma - erkek pishik</td><td style="text-align:right">1,119</td></tr><tr><td>Nobivac Tricat + Nobivac Rabies</td><td style="text-align:right">1,095</td></tr><tr><td>E/d, d/a inyeksiya</td><td style="text-align:right">839</td></tr></table></details>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">Мейн Кун <span style="color:var(--dim);font-size:.7em;margin-left:auto;">115 животных</span></h2>
+      <div class="g3" style="margin-bottom:14px;">
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#86efac;">46,648</div><div style="color:var(--dim);font-size:.78em;">Выручка</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#67e8f9;">66</div><div style="color:var(--dim);font-size:.78em;">Ср. чек</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#a78bfa;">406</div><div style="color:var(--dim);font-size:.78em;">Выручка/животное</div></div>
+      </div>
+      <div style="margin-bottom:10px;"><b style="font-size:.85em;color:var(--dim);">Основные проблемы:</b><br><span class="badge bb" style="margin:2px;">Кардиология (1)</span> <span class="badge bb" style="margin:2px;">Офтальмология (1)</span> </div>
+      <details><summary style="cursor:pointer;color:#a5b4fc;font-size:.88em;">Топ услуг</summary><table class="tb"><tr><th>Услуга</th><th style="text-align:right">Выручка</th></tr><tr><td>Qan analizi biokimyevi (1 gosterici)</td><td style="text-align:right">8,475</td></tr><tr><td>Nobivac Tricat + Nobivac Rabies</td><td style="text-align:right">3,025</td></tr><tr><td>Kliniki muayine, diaqnozun qoyulmasi və teyin</td><td style="text-align:right">1,550</td></tr><tr><td>E/d, d/a inyeksiya</td><td style="text-align:right">1,499</td></tr><tr><td>Qisirlashdirilma - erkek pishik</td><td style="text-align:right">1,304</td></tr></table></details>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">Бенгальская <span style="color:var(--dim);font-size:.7em;margin-left:auto;">114 животных</span></h2>
+      <div class="g3" style="margin-bottom:14px;">
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#86efac;">22,588</div><div style="color:var(--dim);font-size:.78em;">Выручка</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#67e8f9;">45</div><div style="color:var(--dim);font-size:.78em;">Ср. чек</div></div>
+        <div style="text-align:center;"><div style="font-size:1.4em;font-weight:700;color:#a78bfa;">198</div><div style="color:var(--dim);font-size:.78em;">Выручка/животное</div></div>
+      </div>
+      <div style="margin-bottom:10px;"><b style="font-size:.85em;color:var(--dim);">Основные проблемы:</b><br><span style="color:var(--dim);font-size:.85em;">Нет данных</span></div>
+      <details><summary style="cursor:pointer;color:#a5b4fc;font-size:.88em;">Топ услуг</summary><table class="tb"><tr><th>Услуга</th><th style="text-align:right">Выручка</th></tr><tr><td>Qan analizi biokimyevi (1 gosterici)</td><td style="text-align:right">2,590</td></tr><tr><td>Nobivac Tricat + Nobivac Rabies</td><td style="text-align:right">2,485</td></tr><tr><td>Qisirlashdirilma - dishi pishik</td><td style="text-align:right">1,320</td></tr><tr><td>Qisirlashdirilma - erkek pishik</td><td style="text-align:right">1,218</td></tr><tr><td>Kliniki muayine, diaqnozun qoyulmasi və teyin</td><td style="text-align:right">1,100</td></tr></table></details>
+    </div>
+
+<div class="footer">Alfavet Breeds Business Dashboard &bull; 2026</div>
+</div>
+
+<script>
+Chart.defaults.color = '#9ca3af';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+var labels = ["Метис", "Немецкая овчарка", "Шпиц померанский", "Пудель", "Йоркширский терьер", "Сибирский хаски", "Пекинес", "Мальтийская болонка", "Лабрадор-ретривер", "Тойпудель", "Шотландская вислоухая", "Британская короткошерстная", "Метис", "Шотландская короткошёрстная", "Мальтийская болонка", "Сиамская", "Персидская", "Турецкая ангора", "Мейн Кун", "Бенгальская"];
+new Chart(document.getElementById('c_rev'), {
+  type:'bar', data:{labels, datasets:[{data:[285101, 205043, 216960, 229036, 228724, 128223, 141998, 129431, 221130, 79503, 370003, 288484, 285101, 134849, 129431, 43472, 30324, 16453, 46648, 22588], backgroundColor:'#f59e0b', borderRadius:4}]},
+  options:{responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{beginAtZero:true}}}
+});
+new Chart(document.getElementById('c_avg'), {
+  type:'bar', data:{labels, datasets:[{data:[67, 77, 56, 73, 65, 80, 62, 69, 182, 56, 47, 55, 67, 46, 69, 58, 51, 51, 66, 45], backgroundColor:'#6366f1', borderRadius:4}]},
+  options:{responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{beginAtZero:true}}}
+});
+</script>
+</body>
+</html>

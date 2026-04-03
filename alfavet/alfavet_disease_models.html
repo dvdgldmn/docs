@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alfavet — Модели прогрессии болезней</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--brd:#2a2d3a;--txt:#e4e4e7;--dim:#9ca3af}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.6}
+.c{max-width:1440px;margin:0 auto;padding:20px}
+.hdr{background:linear-gradient(135deg,#1a0a2e,#2d1b4e,#1a0a2e);border:1px solid var(--brd);border-radius:16px;padding:40px;margin-bottom:28px;text-align:center}
+.hdr h1{font-size:2.1em;font-weight:700;background:linear-gradient(135deg,#f9a8d4,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr .sub{color:#f9a8d4;margin-top:6px}.hdr .meta{color:var(--dim);margin-top:10px;font-size:.88em}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:24px}
+.kpi{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:16px;text-align:center}
+.kpi .v{font-size:1.8em;font-weight:700}.kpi .l{color:var(--dim);font-size:.78em;text-transform:uppercase}
+.kpi.purple .v{color:#a78bfa}.kpi.pink .v{color:#f9a8d4}.kpi.amber .v{color:#fcd34d}.kpi.red .v{color:#fca5a5}.kpi.green .v{color:#86efac}
+.sec{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:24px;margin-bottom:22px}
+.sec h2{font-size:1.25em;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:900px){.g2{grid-template-columns:1fr}}
+.cb{background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;padding:16px}
+.cb h3{font-size:.9em;color:var(--dim);margin-bottom:12px;text-align:center}
+.cb canvas{max-height:380px}
+.badge{display:inline-block;padding:2px 7px;border-radius:5px;font-size:.76em;font-weight:600}
+.br{background:rgba(239,68,68,.15);color:#fca5a5}.bg{background:rgba(34,197,94,.15);color:#86efac}
+.ba{background:rgba(245,158,11,.15);color:#fcd34d}.bb{background:rgba(6,182,212,.15);color:#67e8f9}
+.footer{text-align:center;color:var(--dim);font-size:.8em;padding:30px;border-top:1px solid var(--brd);margin-top:30px}
+</style>
+</head>
+<body>
+<div class="c">
+
+<div class="hdr">
+  <h1>Disease Progression Models</h1>
+  <div class="sub">Alfavet: стадирование, алерты, рецидивы для 10 заболеваний</div>
+  <div class="meta">03.04.2026 20:29</div>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi purple"><div class="v">10</div><div class="l">Моделей</div></div>
+  <div class="kpi pink"><div class="v">391</div><div class="l">Пациентов</div></div>
+  <div class="kpi amber"><div class="v">449</div><div class="l">Записей</div></div>
+  <div class="kpi red"><div class="v">0</div><div class="l">С высокими рецидивами</div></div>
+</div>
+
+<!-- Overview -->
+<div class="sec">
+  <h2>Обзор</h2>
+  <div class="g2">
+    <div class="cb"><h3>Пациенты по заболеваниям</h3><canvas id="c_bar"></canvas></div>
+    <div class="cb"><h3>% рецидивов</h3><canvas id="c_recur"></canvas></div>
+  </div>
+</div>
+
+<!-- Disease cards -->
+
+    <div class="sec">
+      <h2 style="font-size:1.15em;">
+        Аллергический дерматит
+        <span class="badge bg" style="margin-left:8px;">Риск: Низкий</span>
+        <span class="badge bb" style="margin-left:4px;">Дерматология</span>
+        <span style="color:var(--dim);font-size:.7em;margin-left:auto;">103 пациентов &bull; 130 записей</span>
+      </h2>
+      <div class="g2">
+        <div>
+          <div style="font-size:.88em;font-weight:600;color:#a5b4fc;margin-bottom:8px;">Стадии прогрессии:</div>
+          
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Сезонный</span><span style="color:var(--dim);">100</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:100%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Круглогодичный</span><span style="color:var(--dim);">2</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:2%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Осложнённый вторичной инфекцией</span><span style="color:var(--dim);">1</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:1%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+          <div style="margin-top:12px;font-size:.85em;">
+            <b style="color:var(--dim);">Рецидивы:</b> 2.9% пациентов
+            &bull; ср. период: 55 дней
+          </div>
+        </div>
+        <div>
+          <div style="font-size:.88em;font-weight:600;color:#a5b4fc;margin-bottom:8px;">Породы:</div>
+          <div style="font-size:.85em;margin-bottom:10px;">б/п (29), Шотландская вислоухая (7), Шпиц померанский (6), Йоркширский терьер (6), Мальтийская болонка (5)</div>
+          <div style="font-size:.85em;color:var(--dim);">Собаки: 59 / Кошки: 44</div>
+          <div style="margin-top:14px;padding:12px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:8px;font-size:.85em;">
+            <b style="color:#fcd34d;">Алерт:</b> Элиминационная диета. Аллерготестирование. Иммунотерапия.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">
+        Отит
+        <span class="badge bg" style="margin-left:8px;">Риск: Низкий</span>
+        <span class="badge bb" style="margin-left:4px;">ЛОР</span>
+        <span style="color:var(--dim);font-size:.7em;margin-left:auto;">93 пациентов &bull; 107 записей</span>
+      </h2>
+      <div class="g2">
+        <div>
+          <div style="font-size:.88em;font-weight:600;color:#a5b4fc;margin-bottom:8px;">Стадии прогрессии:</div>
+          
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Острый наружный</span><span style="color:var(--dim);">83</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:100%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Хронический/Рецидивирующий</span><span style="color:var(--dim);">9</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:11%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Средний отит</span><span style="color:var(--dim);">1</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:1%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+          <div style="margin-top:12px;font-size:.85em;">
+            <b style="color:var(--dim);">Рецидивы:</b> 10.8% пациентов
+            &bull; ср. период: 288 дней
+          </div>
+        </div>
+        <div>
+          <div style="font-size:.88em;font-weight:600;color:#a5b4fc;margin-bottom:8px;">Породы:</div>
+          <div style="font-size:.85em;margin-bottom:10px;">Пудель (12), Немецкая овчарка (11), б/п (10), Йоркширский терьер (5), Мальтийская болонка (4)</div>
+          <div style="font-size:.85em;color:var(--dim);">Собаки: 87 / Кошки: 6</div>
+          <div style="margin-top:14px;padding:12px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:8px;font-size:.85em;">
+            <b style="color:#fcd34d;">Алерт:</b> Цитология. Идентификация возбудителя. Контроль аллергии.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">
+        Микроспория (лишай)
+        <span class="badge br" style="margin-left:8px;">Риск: Высокий</span>
+        <span class="badge bb" style="margin-left:4px;">Грибковые</span>
+        <span style="color:var(--dim);font-size:.7em;margin-left:auto;">77 пациентов &bull; 82 записей</span>
+      </h2>
+      <div class="g2">
+        <div>
+          <div style="font-size:.88em;font-weight:600;color:#a5b4fc;margin-bottom:8px;">Стадии прогрессии:</div>
+          
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Начальная (локальное поражение)</span><span style="color:var(--dim);">74</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:100%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Распространённая</span><span style="color:var(--dim);">3</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:4%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Хроническая/Рецидив</span><span style="color:var(--dim);">0</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:0%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+          <div style="margin-top:12px;font-size:.85em;">
+            <b style="color:var(--dim);">Рецидивы:</b> 3.9% пациентов
+            &bull; ср. период: 23 дней
+          </div>
+        </div>
+        <div>
+          <div style="font-size:.88em;font-weight:600;color:#a5b4fc;margin-bottom:8px;">Породы:</div>
+          <div style="font-size:.85em;margin-bottom:10px;">б/п (32), Британская короткошерстная (9), Шотландская вислоухая (4), Йоркширский терьер (4), Турецкая ангора (3)</div>
+          <div style="font-size:.85em;color:var(--dim);">Кошки: 57 / Собаки: 20</div>
+          <div style="margin-top:14px;padding:12px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:8px;font-size:.85em;">
+            <b style="color:#fcd34d;">Алерт:</b> Карантин. Информировать владельца о зоонозном риске.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">
+        Демодекоз
+        <span class="badge ba" style="margin-left:8px;">Риск: Средний</span>
+        <span class="badge bb" style="margin-left:4px;">Паразитарные</span>
+        <span style="color:var(--dim);font-size:.7em;margin-left:auto;">57 пациентов &bull; 59 записей</span>
+      </h2>
+      <div class="g2">
+        <div>
+          <div style="font-size:.88em;font-weight:600;color:#a5b4fc;margin-bottom:8px;">Стадии прогрессии:</div>
+          
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Локальный</span><span style="color:var(--dim);">55</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:100%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Генерализованный</span><span style="color:var(--dim);">2</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:4%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Осложнённый пиодермой</span><span style="color:var(--dim);">0</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:0%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+          <div style="margin-top:12px;font-size:.85em;">
+            <b style="color:var(--dim);">Рецидивы:</b> 3.5% пациентов
+            &bull; ср. период: 21 дней
+          </div>
+        </div>
+        <div>
+          <div style="font-size:.88em;font-weight:600;color:#a5b4fc;margin-bottom:8px;">Породы:</div>
+          <div style="font-size:.85em;margin-bottom:10px;">б/п (18), Немецкая овчарка (5), Йоркширский терьер (5), Сибирский хаски (3), Ротвейлер (3)</div>
+          <div style="font-size:.85em;color:var(--dim);">Собаки: 56 / Кошки: 1</div>
+          <div style="margin-top:14px;padding:12px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:8px;font-size:.85em;">
+            <b style="color:#fcd34d;">Алерт:</b> Породная предрасположенность. Контроль иммуносупрессии.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">
+        Эрлихиоз
+        <span class="badge br" style="margin-left:8px;">Риск: Высокий</span>
+        <span class="badge bb" style="margin-left:4px;">Клещевые</span>
+        <span style="color:var(--dim);font-size:.7em;margin-left:auto;">43 пациентов &bull; 52 записей</span>
+      </h2>
+      <div class="g2">
+        <div>
+          <div style="font-size:.88em;font-weight:600;color:#a5b4fc;margin-bottom:8px;">Стадии прогрессии:</div>
+          
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Острая фаза</span><span style="color:var(--dim);">39</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:100%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Субклиническая</span><span style="color:var(--dim);">3</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:8%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Хроническая (панцитопения)</span><span style="color:var(--dim);">1</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:3%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+          <div style="margin-top:12px;font-size:.85em;">
+            <b style="color:var(--dim);">Рецидивы:</b> 9.3% пациентов
+            &bull; ср. период: 12 дней
+          </div>
+        </div>
+        <div>
+          <div style="font-size:.88em;font-weight:600;color:#a5b4fc;margin-bottom:8px;">Породы:</div>
+          <div style="font-size:.85em;margin-bottom:10px;">б/п (9), Немецкая овчарка (6), Лабрадор-ретривер (4), Сибирский хаски (3), Ротвейлер (3)</div>
+          <div style="font-size:.85em;color:var(--dim);">Собаки: 43</div>
+          <div style="margin-top:14px;padding:12px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:8px;font-size:.85em;">
+            <b style="color:#fcd34d;">Алерт:</b> Антибиотикотерапия. Мониторинг тромбоцитов.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">
+        МКБ (мочекаменная болезнь)
+        <span class="badge ba" style="margin-left:8px;">Риск: Средний</span>
+        <span class="badge bb" style="margin-left:4px;">Урология</span>
+        <span style="color:var(--dim);font-size:.7em;margin-left:auto;">12 пациентов &bull; 13 записей</span>
+      </h2>
+      <div class="g2">
+        <div>
+          <div style="font-size:.88em;font-weight:600;color:#a5b4fc;margin-bottom:8px;">Стадии прогрессии:</div>
+          
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Кристаллурия</span><span style="color:var(--dim);">11</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:100%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Формирование камней</span><span style="color:var(--dim);">1</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:9%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Обструкция</span><span style="color:var(--dim);">0</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:0%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+          <div style="margin-top:12px;font-size:.85em;">
+            <b style="color:var(--dim);">Рецидивы:</b> 8.3% пациентов
+            
+          </div>
+        </div>
+        <div>
+          <div style="font-size:.88em;font-weight:600;color:#a5b4fc;margin-bottom:8px;">Породы:</div>
+          <div style="font-size:.85em;margin-bottom:10px;">б/п (3), Экзотическая короткошерстная (1), Шотландская вислоухая (1), Йоркширский терьер (1), Бенгальская (1)</div>
+          <div style="font-size:.85em;color:var(--dim);">Кошки: 9 / Собаки: 3</div>
+          <div style="margin-top:14px;padding:12px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:8px;font-size:.85em;">
+            <b style="color:#fcd34d;">Алерт:</b> Диетотерапия. pH мониторинг. Экстренная помощь при обструкции.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">
+        Дисплазия ТБС
+        <span class="badge ba" style="margin-left:8px;">Риск: Средний</span>
+        <span class="badge bb" style="margin-left:4px;">Ортопедия</span>
+        <span style="color:var(--dim);font-size:.7em;margin-left:auto;">3 пациентов &bull; 3 записей</span>
+      </h2>
+      <div class="g2">
+        <div>
+          <div style="font-size:.88em;font-weight:600;color:#a5b4fc;margin-bottom:8px;">Стадии прогрессии:</div>
+          
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Лёгкая (без симптомов)</span><span style="color:var(--dim);">3</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:100%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Умеренная (хромота)</span><span style="color:var(--dim);">0</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:0%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Тяжёлая (артроз)</span><span style="color:var(--dim);">0</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:0%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+          <div style="margin-top:12px;font-size:.85em;">
+            <b style="color:var(--dim);">Рецидивы:</b> 0.0% пациентов
+            
+          </div>
+        </div>
+        <div>
+          <div style="font-size:.88em;font-weight:600;color:#a5b4fc;margin-bottom:8px;">Породы:</div>
+          <div style="font-size:.85em;margin-bottom:10px;">Немецкая овчарка (1), Восточно-европейская овчарка (1), Шотландская вислоухая (1)</div>
+          <div style="font-size:.85em;color:var(--dim);">Собаки: 2 / Кошки: 1</div>
+          <div style="margin-top:14px;padding:12px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:8px;font-size:.85em;">
+            <b style="color:#fcd34d;">Алерт:</b> Контроль веса. Хондропротекторы. Возможна хирургия.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">
+        Бабезиоз (пироплазмоз)
+        <span class="badge br" style="margin-left:8px;">Риск: Высокий</span>
+        <span class="badge bb" style="margin-left:4px;">Клещевые</span>
+        <span style="color:var(--dim);font-size:.7em;margin-left:auto;">2 пациентов &bull; 2 записей</span>
+      </h2>
+      <div class="g2">
+        <div>
+          <div style="font-size:.88em;font-weight:600;color:#a5b4fc;margin-bottom:8px;">Стадии прогрессии:</div>
+          
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Острый</span><span style="color:var(--dim);">2</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:100%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Осложнённый (гемолиз, ОПН)</span><span style="color:var(--dim);">0</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:0%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Хронический носитель</span><span style="color:var(--dim);">0</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:0%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+          <div style="margin-top:12px;font-size:.85em;">
+            <b style="color:var(--dim);">Рецидивы:</b> 0.0% пациентов
+            
+          </div>
+        </div>
+        <div>
+          <div style="font-size:.88em;font-weight:600;color:#a5b4fc;margin-bottom:8px;">Породы:</div>
+          <div style="font-size:.85em;margin-bottom:10px;">Кангал (1), Немецкая овчарка (1)</div>
+          <div style="font-size:.85em;color:var(--dim);">Собаки: 2</div>
+          <div style="margin-top:14px;padding:12px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:8px;font-size:.85em;">
+            <b style="color:#fcd34d;">Алерт:</b> Экстренная терапия. Мониторинг гемоглобина и почечной функции.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sec">
+      <h2 style="font-size:1.15em;">
+        Панкреатит
+        <span class="badge ba" style="margin-left:8px;">Риск: Средний</span>
+        <span class="badge bb" style="margin-left:4px;">Внутренние</span>
+        <span style="color:var(--dim);font-size:.7em;margin-left:auto;">1 пациентов &bull; 1 записей</span>
+      </h2>
+      <div class="g2">
+        <div>
+          <div style="font-size:.88em;font-weight:600;color:#a5b4fc;margin-bottom:8px;">Стадии прогрессии:</div>
+          
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Острый</span><span style="color:var(--dim);">1</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:100%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Рецидивирующий</span><span style="color:var(--dim);">0</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:0%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+        <div style="margin:6px 0;">
+          <div style="display:flex;justify-content:space-between;font-size:.82em;">
+            <span>Хронический</span><span style="color:var(--dim);">0</span>
+          </div>
+          <div style="height:6px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:0%;background:linear-gradient(90deg,#6366f1,#a78bfa);border-radius:3px;"></div>
+          </div>
+        </div>
+          <div style="margin-top:12px;font-size:.85em;">
+            <b style="color:var(--dim);">Рецидивы:</b> 0.0% пациентов
+            
+          </div>
+        </div>
+        <div>
+          <div style="font-size:.88em;font-weight:600;color:#a5b4fc;margin-bottom:8px;">Породы:</div>
+          <div style="font-size:.85em;margin-bottom:10px;">б/п (1)</div>
+          <div style="font-size:.85em;color:var(--dim);">Кошки: 1</div>
+          <div style="margin-top:14px;padding:12px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:8px;font-size:.85em;">
+            <b style="color:#fcd34d;">Алерт:</b> Диетотерапия. Мониторинг липазы.
+          </div>
+        </div>
+      </div>
+    </div>
+
+<div class="footer">Alfavet Disease Models Dashboard &bull; 2026</div>
+</div>
+
+<script>
+Chart.defaults.color = '#9ca3af';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+var COLORS = ['#ec4899','#6366f1','#06b6d4','#22c55e','#f59e0b','#ef4444','#8b5cf6','#14b8a6','#f97316','#64748b'];
+
+new Chart(document.getElementById('c_bar'), {
+  type:'bar',
+  data:{labels:["Аллергический дерматит", "Отит", "Микроспория (лишай)", "Демодекоз", "Эрлихиоз", "МКБ (мочекаменная болезнь)", "Дисплазия ТБС", "Бабезиоз (пироплазмоз)", "Панкреатит"], datasets:[{data:[103, 93, 77, 57, 43, 12, 3, 2, 1], backgroundColor:COLORS, borderRadius:4}]},
+  options:{responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{beginAtZero:true}}}
+});
+new Chart(document.getElementById('c_recur'), {
+  type:'bar',
+  data:{labels:["Аллергический дерматит", "Отит", "Микроспория (лишай)", "Демодекоз", "Эрлихиоз", "МКБ (мочекаменная болезнь)", "Дисплазия ТБС", "Бабезиоз (пироплазмоз)", "Панкреатит"], datasets:[{data:[2.9, 10.8, 3.9, 3.5, 9.3, 8.3, 0.0, 0.0, 0.0], backgroundColor:COLORS, borderRadius:4}]},
+  options:{responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{beginAtZero:true,title:{display:true,text:'% рецидивов'}}}}
+});
+</script>
+</body>
+</html>

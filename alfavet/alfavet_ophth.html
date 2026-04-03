@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alfavet — Офтальмология</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--brd:#2a2d3a;--txt:#e4e4e7;--dim:#9ca3af}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.6}
+.c{max-width:1440px;margin:0 auto;padding:20px}
+.hdr{background:linear-gradient(135deg,#0a2540,#0e3d6b,#0a2540);border:1px solid var(--brd);border-radius:16px;padding:40px;margin-bottom:28px;text-align:center}
+.hdr h1{font-size:2.1em;font-weight:700;background:linear-gradient(135deg,#67e8f9,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr .sub{color:#67e8f9;margin-top:6px}.hdr .meta{color:var(--dim);margin-top:10px;font-size:.88em}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:24px}
+.kpi{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:16px;text-align:center}
+.kpi .v{font-size:1.8em;font-weight:700}.kpi .l{color:var(--dim);font-size:.78em;text-transform:uppercase}
+.kpi.blue .v{color:#67e8f9}.kpi.purple .v{color:#a78bfa}.kpi.amber .v{color:#fcd34d}.kpi.red .v{color:#fca5a5}.kpi.green .v{color:#86efac}.kpi.pink .v{color:#f9a8d4}
+.sec{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:24px;margin-bottom:22px}
+.sec h2{font-size:1.25em;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:10px}
+.sec h2 .n{background:linear-gradient(135deg,#06b6d4,#0891b2);color:#fff;min-width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.82em}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:900px){.g2{grid-template-columns:1fr}}
+.cb{background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;padding:16px}
+.cb h3{font-size:.9em;color:var(--dim);margin-bottom:12px;text-align:center}
+.cb canvas{max-height:380px}
+.tb{width:100%;border-collapse:collapse;font-size:.84em}
+.tb th{background:rgba(6,182,212,.1);color:#67e8f9;padding:8px 10px;text-align:left;font-weight:600;font-size:.78em;text-transform:uppercase}
+.tb td{padding:7px 10px;border-bottom:1px solid var(--brd)}
+.tb tr:hover td{background:rgba(6,182,212,.03)}
+.badge{display:inline-block;padding:2px 7px;border-radius:5px;font-size:.76em;font-weight:600}
+.br{background:rgba(239,68,68,.15);color:#fca5a5}.bg{background:rgba(34,197,94,.15);color:#86efac}
+.ba{background:rgba(245,158,11,.15);color:#fcd34d}.bb{background:rgba(6,182,212,.15);color:#67e8f9}
+.footer{text-align:center;color:var(--dim);font-size:.8em;padding:30px;border-top:1px solid var(--brd);margin-top:30px}
+</style>
+</head>
+<body>
+<div class="c">
+
+<div class="hdr">
+  <h1>Офтальмологический отчёт</h1>
+  <div class="sub">Alfavet: глазные болезни у собак и кошек</div>
+  <div class="meta">03.04.2026 20:21 &bull; 31,071 животных</div>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi blue"><div class="v">164</div><div class="l">Пациентов</div></div>
+  <div class="kpi purple"><div class="v">196</div><div class="l">Записей</div></div>
+  <div class="kpi amber"><div class="v">10</div><div class="l">Категорий</div></div>
+  <div class="kpi green"><div class="v">111</div><div class="l">Собаки (записей)</div></div>
+  <div class="kpi pink"><div class="v">85</div><div class="l">Кошки (записей)</div></div>
+  <div class="kpi red"><div class="v">0.5%</div><div class="l">Распространённость</div></div>
+</div>
+
+<!-- 1. Categories -->
+<div class="sec">
+  <h2><span class="n">1</span> Категории офтальмо-диагнозов</h2>
+  <div class="g2">
+    <div class="cb"><h3>Количество записей</h3><canvas id="c_cat_bar"></canvas></div>
+    <div class="cb"><h3>Доли</h3><canvas id="c_cat_pie"></canvas></div>
+  </div>
+</div>
+
+<!-- 2. Dogs vs Cats -->
+<div class="sec">
+  <h2><span class="n">2</span> Собаки vs Кошки</h2>
+  <div class="cb"><canvas id="c_species" style="max-height:400px;"></canvas></div>
+</div>
+
+<!-- 3. Top diagnoses -->
+<div class="sec">
+  <h2><span class="n">3</span> Топ-15 диагнозов</h2>
+  <table class="tb"><tr><th>Диагноз</th><th>Записей</th><th>Категория</th></tr><tr><td>конъюнктивит (Probable)</td><td>77</td><td><span class="badge bb">Конъюнктивит</span></td></tr><tr><td>Гнойный конъюнктивит (Probable)</td><td>32</td><td><span class="badge bb">Конъюнктивит</span></td></tr><tr><td>кератит (Probable)</td><td>20</td><td><span class="badge bb">Кератит</span></td></tr><tr><td>Катаракта (Probable)</td><td>17</td><td><span class="badge bb">Катаракта</span></td></tr><tr><td>Аллергический конъюнктивит (Probable)</td><td>8</td><td><span class="badge bb">Конъюнктивит</span></td></tr><tr><td>фолликулярный конъюнктивит (Probable)</td><td>6</td><td><span class="badge bb">Конъюнктивит</span></td></tr><tr><td>язвенный кератит (Probable)</td><td>5</td><td><span class="badge bb">Кератит</span></td></tr><tr><td>Увеит (Probable)</td><td>4</td><td><span class="badge bb">Увеит</span></td></tr><tr><td>Пролапс слёзной железы (Probable)</td><td>4</td><td><span class="badge bb">Выпадение 3-го века</span></td></tr><tr><td>Панофтальмит (Probable)</td><td>4</td><td><span class="badge bb">Другое офтальмо</span></td></tr><tr><td>Язва роговицы (Probable)</td><td>3</td><td><span class="badge bb">Язва роговицы</span></td></tr><tr><td>вывих глазного яблока (Probable)</td><td>3</td><td><span class="badge bb">Другое офтальмо</span></td></tr><tr><td>серозный конъюнктивит (Probable)</td><td>2</td><td><span class="badge bb">Конъюнктивит</span></td></tr><tr><td>Дермоид (Probable)</td><td>2</td><td><span class="badge bb">Другое офтальмо</span></td></tr><tr><td>атрофия глазного яблока (Probable)</td><td>2</td><td><span class="badge bb">Другое офтальмо</span></td></tr></table>
+</div>
+
+<!-- 4. Breeds -->
+<div class="sec">
+  <h2><span class="n">4</span> Породная предрасположенность — Собаки</h2>
+  <table class="tb"><tr><th>Порода</th><th>Пациентов</th><th>Всего</th><th>%</th></tr><tr><td>Японский хин</td><td>1</td><td>14</td><td><span class="badge ba">7.1%</span></td></tr><tr><td>Тибетский спаниель</td><td>2</td><td>30</td><td><span class="badge ba">6.7%</span></td></tr><tr><td>Бишон-фризе</td><td>4</td><td>64</td><td><span class="badge ba">6.2%</span></td></tr><tr><td>Шар-пей</td><td>1</td><td>21</td><td><span class="badge bb">4.8%</span></td></tr><tr><td>Американский кокер-спаниель</td><td>1</td><td>25</td><td><span class="badge bb">4.0%</span></td></tr><tr><td>Русский спаниель</td><td>1</td><td>28</td><td><span class="badge bb">3.6%</span></td></tr><tr><td>Восточно-европейская овчарка</td><td>2</td><td>63</td><td><span class="badge bb">3.2%</span></td></tr><tr><td>Ши-тцу</td><td>3</td><td>98</td><td><span class="badge bb">3.1%</span></td></tr><tr><td>Бигль</td><td>3</td><td>114</td><td><span class="badge bb">2.6%</span></td></tr><tr><td>Мопс</td><td>2</td><td>83</td><td><span class="badge bb">2.4%</span></td></tr></table>
+</div>
+
+<div class="sec">
+  <h2><span class="n">5</span> Породная предрасположенность — Кошки</h2>
+  <table class="tb"><tr><th>Порода</th><th>Пациентов</th><th>Всего</th><th>%</th></tr><tr><td>Экзотическая короткошерстная</td><td>2</td><td>40</td><td><span class="badge ba">5.0%</span></td></tr><tr><td>Персидская</td><td>7</td><td>172</td><td><span class="badge bb">4.1%</span></td></tr><tr><td>Ангорская</td><td>1</td><td>93</td><td><span class="badge bb">1.1%</span></td></tr><tr><td>Канадский сфинкс</td><td>1</td><td>101</td><td><span class="badge bb">1.0%</span></td></tr><tr><td>Мейн Кун</td><td>1</td><td>115</td><td><span class="badge bb">0.9%</span></td></tr><tr><td>Британская короткошерстная</td><td>8</td><td>1205</td><td><span class="badge bb">0.7%</span></td></tr><tr><td>б/п</td><td>44</td><td>12158</td><td><span class="badge bb">0.4%</span></td></tr><tr><td>Шотландская вислоухая</td><td>7</td><td>1745</td><td><span class="badge bb">0.4%</span></td></tr><tr><td>Метис</td><td>3</td><td>772</td><td><span class="badge bb">0.4%</span></td></tr><tr><td>Сиамская</td><td>1</td><td>225</td><td><span class="badge bb">0.4%</span></td></tr></table>
+</div>
+
+<!-- 6. Comorbidities -->
+<div class="sec">
+  <h2><span class="n">6</span> Коморбидности (сопутствующие диагнозы у офтальмо-пациентов)</h2>
+  <table class="tb"><tr><th>Сопутствующий диагноз</th><th>Пациентов</th></tr><tr><td>кератоконъюктивит (Probable)</td><td>7</td></tr><tr><td>Гингивит (Gingivitis) (Probable)</td><td>5</td></tr><tr><td>хламидиоз (Probable)</td><td>5</td></tr><tr><td>отодектоз (Probable)</td><td>3</td></tr><tr><td>Отит (Otitis) (Probable)</td><td>3</td></tr><tr><td>Периодонтит (Probable)</td><td>2</td></tr><tr><td>Катаральный конъюктивит (Probable)</td><td>2</td></tr><tr><td>аллергический блошиный дерматит (Probable)</td><td>2</td></tr><tr><td>ринит (Probable)</td><td>2</td></tr><tr><td>опухоль молочной железы (Probable)</td><td>2</td></tr><tr><td>Ринотрахеит (Probable)</td><td>2</td></tr><tr><td>ID:6 (Probable)</td><td>1</td></tr><tr><td>Инфекционный ринотрахеит (Probable)</td><td>1</td></tr><tr><td>Грыжа пупочная (Hernia umbilicalia) (Probable)</td><td>1</td></tr><tr><td>ID:114 (Probable)</td><td>1</td></tr></table>
+</div>
+
+<div class="footer">Alfavet Ophthalmology Dashboard &bull; 2026</div>
+</div>
+
+<script>
+var COLORS = ['#06b6d4','#6366f1','#22c55e','#f59e0b','#ef4444','#ec4899','#8b5cf6','#14b8a6','#f97316','#64748b','#a855f7','#0ea5e9'];
+Chart.defaults.color = '#9ca3af';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+
+// Categories bar
+new Chart(document.getElementById('c_cat_bar'), {
+  type:'bar',
+  data:{labels:["Конъюнктивит", "Кератит", "Катаракта", "Другое офтальмо", "Выпадение 3-го века", "Увеит", "Язва роговицы", "Блефарит", "Энтропион", "Глаукома"], datasets:[{data:[126, 25, 17, 12, 5, 4, 3, 2, 1, 1], backgroundColor:COLORS, borderRadius:4}]},
+  options:{responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{beginAtZero:true}}}
+});
+
+// Categories pie
+new Chart(document.getElementById('c_cat_pie'), {
+  type:'doughnut',
+  data:{labels:["Конъюнктивит", "Кератит", "Катаракта", "Другое офтальмо", "Выпадение 3-го века", "Увеит", "Язва роговицы", "Блефарит", "Энтропион", "Глаукома"], datasets:[{data:[126, 25, 17, 12, 5, 4, 3, 2, 1, 1], backgroundColor:COLORS, borderWidth:0}]},
+  options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'right',labels:{font:{size:10}}}}, cutout:'50%'}
+});
+
+// Species comparison
+var sp_cats = ["Конъюнктивит", "Кератит", "Катаракта", "Другое офтальмо", "Выпадение 3-го века", "Увеит", "Язва роговицы", "Блефарит"];
+new Chart(document.getElementById('c_species'), {
+  type:'bar',
+  data:{
+    labels: sp_cats,
+    datasets: [
+      {label:'Собаки', data:sp_cats.map(c => {"Увеит": 2, "Катаракта": 17, "Выпадение 3-го века": 4, "Конъюнктивит": 65, "Кератит": 9, "Язва роговицы": 3, "Блефарит": 1, "Глаукома": 1, "Другое офтальмо": 9}[c]||0), backgroundColor:'#6366f1', borderRadius:4},
+      {label:'Кошки', data:sp_cats.map(c => {"Энтропион": 1, "Кератит": 16, "Конъюнктивит": 61, "Другое офтальмо": 3, "Увеит": 2, "Блефарит": 1, "Выпадение 3-го века": 1}[c]||0), backgroundColor:'#ec4899', borderRadius:4}
+    ]
+  },
+  options:{responsive:true, maintainAspectRatio:false, scales:{y:{beginAtZero:true}}}
+});
+</script>
+</body>
+</html>

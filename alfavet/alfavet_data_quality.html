@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alfavet — Качество данных</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--brd:#2a2d3a;--txt:#e4e4e7;--dim:#9ca3af}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.6}
+.c{max-width:1440px;margin:0 auto;padding:20px}
+.hdr{background:linear-gradient(135deg,#0a2540,#0e3d6b,#0a2540);border:1px solid var(--brd);border-radius:16px;padding:40px;margin-bottom:28px;text-align:center}
+.hdr h1{font-size:2.1em;font-weight:700;background:linear-gradient(135deg,#67e8f9,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr .sub{color:#67e8f9;margin-top:6px}.hdr .meta{color:var(--dim);margin-top:10px;font-size:.88em}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:24px}
+.kpi{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:16px;text-align:center}
+.kpi .v{font-size:1.8em;font-weight:700}.kpi .l{color:var(--dim);font-size:.78em;text-transform:uppercase}
+.sec{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:24px;margin-bottom:22px}
+.sec h2{font-size:1.25em;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:10px}
+.sec h2 .n{background:linear-gradient(135deg,#06b6d4,#0891b2);color:#fff;min-width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.82em}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+@media(max-width:900px){.g2,.g3{grid-template-columns:1fr}}
+.cb{background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;padding:16px}
+.cb h3{font-size:.9em;color:var(--dim);margin-bottom:12px;text-align:center}
+.cb canvas{max-height:400px}
+.tb{width:100%;border-collapse:collapse;font-size:.84em}
+.tb th{background:rgba(6,182,212,.1);color:#67e8f9;padding:8px 10px;text-align:left;font-weight:600;font-size:.78em;text-transform:uppercase}
+.tb td{padding:7px 10px;border-bottom:1px solid var(--brd)}
+.tb tr:hover td{background:rgba(6,182,212,.03)}
+.badge{display:inline-block;padding:2px 7px;border-radius:5px;font-size:.76em;font-weight:600}
+.br{background:rgba(239,68,68,.15);color:#fca5a5}.bg{background:rgba(34,197,94,.15);color:#86efac}
+.ba{background:rgba(245,158,11,.15);color:#fcd34d}.bb{background:rgba(6,182,212,.15);color:#67e8f9}
+.footer{text-align:center;color:var(--dim);font-size:.8em;padding:30px;border-top:1px solid var(--brd);margin-top:30px}
+</style>
+</head>
+<body>
+<div class="c">
+
+<div class="hdr">
+  <h1>Качество данных</h1>
+  <div class="sub">Alfavet: полнота, аномалии, план улучшений</div>
+  <div class="meta">03.04.2026 20:29</div>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi" style="border:2px solid #fcd34d;"><div class="v" style="color:#fcd34d;">71.3%</div><div class="l">Общая оценка</div></div>
+  <div class="kpi"><div class="v" style="color:#86efac;">8</div><div class="l">Полей &ge;90%</div></div>
+  <div class="kpi"><div class="v" style="color:#fcd34d;">4</div><div class="l">Полей 60-89%</div></div>
+  <div class="kpi"><div class="v" style="color:#fca5a5;">6</div><div class="l">Полей &lt;60%</div></div>
+  <div class="kpi"><div class="v" style="color:#a78bfa;">6</div><div class="l">Пробелов (&lt;80%)</div></div>
+</div>
+
+<!-- 1. Overview chart -->
+<div class="sec">
+  <h2><span class="n">1</span> Полнота данных по полям</h2>
+  <div class="cb"><canvas id="c_fields" style="max-height:450px;"></canvas></div>
+</div>
+
+<!-- 2. Full table -->
+<div class="sec">
+  <h2><span class="n">2</span> Детализация по полям</h2>
+  <table class="tb"><tr><th>Поле</th><th>Заполнено</th><th>Всего</th><th>%</th><th>Приоритет</th></tr><tr><td>Клиенты: телефон</td><td>16,540</td><td>16,952</td><td style="color:#86efac;font-weight:700;">97.6%</td><td><span class="badge br">Критичное</span></td></tr><tr><td>Клиенты: email</td><td>1,505</td><td>16,952</td><td style="color:#fca5a5;font-weight:700;">8.9%</td><td><span class="badge ba">Важное</span></td></tr><tr><td>Клиенты: город</td><td>16,944</td><td>16,952</td><td style="color:#86efac;font-weight:700;">100.0%</td><td><span class="badge bg">Желательное</span></td></tr><tr><td>Клиенты: дата регистрации</td><td>16,951</td><td>16,952</td><td style="color:#86efac;font-weight:700;">100.0%</td><td><span class="badge ba">Важное</span></td></tr><tr><td>Животные: вид</td><td>30,975</td><td>31,071</td><td style="color:#86efac;font-weight:700;">99.7%</td><td><span class="badge br">Критичное</span></td></tr><tr><td>Животные: порода</td><td>15,290</td><td>31,071</td><td style="color:#fca5a5;font-weight:700;">49.2%</td><td><span class="badge br">Критичное</span></td></tr><tr><td>Животные: пол</td><td>31,069</td><td>31,071</td><td style="color:#86efac;font-weight:700;">100.0%</td><td><span class="badge ba">Важное</span></td></tr><tr><td>Животные: дата рождения</td><td>26,085</td><td>31,071</td><td style="color:#fcd34d;font-weight:700;">84.0%</td><td><span class="badge br">Критичное</span></td></tr><tr><td>Животные: вес (профиль)</td><td>18,247</td><td>31,071</td><td style="color:#fca5a5;font-weight:700;">58.7%</td><td><span class="badge ba">Важное</span></td></tr><tr><td>Животные: чип</td><td>3,828</td><td>31,071</td><td style="color:#fca5a5;font-weight:700;">12.3%</td><td><span class="badge bg">Желательное</span></td></tr><tr><td>Животные: владелец</td><td>31,071</td><td>31,071</td><td style="color:#86efac;font-weight:700;">100.0%</td><td><span class="badge br">Критичное</span></td></tr><tr><td>Медзаписи: диагноз</td><td>2,039</td><td>94,867</td><td style="color:#fca5a5;font-weight:700;">2.1%</td><td><span class="badge br">Критичное</span></td></tr><tr><td>Медзаписи: лечение</td><td>84,059</td><td>94,867</td><td style="color:#fcd34d;font-weight:700;">88.6%</td><td><span class="badge ba">Важное</span></td></tr><tr><td>Медзаписи: врач</td><td>0</td><td>94,867</td><td style="color:#fca5a5;font-weight:700;">0.0%</td><td><span class="badge ba">Важное</span></td></tr><tr><td>Витали: вес</td><td>72,410</td><td>81,587</td><td style="color:#fcd34d;font-weight:700;">88.8%</td><td><span class="badge ba">Важное</span></td></tr><tr><td>Витали: температура</td><td>67,162</td><td>81,587</td><td style="color:#fcd34d;font-weight:700;">82.3%</td><td><span class="badge bg">Желательное</span></td></tr><tr><td>Визиты: статус</td><td>111,416</td><td>111,416</td><td style="color:#86efac;font-weight:700;">100.0%</td><td><span class="badge ba">Важное</span></td></tr><tr><td>Визиты: врач</td><td>111,299</td><td>111,416</td><td style="color:#86efac;font-weight:700;">99.9%</td><td><span class="badge ba">Важное</span></td></tr></table>
+</div>
+
+<!-- 3. Gaps -->
+<div class="sec">
+  <h2><span class="n">3</span> Основные пробелы (заполнено &lt;80%)</h2>
+  <table class="tb"><tr><th>Поле</th><th>Заполнено %</th><th>Пропусков</th><th>Приоритет</th></tr><tr><td>Медзаписи: врач</td><td style="color:#fca5a5;font-weight:700;">0.0%</td><td>94,867</td><td><span class="badge ba">Важное</span></td></tr><tr><td>Медзаписи: диагноз</td><td style="color:#fca5a5;font-weight:700;">2.1%</td><td>92,828</td><td><span class="badge br">Критичное</span></td></tr><tr><td>Клиенты: email</td><td style="color:#fca5a5;font-weight:700;">8.9%</td><td>15,447</td><td><span class="badge ba">Важное</span></td></tr><tr><td>Животные: чип</td><td style="color:#fca5a5;font-weight:700;">12.3%</td><td>27,243</td><td><span class="badge bg">Желательное</span></td></tr><tr><td>Животные: порода</td><td style="color:#fca5a5;font-weight:700;">49.2%</td><td>15,781</td><td><span class="badge br">Критичное</span></td></tr><tr><td>Животные: вес (профиль)</td><td style="color:#fca5a5;font-weight:700;">58.7%</td><td>12,824</td><td><span class="badge ba">Важное</span></td></tr></table>
+</div>
+
+<!-- 4. Anomalies -->
+<div class="sec">
+  <h2><span class="n">4</span> Аномалии в данных</h2>
+  <table class="tb"><tr><th>Аномалия</th><th>Количество</th></tr><tr><td>Вес > 300 кг</td><td><span class="badge br">2</span></td></tr><tr><td>Температура вне 30-45°C</td><td><span class="badge bg">0</span></td></tr><tr><td>Дата рождения в будущем</td><td><span class="badge bg">0</span></td></tr><tr><td>Дата рождения до 1990</td><td><span class="badge bg">0</span></td></tr><tr><td>Дублирующиеся чипы</td><td><span class="badge br">85</span></td></tr></table>
+</div>
+
+<!-- 5. Roadmap -->
+<div class="sec">
+  <h2><span class="n">5</span> План улучшений</h2>
+  <div class="g3">
+    <div class="cb" style="border-left:3px solid #6366f1;">
+      <h3 style="text-align:left;color:#a5b4fc;">Фаза 1 (1-2 нед.) — Критичные поля</h3>
+      <ul style="padding-left:20px;color:var(--txt);"><li style="margin:4px 0;font-size:.88em;">Обязательный ввод даты рождения при регистрации</li><li style="margin:4px 0;font-size:.88em;">Обязательный выбор породы из справочника</li><li style="margin:4px 0;font-size:.88em;">Обязательный ввод диагноза при закрытии медзаписи</li></ul>
+    </div>
+    <div class="cb" style="border-left:3px solid #6366f1;">
+      <h3 style="text-align:left;color:#a5b4fc;">Фаза 2 (1 мес.) — Важные поля</h3>
+      <ul style="padding-left:20px;color:var(--txt);"><li style="margin:4px 0;font-size:.88em;">Автозаполнение врача из расписания</li><li style="margin:4px 0;font-size:.88em;">Обязательный вес при каждом визите</li><li style="margin:4px 0;font-size:.88em;">Валидация email при вводе</li></ul>
+    </div>
+    <div class="cb" style="border-left:3px solid #6366f1;">
+      <h3 style="text-align:left;color:#a5b4fc;">Фаза 3 (2 мес.) — Обогащение</h3>
+      <ul style="padding-left:20px;color:var(--txt);"><li style="margin:4px 0;font-size:.88em;">Чипирование с автосканированием</li><li style="margin:4px 0;font-size:.88em;">Интеграция с лабораториями (авто-результаты)</li><li style="margin:4px 0;font-size:.88em;">Шаблоны диагнозов для ускорения ввода</li></ul>
+    </div></div>
+</div>
+
+<div class="footer">Alfavet Data Quality Dashboard &bull; 2026</div>
+</div>
+
+<script>
+Chart.defaults.color = '#9ca3af';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+var labels = ["телефон", "email", "город", "дата регистрации", "вид", "порода", "пол", "дата рождения", "вес (профиль)", "чип", "владелец", "диагноз", "лечение", "врач", "вес", "температура", "статус", "врач"];
+var values = [97.6, 8.9, 100.0, 100.0, 99.7, 49.2, 100.0, 84.0, 58.7, 12.3, 100.0, 2.1, 88.6, 0.0, 88.8, 82.3, 100.0, 99.9];
+var colors = values.map(v => v >= 90 ? '#22c55e' : v >= 60 ? '#f59e0b' : '#ef4444');
+new Chart(document.getElementById('c_fields'), {
+  type:'bar',
+  data:{labels, datasets:[{data:values, backgroundColor:colors, borderRadius:4}]},
+  options:{responsive:true, maintainAspectRatio:false, indexAxis:'y',
+    plugins:{legend:{display:false}},
+    scales:{x:{beginAtZero:true, max:100, title:{display:true,text:'% заполнено'}}}
+  }
+});
+</script>
+</body>
+</html>

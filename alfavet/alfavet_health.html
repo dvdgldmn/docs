@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alfavet — Болезни по породам (Собаки)</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--brd:#2a2d3a;--txt:#e4e4e7;--dim:#9ca3af}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.6}
+.c{max-width:1440px;margin:0 auto;padding:20px}
+.hdr{background:linear-gradient(135deg,#1a2e0a,#1e4a1e,#1a2e0a);border:1px solid var(--brd);border-radius:16px;padding:40px;margin-bottom:28px;text-align:center}
+.hdr h1{font-size:2.1em;font-weight:700;background:linear-gradient(135deg,#86efac,#4ade80);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr .sub{color:#86efac;margin-top:6px}.hdr .meta{color:var(--dim);margin-top:10px;font-size:.88em}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:24px}
+.kpi{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:16px;text-align:center}
+.kpi .v{font-size:1.8em;font-weight:700}.kpi .l{color:var(--dim);font-size:.78em;text-transform:uppercase}
+.kpi.purple .v{color:#a78bfa}.kpi.blue .v{color:#67e8f9}.kpi.amber .v{color:#fcd34d}.kpi.red .v{color:#fca5a5}.kpi.green .v{color:#86efac}.kpi.pink .v{color:#f9a8d4}
+.sec{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:24px;margin-bottom:22px}
+.sec h2{font-size:1.25em;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:10px}
+.sec h2 .n{background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;min-width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.82em;flex-shrink:0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+@media(max-width:900px){.g2,.g3{grid-template-columns:1fr}}
+.cb{background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;padding:16px}
+.cb h3{font-size:.9em;color:var(--dim);margin-bottom:12px;text-align:center}
+.cb canvas{max-height:380px}
+.tb{width:100%;border-collapse:collapse;font-size:.84em}
+.tb th{background:rgba(34,197,94,.1);color:#86efac;padding:8px 10px;text-align:left;font-weight:600;font-size:.78em;text-transform:uppercase}
+.tb td{padding:7px 10px;border-bottom:1px solid var(--brd)}
+.tb tr:hover td{background:rgba(34,197,94,.03)}
+.badge{display:inline-block;padding:2px 7px;border-radius:5px;font-size:.76em;font-weight:600}
+.br{background:rgba(239,68,68,.15);color:#fca5a5}.bg{background:rgba(34,197,94,.15);color:#86efac}
+.ba{background:rgba(245,158,11,.15);color:#fcd34d}.bb{background:rgba(6,182,212,.15);color:#67e8f9}
+.footer{text-align:center;color:var(--dim);font-size:.8em;padding:30px;border-top:1px solid var(--brd);margin-top:30px}
+</style>
+</head>
+<body>
+<div class="c">
+
+<div class="hdr">
+  <h1>Здоровье по породам — Собаки</h1>
+  <div class="sub">Alfavet: анализ диагнозов, породная специфика, коморбидности</div>
+  <div class="meta">03.04.2026 16:57 &bull; 12,283 собак &bull; 42,645 медзаписей</div>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi green"><div class="v">12,283</div><div class="l">Всего собак</div></div>
+  <div class="kpi blue"><div class="v">802</div><div class="l">С диагнозами</div></div>
+  <div class="kpi amber"><div class="v">1,215</div><div class="l">Записей с диагнозами</div></div>
+  <div class="kpi purple"><div class="v">200</div><div class="l">Уникальных диагнозов</div></div>
+  <div class="kpi red"><div class="v">427</div><div class="l">Смертей</div></div>
+  <div class="kpi pink"><div class="v">12</div><div class="l">Пород в анализе</div></div>
+</div>
+
+<!-- 1. Global distribution -->
+<div class="sec">
+  <h2><span class="n">1</span> Распределение диагнозов по категориям</h2>
+  <div class="g2">
+    <div class="cb"><h3>Количество записей по категориям</h3><canvas id="c_gc" style="max-height:400px;"></canvas></div>
+    <div class="cb"><h3>Доли категорий</h3><canvas id="c_gc_pie"></canvas></div>
+  </div>
+</div>
+
+<!-- 2. Heatmap -->
+<div class="sec">
+  <h2><span class="n">2</span> Тепловая карта: породы &times; категории болезней</h2>
+  <div class="cb"><canvas id="c_heatmap" style="max-height:500px;"></canvas></div>
+  <div style="color:var(--dim);font-size:.82em;margin-top:8px;">Значения — записи на 100 животных данной породы</div>
+</div>
+
+<!-- 3. Top diagnoses -->
+<div class="sec">
+  <h2><span class="n">3</span> Топ-20 диагнозов</h2>
+  <table class="tb"><tr><th>#</th><th>Диагноз</th><th>Записей</th><th>Категория</th></tr><tr><td>1</td><td>ID:126</td><td>121</td><td><span class="badge bb">Другое</span></td></tr><tr><td>2</td><td>Отит (Otitis)</td><td>85</td><td><span class="badge bb">ЛОР/Респираторные</span></td></tr><tr><td>3</td><td>Парвовирусный энтерит</td><td>53</td><td><span class="badge bb">ЖКТ</span></td></tr><tr><td>4</td><td>пиометра</td><td>51</td><td><span class="badge bb">Репродуктивная</span></td></tr><tr><td>5</td><td>Демодекоз (Demodecosis)</td><td>50</td><td><span class="badge bb">Дерматология</span></td></tr><tr><td>6</td><td>Эрлихиоз (Ehrlichiosis)</td><td>44</td><td><span class="badge bb">Инфекции</span></td></tr><tr><td>7</td><td>саркома штиккера</td><td>44</td><td><span class="badge bb">Онкология</span></td></tr><tr><td>8</td><td>Инфекционный ларинготрахеит</td><td>35</td><td><span class="badge bb">ЛОР/Респираторные</span></td></tr><tr><td>9</td><td>Атопический дерматит</td><td>34</td><td><span class="badge bb">Дерматология</span></td></tr><tr><td>10</td><td>конъюнктивит</td><td>33</td><td><span class="badge bb">Офтальмология</span></td></tr><tr><td>11</td><td>Ларинготрахеит инфекционный (вольерный кашель собак)</td><td>33</td><td><span class="badge bb">ЛОР/Респираторные</span></td></tr><tr><td>12</td><td>ID:305</td><td>32</td><td><span class="badge bb">Другое</span></td></tr><tr><td>13</td><td>ID:122</td><td>31</td><td><span class="badge bb">Другое</span></td></tr><tr><td>14</td><td>Сахарный диабет</td><td>30</td><td><span class="badge bb">Эндокринология</span></td></tr><tr><td>15</td><td>Ларинготрахеит (Laringotracheitis)</td><td>29</td><td><span class="badge bb">ЛОР/Респираторные</span></td></tr><tr><td>16</td><td>опухоль молочной железы</td><td>25</td><td><span class="badge bb">Онкология</span></td></tr><tr><td>17</td><td>Саркоптоз (Sarcoptosis)</td><td>24</td><td><span class="badge bb">Другое</span></td></tr><tr><td>18</td><td>Аллергия (Allergia)</td><td>22</td><td><span class="badge bb">Аллергология</span></td></tr><tr><td>19</td><td>Дерматит острый влажный (Hot spot)</td><td>20</td><td><span class="badge bb">Дерматология</span></td></tr><tr><td>20</td><td>ID:6</td><td>19</td><td><span class="badge bb">Другое</span></td></tr></table>
+</div>
+
+<!-- 4. Breed-specific -->
+<h2 style="font-size:1.4em;margin:30px 0 16px;padding-left:8px;">Породная специфика</h2>
+
+    <div class="sec">
+      <h2><span class="n" style="font-size:.7em;">1</span> Немецкая овчарка <span style="color:var(--dim);font-size:.7em;margin-left:auto;">811 животных &bull; 37 смертей</span></h2>
+      <div style="margin-bottom:12px;"><span class="badge bb" style="margin:2px;">Другое (43)</span> <span class="badge bb" style="margin:2px;">ЛОР/Респираторные (19)</span> <span class="badge bb" style="margin:2px;">Дерматология (13)</span> <span class="badge bb" style="margin:2px;">Онкология (10)</span> <span class="badge bb" style="margin:2px;">Инфекции (7)</span> </div>
+      <table class="tb"><tr><th>Диагноз</th><th>% породы</th><th>% общий</th><th>Ratio</th></tr><tr><td>Отит (Otitis)</td><td>1.4%</td><td>0.64%</td><td><span class="badge ba">2.1x</span></td></tr></table>
+      <div style="margin-top:8px;font-size:.85em;color:var(--dim);">Темп.: средняя 38.74°C, медиана 38.6°C (n=1313)</div>
+    </div>
+    <div class="sec">
+      <h2><span class="n" style="font-size:.7em;">2</span> Шпиц померанский <span style="color:var(--dim);font-size:.7em;margin-left:auto;">729 животных &bull; 19 смертей</span></h2>
+      <div style="margin-bottom:12px;"><span class="badge bb" style="margin:2px;">Другое (22)</span> <span class="badge bb" style="margin:2px;">ЛОР/Респираторные (13)</span> <span class="badge bb" style="margin:2px;">Офтальмология (5)</span> <span class="badge bb" style="margin:2px;">Дерматология (4)</span> <span class="badge bb" style="margin:2px;">Аллергология (3)</span> </div>
+      <div style="color:var(--dim);font-size:.85em;">Нет специфичных диагнозов (ratio &ge; 1.5)</div>
+      <div style="margin-top:8px;font-size:.85em;color:var(--dim);">Темп.: средняя 38.49°C, медиана 38.5°C (n=2262)</div>
+    </div>
+    <div class="sec">
+      <h2><span class="n" style="font-size:.7em;">3</span> Пудель <span style="color:var(--dim);font-size:.7em;margin-left:auto;">649 животных &bull; 26 смертей</span></h2>
+      <div style="margin-bottom:12px;"><span class="badge bb" style="margin:2px;">Другое (22)</span> <span class="badge bb" style="margin:2px;">ЛОР/Респираторные (18)</span> <span class="badge bb" style="margin:2px;">Онкология (13)</span> <span class="badge bb" style="margin:2px;">Офтальмология (13)</span> <span class="badge bb" style="margin:2px;">Репродуктивная (7)</span> </div>
+      <table class="tb"><tr><th>Диагноз</th><th>% породы</th><th>% общий</th><th>Ratio</th></tr><tr><td>Отит (Otitis)</td><td>1.5%</td><td>0.64%</td><td><span class="badge ba">2.4x</span></td></tr></table>
+      <div style="margin-top:8px;font-size:.85em;color:var(--dim);">Темп.: средняя 38.53°C, медиана 38.5°C (n=1915)</div>
+    </div>
+    <div class="sec">
+      <h2><span class="n" style="font-size:.7em;">4</span> Йоркширский терьер <span style="color:var(--dim);font-size:.7em;margin-left:auto;">610 животных &bull; 26 смертей</span></h2>
+      <div style="margin-bottom:12px;"><span class="badge bb" style="margin:2px;">Другое (21)</span> <span class="badge bb" style="margin:2px;">ЛОР/Респираторные (17)</span> <span class="badge bb" style="margin:2px;">Офтальмология (14)</span> <span class="badge bb" style="margin:2px;">Дерматология (11)</span> <span class="badge bb" style="margin:2px;">Репродуктивная (6)</span> </div>
+      <div style="color:var(--dim);font-size:.85em;">Нет специфичных диагнозов (ratio &ge; 1.5)</div>
+      <div style="margin-top:8px;font-size:.85em;color:var(--dim);">Темп.: средняя 38.51°C, медиана 38.5°C (n=2126)</div>
+    </div>
+    <div class="sec">
+      <h2><span class="n" style="font-size:.7em;">5</span> Сибирский хаски <span style="color:var(--dim);font-size:.7em;margin-left:auto;">555 животных &bull; 12 смертей</span></h2>
+      <div style="margin-bottom:12px;"><span class="badge bb" style="margin:2px;">Другое (8)</span> <span class="badge bb" style="margin:2px;">Дерматология (4)</span> <span class="badge bb" style="margin:2px;">Онкология (4)</span> <span class="badge bb" style="margin:2px;">Урология (3)</span> <span class="badge bb" style="margin:2px;">ЛОР/Респираторные (3)</span> </div>
+      <div style="color:var(--dim);font-size:.85em;">Нет специфичных диагнозов (ratio &ge; 1.5)</div>
+      <div style="margin-top:8px;font-size:.85em;color:var(--dim);">Темп.: средняя 38.63°C, медиана 38.6°C (n=992)</div>
+    </div>
+    <div class="sec">
+      <h2><span class="n" style="font-size:.7em;">6</span> Пекинес <span style="color:var(--dim);font-size:.7em;margin-left:auto;">531 животных &bull; 21 смертей</span></h2>
+      <div style="margin-bottom:12px;"><span class="badge bb" style="margin:2px;">Другое (28)</span> <span class="badge bb" style="margin:2px;">ЛОР/Респираторные (14)</span> <span class="badge bb" style="margin:2px;">Офтальмология (7)</span> <span class="badge bb" style="margin:2px;">Дерматология (6)</span> <span class="badge bb" style="margin:2px;">Репродуктивная (5)</span> </div>
+      <div style="color:var(--dim);font-size:.85em;">Нет специфичных диагнозов (ratio &ge; 1.5)</div>
+      <div style="margin-top:8px;font-size:.85em;color:var(--dim);">Темп.: средняя 38.52°C, медиана 38.5°C (n=1322)</div>
+    </div>
+    <div class="sec">
+      <h2><span class="n" style="font-size:.7em;">7</span> Метис <span style="color:var(--dim);font-size:.7em;margin-left:auto;">411 животных &bull; 6 смертей</span></h2>
+      <div style="margin-bottom:12px;"><span class="badge bb" style="margin:2px;">Другое (31)</span> <span class="badge bb" style="margin:2px;">ЛОР/Респираторные (6)</span> <span class="badge bb" style="margin:2px;">Дерматология (6)</span> <span class="badge bb" style="margin:2px;">Офтальмология (4)</span> <span class="badge bb" style="margin:2px;">Онкология (3)</span> </div>
+      <div style="color:var(--dim);font-size:.85em;">Нет специфичных диагнозов (ratio &ge; 1.5)</div>
+      <div style="margin-top:8px;font-size:.85em;color:var(--dim);">Темп.: средняя 38.55°C, медиана 38.5°C (n=983)</div>
+    </div>
+    <div class="sec">
+      <h2><span class="n" style="font-size:.7em;">8</span> Мальтийская болонка <span style="color:var(--dim);font-size:.7em;margin-left:auto;">289 животных &bull; 11 смертей</span></h2>
+      <div style="margin-bottom:12px;"><span class="badge bb" style="margin:2px;">ЛОР/Респираторные (6)</span> <span class="badge bb" style="margin:2px;">Другое (5)</span> <span class="badge bb" style="margin:2px;">Дерматология (4)</span> <span class="badge bb" style="margin:2px;">Репродуктивная (4)</span> <span class="badge bb" style="margin:2px;">Аллергология (2)</span> </div>
+      <table class="tb"><tr><th>Диагноз</th><th>% породы</th><th>% общий</th><th>Ratio</th></tr><tr><td>Отит (Otitis)</td><td>1.0%</td><td>0.64%</td><td><span class="badge bb">1.6x</span></td></tr></table>
+      <div style="margin-top:8px;font-size:.85em;color:var(--dim);">Темп.: средняя 38.52°C, медиана 38.5°C (n=1232)</div>
+    </div>
+    <div class="sec">
+      <h2><span class="n" style="font-size:.7em;">9</span> Лабрадор-ретривер <span style="color:var(--dim);font-size:.7em;margin-left:auto;">278 животных &bull; 9 смертей</span></h2>
+      <div style="margin-bottom:12px;"><span class="badge bb" style="margin:2px;">Другое (16)</span> <span class="badge bb" style="margin:2px;">ЛОР/Респираторные (16)</span> <span class="badge bb" style="margin:2px;">Дерматология (5)</span> <span class="badge bb" style="margin:2px;">ЖКТ (4)</span> <span class="badge bb" style="margin:2px;">Инфекции (4)</span> </div>
+      <table class="tb"><tr><th>Диагноз</th><th>% породы</th><th>% общий</th><th>Ratio</th></tr><tr><td>Инфекционный ларинготрахеит</td><td>1.8%</td><td>0.28%</td><td><span class="badge br">6.5x</span></td></tr><tr><td>Ларинготрахеит (Laringotracheitis)</td><td>1.1%</td><td>0.22%</td><td><span class="badge br">4.9x</span></td></tr><tr><td>Парвовирусный энтерит</td><td>1.4%</td><td>0.35%</td><td><span class="badge br">4.1x</span></td></tr><tr><td>Эрлихиоз (Ehrlichiosis)</td><td>1.1%</td><td>0.28%</td><td><span class="badge br">3.8x</span></td></tr><tr><td>Отит (Otitis)</td><td>1.1%</td><td>0.64%</td><td><span class="badge bb">1.7x</span></td></tr></table>
+      <div style="margin-top:8px;font-size:.85em;color:var(--dim);">Темп.: средняя 38.6°C, медиана 38.5°C (n=709)</div>
+    </div>
+    <div class="sec">
+      <h2><span class="n" style="font-size:.7em;">10</span> Тойпудель <span style="color:var(--dim);font-size:.7em;margin-left:auto;">246 животных &bull; 10 смертей</span></h2>
+      <div style="margin-bottom:12px;"><span class="badge bb" style="margin:2px;">Другое (5)</span> <span class="badge bb" style="margin:2px;">ЛОР/Респираторные (2)</span> <span class="badge bb" style="margin:2px;">Кардиология (1)</span> <span class="badge bb" style="margin:2px;">Репродуктивная (1)</span> </div>
+      <div style="color:var(--dim);font-size:.85em;">Нет специфичных диагнозов (ratio &ge; 1.5)</div>
+      <div style="margin-top:8px;font-size:.85em;color:var(--dim);">Темп.: средняя 38.45°C, медиана 38.4°C (n=917)</div>
+    </div>
+    <div class="sec">
+      <h2><span class="n" style="font-size:.7em;">11</span> Чихуахуа <span style="color:var(--dim);font-size:.7em;margin-left:auto;">230 животных &bull; 13 смертей</span></h2>
+      <div style="margin-bottom:12px;"><span class="badge bb" style="margin:2px;">Другое (11)</span> <span class="badge bb" style="margin:2px;">ЖКТ (3)</span> <span class="badge bb" style="margin:2px;">Кардиология (2)</span> <span class="badge bb" style="margin:2px;">Дерматология (1)</span> <span class="badge bb" style="margin:2px;">ЛОР/Респираторные (1)</span> </div>
+      <div style="color:var(--dim);font-size:.85em;">Нет специфичных диагнозов (ratio &ge; 1.5)</div>
+      <div style="margin-top:8px;font-size:.85em;color:var(--dim);">Темп.: средняя 38.49°C, медиана 38.5°C (n=689)</div>
+    </div>
+    <div class="sec">
+      <h2><span class="n" style="font-size:.7em;">12</span> Золотистый ретривер <span style="color:var(--dim);font-size:.7em;margin-left:auto;">188 животных &bull; 0 смертей</span></h2>
+      <div style="margin-bottom:12px;"><span class="badge bb" style="margin:2px;">ЛОР/Респираторные (5)</span> <span class="badge bb" style="margin:2px;">Другое (1)</span> <span class="badge bb" style="margin:2px;">Инфекции (1)</span> <span class="badge bb" style="margin:2px;">Дерматология (1)</span> <span class="badge bb" style="margin:2px;">Урология (1)</span> </div>
+      <table class="tb"><tr><th>Диагноз</th><th>% породы</th><th>% общий</th><th>Ratio</th></tr><tr><td>Отит наружный</td><td>1.1%</td><td>0.05%</td><td><span class="badge br">21.8x</span></td></tr><tr><td>Отит (Otitis)</td><td>1.1%</td><td>0.64%</td><td><span class="badge bb">1.7x</span></td></tr></table>
+      <div style="margin-top:8px;font-size:.85em;color:var(--dim);">Темп.: средняя 38.59°C, медиана 38.5°C (n=480)</div>
+    </div>
+
+<!-- Comorbidities -->
+<div class="sec">
+  <h2><span class="n">C</span> Коморбидности (сочетания категорий у одного пациента)</h2>
+  <div class="g2">
+    <div class="cb"><table class="tb"><tr><th>Пара категорий</th><th>Пациентов</th></tr><tr><td>Другое + Офтальмология</td><td>19</td></tr><tr><td>Дерматология + Другое</td><td>17</td></tr><tr><td>Другое + ЛОР/Респираторные</td><td>16</td></tr><tr><td>Другое + Инфекции</td><td>11</td></tr><tr><td>ЛОР/Респираторные + Офтальмология</td><td>11</td></tr><tr><td>Дерматология + ЛОР/Респираторные</td><td>7</td></tr><tr><td>Другое + Ортопедия</td><td>5</td></tr><tr><td>Другое + Кардиология</td><td>4</td></tr><tr><td>Дерматология + Офтальмология</td><td>4</td></tr><tr><td>Репродуктивная + Урология</td><td>3</td></tr><tr><td>Инфекции + ЛОР/Респираторные</td><td>3</td></tr><tr><td>Другое + Репродуктивная</td><td>3</td></tr></table></div>
+    <div class="cb"><h3>Смертность по породам</h3><table class="tb"><tr><th>Порода</th><th>Смертей</th><th>Всего</th><th>%</th></tr><tr><td>б/п</td><td>103</td><td>3,050</td><td>3.4%</td></tr><tr><td>Немецкая овчарка</td><td>37</td><td>811</td><td>4.6%</td></tr><tr><td>Йоркширский терьер</td><td>26</td><td>610</td><td>4.3%</td></tr><tr><td>Пудель</td><td>26</td><td>649</td><td>4.0%</td></tr><tr><td>Пекинес</td><td>21</td><td>531</td><td>4.0%</td></tr><tr><td>Шпиц померанский</td><td>19</td><td>729</td><td>2.6%</td></tr><tr><td>Чихуахуа</td><td>13</td><td>230</td><td>5.7%</td></tr><tr><td>Сибирский хаски</td><td>12</td><td>555</td><td>2.2%</td></tr><tr><td>Мальтийская болонка</td><td>11</td><td>289</td><td>3.8%</td></tr><tr><td>Тойпудель</td><td>10</td><td>246</td><td>4.1%</td></tr></table></div>
+  </div>
+</div>
+
+<div class="footer">Alfavet Health Dashboard &bull; 2026</div>
+</div>
+
+<script>
+var COLORS = ['#6366f1','#06b6d4','#22c55e','#f59e0b','#ef4444','#ec4899','#8b5cf6','#14b8a6','#f97316','#64748b','#a855f7','#0ea5e9','#84cc16','#e11d48','#facc15','#10b981'];
+Chart.defaults.color = '#9ca3af';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+
+// 1. Global categories
+var gc_labels = ["ЛОР/Респираторные", "Дерматология", "Офтальмология", "Онкология", "Репродуктивная", "ЖКТ", "Инфекции", "Эндокринология", "Ортопедия", "Аллергология", "Урология", "Кардиология", "Стоматология", "Травмы"];
+var gc_values = [231, 161, 101, 85, 67, 60, 54, 32, 26, 22, 14, 12, 10, 3];
+new Chart(document.getElementById('c_gc'), {
+  type:'bar', data:{labels:gc_labels, datasets:[{data:gc_values, backgroundColor:COLORS, borderRadius:4}]},
+  options:{responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{beginAtZero:true}}}
+});
+new Chart(document.getElementById('c_gc_pie'), {
+  type:'doughnut', data:{labels:gc_labels, datasets:[{data:gc_values, backgroundColor:COLORS, borderWidth:0}]},
+  options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'right',labels:{padding:10,font:{size:10}}}}, cutout:'50%'}
+});
+
+// 2. Heatmap (matrix as bubble chart)
+var hm_breeds = ["Немецкая овчарка", "Шпиц померанский", "Пудель", "Йоркширский терьер", "Сибирский хаски", "Пекинес", "Метис", "Мальтийская болонка", "Лабрадор-ретривер", "Тойпудель", "Чихуахуа", "Золотистый ретривер"];
+var hm_cats = ["Кардиология", "ЖКТ", "Дерматология", "Ортопедия", "Офтальмология", "ЛОР/Респираторные", "Урология", "Неврология", "Стоматология", "Аллергология", "Инфекции", "Эндокринология", "Репродуктивная", "Ожирение", "Травмы", "Онкология"];
+var hm_data = [[0.0, 0.6, 1.6, 0.7, 0.2, 2.3, 0.1, 0.0, 0.1, 0.0, 0.9, 0.0, 0.1, 0.0, 0.2, 1.2], [0.3, 0.3, 0.5, 0.0, 0.7, 1.8, 0.0, 0.1, 0.0, 0.4, 0.1, 0.1, 0.3, 0.0, 0.0, 0.0], [0.0, 0.5, 0.2, 0.0, 2.0, 2.8, 0.2, 0.2, 0.0, 0.3, 0.2, 0.0, 1.1, 0.0, 0.0, 2.0], [0.2, 0.0, 1.8, 0.7, 2.3, 2.8, 0.7, 0.0, 0.8, 0.2, 0.2, 0.0, 1.0, 0.0, 0.0, 0.5], [0.0, 0.0, 0.7, 0.0, 0.5, 0.5, 0.5, 0.0, 0.0, 0.0, 0.5, 0.2, 0.2, 0.0, 0.0, 0.7], [0.0, 0.0, 1.1, 0.6, 1.3, 2.6, 0.0, 0.0, 0.0, 0.4, 0.2, 0.0, 0.9, 0.0, 0.0, 0.0], [0.0, 0.2, 1.5, 0.2, 1.0, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.0, 0.0, 0.7], [0.0, 0.0, 1.4, 0.0, 0.3, 2.1, 0.0, 0.0, 0.3, 0.7, 0.0, 0.0, 1.4, 0.0, 0.0, 0.0], [0.0, 1.4, 1.8, 0.0, 0.0, 5.8, 0.4, 0.0, 0.0, 0.4, 1.4, 0.0, 0.0, 0.0, 0.4, 1.1], [0.4, 0.0, 0.0, 0.0, 0.0, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.4, 0.0, 0.0, 0.0], [0.9, 1.3, 0.4, 0.0, 0.0, 0.4, 0.0, 0.0, 0.0, 0.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.5, 0.0, 0.0, 2.7, 0.5, 0.0, 0.0, 0.0, 0.5, 0.0, 0.5, 0.0, 0.0, 0.0]];
+var hm_points = [];
+for (var i=0; i<hm_breeds.length; i++) {
+  for (var j=0; j<hm_cats.length; j++) {
+    var v = hm_data[i][j];
+    if (v > 0) hm_points.push({x:j, y:i, v:v, r:Math.min(Math.max(Math.sqrt(v)*2.5, 3), 22)});
+  }
+}
+new Chart(document.getElementById('c_heatmap'), {
+  type:'bubble',
+  data:{datasets:[{data:hm_points.map(p => ({x:p.x, y:p.y, r:p.r})), backgroundColor:hm_points.map(p => {
+    var a = Math.min(p.v/30, 1);
+    return 'rgba(34,197,94,' + (0.15 + a*0.7) + ')';
+  })}]},
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false}, tooltip:{callbacks:{label:function(ctx){
+      var p = hm_points[ctx.dataIndex];
+      return hm_breeds[p.y] + ' / ' + hm_cats[p.x] + ': ' + p.v + ' на 100';
+    }}}},
+    scales:{
+      x:{type:'linear', min:-0.5, max:hm_cats.length-0.5, ticks:{callback:function(v){return hm_cats[v]||''}, maxRotation:45, font:{size:9}}},
+      y:{type:'linear', min:-0.5, max:hm_breeds.length-0.5, ticks:{callback:function(v){return hm_breeds[v]||''}, font:{size:10}}, reverse:true}
+    }
+  }
+});
+</script>
+</body>
+</html>
