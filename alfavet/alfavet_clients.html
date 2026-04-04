@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alfavet — Детальный анализ клиентов</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0f1117;--card:#1a1d27;--brd:#2a2d3a;--txt:#e4e4e7;--dim:#9ca3af}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.6}
+.c{max-width:1440px;margin:0 auto;padding:20px}
+.hdr{background:linear-gradient(135deg,#1e1b4b,#312e81,#1e1b4b);border:1px solid var(--brd);border-radius:16px;padding:40px;margin-bottom:28px;text-align:center}
+.hdr h1{font-size:2.1em;font-weight:700;background:linear-gradient(135deg,#c7d2fe,#a5b4fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr .sub{color:#a5b4fc;margin-top:6px}.hdr .meta{color:var(--dim);margin-top:10px;font-size:.88em}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:24px}
+.kpi{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:16px;text-align:center}
+.kpi .v{font-size:1.8em;font-weight:700}.kpi .l{color:var(--dim);font-size:.78em;text-transform:uppercase}
+.kpi.purple .v{color:#a78bfa}.kpi.blue .v{color:#67e8f9}.kpi.amber .v{color:#fcd34d}.kpi.red .v{color:#fca5a5}.kpi.green .v{color:#86efac}.kpi.pink .v{color:#f9a8d4}
+.sec{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:24px;margin-bottom:22px}
+.sec h2{font-size:1.25em;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:10px}
+.sec h2 .n{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;min-width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.82em}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px}.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+@media(max-width:900px){.g2,.g3{grid-template-columns:1fr}}
+.cb{background:rgba(255,255,255,.02);border:1px solid var(--brd);border-radius:10px;padding:16px}
+.cb h3{font-size:.9em;color:var(--dim);margin-bottom:12px;text-align:center}
+.cb canvas{max-height:350px}
+.tb{width:100%;border-collapse:collapse;font-size:.84em}
+.tb th{background:rgba(99,102,241,.1);color:#a5b4fc;padding:8px 10px;text-align:left;font-weight:600;font-size:.78em;text-transform:uppercase}
+.tb td{padding:7px 10px;border-bottom:1px solid var(--brd)}
+.tb tr:hover td{background:rgba(99,102,241,.03)}
+.badge{display:inline-block;padding:2px 7px;border-radius:5px;font-size:.76em;font-weight:600}
+.br{background:rgba(239,68,68,.15);color:#fca5a5}.bg{background:rgba(34,197,94,.15);color:#86efac}
+.ba{background:rgba(245,158,11,.15);color:#fcd34d}.bb{background:rgba(6,182,212,.15);color:#67e8f9}
+.footer{text-align:center;color:var(--dim);font-size:.8em;padding:30px;border-top:1px solid var(--brd);margin-top:30px}
+</style>
+</head>
+<body>
+<div class="c">
+
+<div class="hdr">
+  <h1>Детальный анализ клиентов</h1>
+  <div class="sub">Alfavet: сегментация, лояльность, отток, точки роста</div>
+  <div class="meta">04.04.2026 09:43 &bull; 16,950 клиентов</div>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi purple"><div class="v">16,950</div><div class="l">Всего клиентов</div></div>
+  <div class="kpi green"><div class="v">1,254</div><div class="l">Активных (90д)</div></div>
+  <div class="kpi amber"><div class="v">806</div><div class="l">Под угрозой</div></div>
+  <div class="kpi red"><div class="v">6,302</div><div class="l">Одноразовые</div></div>
+  <div class="kpi blue"><div class="v">6,411</div><div class="l">Регулярные + Лояльные</div></div>
+  <div class="kpi pink"><div class="v">69%</div><div class="l">Выручка от топ-10%</div></div>
+</div>
+
+<!-- 1. Сегментация -->
+<div class="sec">
+  <h2><span class="n">1</span> Сегментация клиентов</h2>
+  <table class="tb"><tr><th>Сегмент</th><th>Клиентов</th><th>% базы</th><th>Выручка ₼</th><th>% выручки</th><th>Ср. LTV ₼</th></tr><tr><td><b>Без визитов</b></td><td>486</td><td>2.9%</td><td>2,715</td><td>0.0%</td><td>6</td></tr><tr><td><b>Одноразовый</b></td><td>6,302</td><td>37.2%</td><td>247,031</td><td>3.3%</td><td>39</td></tr><tr><td><b>Редкий (2-3)</b></td><td>3,751</td><td>22.1%</td><td>484,369</td><td>6.5%</td><td>129</td></tr><tr><td><b>Регулярный (4-10)</b></td><td>3,877</td><td>22.9%</td><td>1,479,947</td><td>20.0%</td><td>382</td></tr><tr><td><b>Лояльный (11+)</b></td><td>2,534</td><td>14.9%</td><td>5,183,898</td><td>70.1%</td><td>2,046</td></tr></table>
+  <div class="g2" style="margin-top:18px;">
+    <div class="cb"><h3>Клиенты по сегментам</h3><canvas id="c_seg"></canvas></div>
+    <div class="cb"><h3>Выручка по сегментам</h3><canvas id="c_seg_rev"></canvas></div>
+  </div>
+</div>
+
+<!-- 2. Статус оттока -->
+<div class="sec">
+  <h2><span class="n">2</span> Статус клиентов</h2>
+  <div class="g2">
+    <div class="cb"><h3>Распределение по статусу</h3><canvas id="c_churn"></canvas></div>
+    <div class="cb"><h3>Ср. визитов по статусу</h3><canvas id="c_churn_visits"></canvas></div>
+  </div>
+</div>
+
+<!-- 3. Лояльные клиенты -->
+<div class="sec">
+  <h2><span class="n">3</span> Лояльные клиенты (11+ визитов) — топ-20 по выручке</h2>
+  <div style="overflow-x:auto;"><table class="tb"><tr><th>#</th><th>Клиент</th><th>Визитов</th><th>Животных</th><th>Выручка ₼</th><th>Ср. интервал</th><th>Основные обращения</th></tr><tr><td>1</td><td><b>(Good World Animal Rescue & Pr</b><br><span style="color:var(--dim);font-size:.8em;">karina (б/п), Шанс (б/п), Фунтик (б/п)</span></td><td>1887</td><td>739</td><td>223,978</td><td>5д</td><td style="font-size:.82em;">саркома штиккера (Probable), Демодекоз (Demodecosi</td></tr><tr><td>2</td><td><b>Теймур Гулиев</b><br><span style="color:var(--dim);font-size:.8em;">кошка (б/п), щенок (Золотистый ретривер), Силки (Лабрадор-ре</span></td><td>35</td><td>3</td><td>115,932</td><td>82д</td><td style="font-size:.82em;">—</td></tr><tr><td>3</td><td><b>Nicola Scales</b><br><span style="color:var(--dim);font-size:.8em;">Lenin (б/п), Сталин (б/п), Толстой (б/п)</span></td><td>448</td><td>99</td><td>96,992</td><td>13д</td><td style="font-size:.82em;">ID:305 (Probable), Демодекоз (Demodecosis) (Probab</td></tr><tr><td>4</td><td><b>Наиля Халилова</b><br><span style="color:var(--dim);font-size:.8em;">Джуля 2 (б/п), Джуля (б/п), Коко (Немецкая овчарка)</span></td><td>564</td><td>218</td><td>78,973</td><td>11д</td><td style="font-size:.82em;">Демодекоз (Demodecosis) (Probable), Отит (Otitis) </td></tr><tr><td>5</td><td><b>Angela Walker</b><br><span style="color:var(--dim);font-size:.8em;">Dave (Английский бульдог), Bez (Английский бульдог)</span></td><td>21</td><td>2</td><td>51,473</td><td>70д</td><td style="font-size:.82em;">конъюнктивит (Probable), Отит (Otitis) (Probable)</td></tr><tr><td>6</td><td><b>Street Dogs Rescue Baku</b><br><span style="color:var(--dim);font-size:.8em;">Asha (б/п), Zara (б/п), Ladybug (б/п)</span></td><td>585</td><td>305</td><td>50,308</td><td>13д</td><td style="font-size:.82em;">Гингивит (Gingivitis) (Probable), чума (Probable)</td></tr><tr><td>7</td><td><b>Каролина Швайгер</b><br><span style="color:var(--dim);font-size:.8em;">Луна (Алабай), Мегги (б/п), Кейли (Золотистый ретривер)</span></td><td>358</td><td>123</td><td>47,664</td><td>9д</td><td style="font-size:.82em;">—</td></tr><tr><td>8</td><td><b>Саида Маммедбейли</b><br><span style="color:var(--dim);font-size:.8em;">Каби (Акита-ину)</span></td><td>36</td><td>1</td><td>40,151</td><td>97д</td><td style="font-size:.82em;">—</td></tr><tr><td>9</td><td><b>Павел Парпура</b><br><span style="color:var(--dim);font-size:.8em;">Поляша (б/п), Петрушка (б/п), Механик (б/п)</span></td><td>42</td><td>4</td><td>39,771</td><td>24д</td><td style="font-size:.82em;">—</td></tr><tr><td>10</td><td><b>Амина Ильянова</b><br><span style="color:var(--dim);font-size:.8em;">Луи (Английский кокер-спа), Филип (б/п), Моня (б/п)</span></td><td>32</td><td>3</td><td>38,867</td><td>36д</td><td style="font-size:.82em;">—</td></tr><tr><td>11</td><td><b>Ирина Евстарова</b><br><span style="color:var(--dim);font-size:.8em;">Микки (Шпиц померанский), Кузя (Шпиц померанский), Тоша (Шпи</span></td><td>149</td><td>6</td><td>35,827</td><td>21д</td><td style="font-size:.82em;">Гнойный конъюнктивит (Probable), ID:305 (Probable)</td></tr><tr><td>12</td><td><b>Ильхама Насирова</b><br><span style="color:var(--dim);font-size:.8em;">дыма (б/п), Маруся (б/п), Мими (б/п)</span></td><td>402</td><td>156</td><td>35,306</td><td>8д</td><td style="font-size:.82em;">Лишай (Probable)</td></tr><tr><td>13</td><td><b>Дарья Карпушова</b><br><span style="color:var(--dim);font-size:.8em;">Моника (Британская короткоше), Котенок (Британская короткоше</span></td><td>25</td><td>3</td><td>34,647</td><td>83д</td><td style="font-size:.82em;">—</td></tr><tr><td>14</td><td><b>Марина Турабова</b><br><span style="color:var(--dim);font-size:.8em;">Мурзик (б/п), Линда (б/п), Собака (б/п)</span></td><td>319</td><td>203</td><td>29,383</td><td>15д</td><td style="font-size:.82em;">Парвовирусный энтерит (Probable), блошиный дермати</td></tr><tr><td>15</td><td><b>Марьям Агаева</b><br><span style="color:var(--dim);font-size:.8em;">Рич (Пудель), Мери (Метис)</span></td><td>14</td><td>2</td><td>24,462</td><td>89д</td><td style="font-size:.82em;">—</td></tr><tr><td>16</td><td><b>Юрий Байдаров</b><br><span style="color:var(--dim);font-size:.8em;">Глазонька (б/п), Котя (б/п), Кукуля (б/п)</span></td><td>225</td><td>79</td><td>24,122</td><td>18д</td><td style="font-size:.82em;">Лишай (Probable), Грыжа диафрагмальная (Hernia dia</td></tr><tr><td>17</td><td><b>Валерия Гарбер</b><br><span style="color:var(--dim);font-size:.8em;">Девочка (б/п), Рони (б/п), Котя (б/п)</span></td><td>151</td><td>79</td><td>20,308</td><td>26д</td><td style="font-size:.82em;">Микроспория (Лишай) (Probable)</td></tr><tr><td>18</td><td><b>Фидан Исмаилова</b><br><span style="color:var(--dim);font-size:.8em;">Мики (Йоркширский терьер), Фунтик (Йоркширский терьер)</span></td><td>70</td><td>2</td><td>20,103</td><td>37д</td><td style="font-size:.82em;">—</td></tr><tr><td>19</td><td><b>Алла Бурнашова</b><br><span style="color:var(--dim);font-size:.8em;">Гарфилд (Чихуахуа)</span></td><td>16</td><td>1</td><td>19,268</td><td>117д</td><td style="font-size:.82em;">—</td></tr><tr><td>20</td><td><b>Зульфия Гулиева</b><br><span style="color:var(--dim);font-size:.8em;">Поппи (Мальтийская болонка)</span></td><td>24</td><td>1</td><td>18,925</td><td>77д</td><td style="font-size:.82em;">—</td></tr></table></div>
+  <div class="g2" style="margin-top:18px;">
+    <div class="cb"><h3>С чем возвращаются (категории обращений)</h3><canvas id="c_loyal_diags"></canvas></div>
+    <div class="cb">
+      <h3>Профиль лояльного клиента</h3>
+      <table class="tb" style="margin-top:10px;">
+        <tr><td>Кол-во</td><td style="text-align:right;font-weight:700;color:#86efac;">2,534 клиентов</td></tr>
+        <tr><td>Общая выручка</td><td style="text-align:right;font-weight:700;color:#86efac;">5,183,898 ₼</td></tr>
+        <tr><td>Ср. LTV</td><td style="text-align:right;font-weight:700;color:#86efac;">2,046 ₼</td></tr>
+        <tr><td>Доля выручки</td><td style="text-align:right;font-weight:700;color:#86efac;">70.1%</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- 4. Одноразовые клиенты -->
+<div class="sec">
+  <h2><span class="n">4</span> Одноразовые клиенты — пришли 1 раз и не вернулись</h2>
+  <div class="g3">
+    <div class="cb">
+      <h3>Профиль</h3>
+      <table class="tb">
+        <tr><td>Кол-во</td><td style="text-align:right;font-weight:700;color:#fca5a5;">6,302</td></tr>
+        <tr><td>% от базы</td><td style="text-align:right;font-weight:700;color:#fca5a5;">37.2%</td></tr>
+        <tr><td>Общая выручка</td><td style="text-align:right;">247,031 ₼</td></tr>
+        <tr><td>Ср. чек</td><td style="text-align:right;">39 ₼</td></tr>
+      </table>
+    </div>
+    <div class="cb"><h3>По годам</h3><table class="tb"><tr><th>Год</th><th>Одноразовых</th></tr><tr><td>2016</td><td>130</td></tr><tr><td>2017</td><td>256</td></tr><tr><td>2018</td><td>595</td></tr><tr><td>2019</td><td>686</td></tr><tr><td>2020</td><td>838</td></tr><tr><td>2021</td><td>964</td></tr><tr><td>2022</td><td>865</td></tr><tr><td>2023</td><td>736</td></tr><tr><td>2024</td><td>553</td></tr><tr><td>2025</td><td>528</td></tr><tr><td>2026</td><td>151</td></tr></table></div>
+    <div class="cb"><h3>С чем приходили</h3><canvas id="c_ot_diags"></canvas></div>
+  </div>
+</div>
+
+<!-- 5. Клиенты под угрозой -->
+<div class="sec">
+  <h2><span class="n">5</span> Клиенты под угрозой (90-180 дней без визита) — топ-20 по выручке</h2>
+  <table class="tb"><tr><th>Клиент</th><th>Визитов</th><th>Выручка ₼</th><th>Дней без визита</th><th>Животные</th></tr><tr><td><b>Павел Парпура</b></td><td>42</td><td>39,771</td><td><span class="badge ba">124д</span></td><td style="font-size:.82em;">Поляша (Кошки), Петрушка (Кошки)</td></tr><tr><td><b>Ирина Евстарова</b></td><td>149</td><td>35,827</td><td><span class="badge ba">135д</span></td><td style="font-size:.82em;">Микки (Собаки), Кузя (Собаки)</td></tr><tr><td><b>Айна Султанова</b></td><td>133</td><td>16,402</td><td><span class="badge ba">113д</span></td><td style="font-size:.82em;">Топуш (Кошки), Баксик (Кошки)</td></tr><tr><td><b>Евгений/Лариса Селюков</b></td><td>22</td><td>12,208</td><td><span class="badge ba">148д</span></td><td style="font-size:.82em;">Челси (Собаки), Гранд (Кошки)</td></tr><tr><td><b>Елена Гадырова</b></td><td>57</td><td>10,541</td><td><span class="badge ba">159д</span></td><td style="font-size:.82em;">Марго (Собаки), Малыш (Кошки)</td></tr><tr><td><b>Лейла Мамедова</b></td><td>53</td><td>9,467</td><td><span class="badge ba">110д</span></td><td style="font-size:.82em;">Шанди (Кошки), Шерри (Кошки)</td></tr><tr><td><b>Пярвин Аббасова</b></td><td>144</td><td>8,416</td><td><span class="badge ba">168д</span></td><td style="font-size:.82em;">Найда (Собаки), Квини (Собаки)</td></tr><tr><td><b>Мария Олейникова</b></td><td>95</td><td>8,167</td><td><span class="badge ba">138д</span></td><td style="font-size:.82em;">Зевс (Собаки), Терри (Собаки)</td></tr><tr><td><b>Animal Rescue Society Foundati</b></td><td>98</td><td>7,866</td><td><span class="badge ba">165д</span></td><td style="font-size:.82em;">Audi (Кошки), Дима (Кошки)</td></tr><tr><td><b>Туран Джалилова</b></td><td>162</td><td>7,779</td><td><span class="badge ba">168д</span></td><td style="font-size:.82em;">Джоник (Кошки), Серый (Кошки)</td></tr><tr><td><b>Диляра Бабаева</b></td><td>129</td><td>7,774</td><td><span class="badge ba">160д</span></td><td style="font-size:.82em;">Альфи (Собаки), Соня (Собаки)</td></tr><tr><td><b>Самира Эртугрул</b></td><td>80</td><td>7,686</td><td><span class="badge ba">111д</span></td><td style="font-size:.82em;">Васька (Кошки), Мястан (Кошки)</td></tr><tr><td><b>Руслан Семенцов</b></td><td>23</td><td>7,043</td><td><span class="badge ba">100д</span></td><td style="font-size:.82em;">Баку (Кошки)</td></tr><tr><td><b>Валихад Сафаров</b></td><td>84</td><td>6,511</td><td><span class="badge ba">123д</span></td><td style="font-size:.82em;">Милка (Кошки), Маркиз (Кошки)</td></tr><tr><td><b>Алёна Салимова</b></td><td>51</td><td>6,082</td><td><span class="badge ba">166д</span></td><td style="font-size:.82em;">Руди (Собаки), Кот (Собаки)</td></tr><tr><td><b>Олеся Бабекова</b></td><td>41</td><td>5,936</td><td><span class="badge ba">141д</span></td><td style="font-size:.82em;">Карлито (Собаки), Котенок (Кошки)</td></tr><tr><td><b>Рейхан Гасанова</b></td><td>69</td><td>5,761</td><td><span class="badge ba">121д</span></td><td style="font-size:.82em;">Лила (Собаки)</td></tr><tr><td><b>Ляман/Ага Алиева</b></td><td>84</td><td>5,730</td><td><span class="badge ba">112д</span></td><td style="font-size:.82em;">Мероди (Собаки), Котельер Амотеус (Кошки)</td></tr><tr><td><b>Наталья Стукалина</b></td><td>61</td><td>5,419</td><td><span class="badge ba">173д</span></td><td style="font-size:.82em;">Анжела (Собаки), Коза (Кошки)</td></tr><tr><td><b>Румия Агаева</b></td><td>87</td><td>5,371</td><td><span class="badge ba">139д</span></td><td style="font-size:.82em;">Минни (Кошки), Спотти (Кошки)</td></tr></table>
+  <div style="margin-top:12px;padding:12px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:8px;font-size:.85em;color:#fcd34d;">
+    <b>Суммарная выручка «под угрозой»:</b> 857,738 ₼ —
+    эти клиенты ещё не ушли, но скоро уйдут без активных действий.
+  </div>
+</div>
+
+<!-- 6. Мультипитомцы -->
+<div class="sec">
+  <h2><span class="n">6</span> Мультипитомцы</h2>
+  <div class="g2">
+    <div class="cb"><table class="tb"><tr><th>Питомцев</th><th>Клиентов</th><th>Ср. визитов</th><th>Ср. LTV ₼</th></tr><tr><td>1</td><td>13,068</td><td>3.3</td><td>198</td></tr><tr><td>2</td><td>2,080</td><td>8.6</td><td>560</td></tr><tr><td>3+</td><td>1,802</td><td>25.9</td><td>2,020</td></tr></table></div>
+    <div class="cb"><h3>Города — топ 10</h3><canvas id="c_cities"></canvas></div>
+  </div>
+</div>
+
+<!-- 7. Концентрация выручки -->
+<div class="sec">
+  <h2><span class="n">7</span> Концентрация выручки</h2>
+  <div class="g2">
+    <div class="cb">
+      <h3>Правило Парето</h3>
+      <table class="tb">
+        <tr><td>Топ-10% клиентов (1,695)</td><td style="text-align:right;font-weight:700;color:#a78bfa;">5,109,957 ₼ (69% выручки)</td></tr>
+        <tr><td>Упущенная выручка (ушедшие)</td><td style="text-align:right;font-weight:700;color:#fca5a5;">3,415,649 ₼ от 13,014 клиентов</td></tr>
+        <tr><td>Ср. LTV ушедших</td><td style="text-align:right;">262 ₼</td></tr>
+        <tr><td>Потенциал возврата (10% ушедших)</td><td style="text-align:right;font-weight:700;color:#86efac;">~341,565 ₼/год</td></tr>
+      </table>
+    </div>
+    <div class="cb"><h3>Выручка: лояльные vs одноразовые</h3><canvas id="c_rev_compare"></canvas></div>
+  </div>
+</div>
+
+<!-- 8. Инсайты и рекомендации -->
+<div class="sec">
+  <h2><span class="n">R</span> Инсайты и рекомендации</h2>
+  <div class="g2">
+    <div class="cb" style="border-left:3px solid #22c55e;">
+      <h3 style="text-align:left;color:#86efac;">Ключевые инсайты</h3>
+      <ul style="padding-left:18px;font-size:.88em;line-height:1.9;color:var(--txt);">
+        <li><b>6,302</b> клиентов (37%) пришли один раз и не вернулись — главная зона потерь</li>
+        <li>Топ-10% клиентов генерируют <b>69%</b> выручки — высокая концентрация, риск при потере ключевых клиентов</li>
+        <li>Лояльные (11+ визитов) — всего <b>14.9%</b> базы, но <b>70%</b> выручки</li>
+        <li>Ушедшие клиенты «унесли» потенциал в <b>3,415,649 ₼</b> — возврат даже 10% = ~341,565 ₼</li>
+        <li><b>806</b> клиентов «под угрозой» (90-180 дней) — окно для активации ещё открыто</li>
+        <li>Мультипитомцы: LTV в <b>10.2x</b> выше, чем у владельцев одного животного</li>
+      </ul>
+    </div>
+    <div class="cb" style="border-left:3px solid #f59e0b;">
+      <h3 style="text-align:left;color:#fcd34d;">Рекомендации</h3>
+      <ul style="padding-left:18px;font-size:.88em;line-height:1.9;color:var(--txt);">
+        <li><b>Одноразовые → регулярные:</b> SMS/WhatsApp через 14 дней после первого визита с напоминанием о вакцинации или контрольном осмотре</li>
+        <li><b>Под угрозой → активные:</b> персональное напоминание через 90 дней: «Давно не были, пора на осмотр» + скидка 10% на следующий визит</li>
+        <li><b>Программа лояльности:</b> каждый 5-й визит — бесплатный осмотр или скидка. Удержать лояльного дешевле, чем привлечь нового</li>
+        <li><b>Мультипитомцы:</b> пакетные скидки для семей с 2+ животными — стимул регистрировать всех питомцев</li>
+        <li><b>Возврат ушедших:</b> кампания «Мы скучаем» для клиентов с LTV > 500 ₼, ушедших 6-12 мес. назад</li>
+        <li><b>VIP-программа:</b> для топ-10% — приоритетная запись, персональный врач, напоминания о профилактике</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Alfavet Client Analytics Dashboard &bull; 2026</div>
+</div>
+
+<script>
+var COLORS = ['#6366f1','#06b6d4','#22c55e','#f59e0b','#ef4444','#ec4899','#8b5cf6','#14b8a6','#f97316','#64748b'];
+Chart.defaults.color = '#9ca3af';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+
+// Segments
+new Chart(document.getElementById('c_seg'), {
+  type:'doughnut',
+  data:{labels:["Без визитов", "Одноразовый", "Редкий (2-3)", "Регулярный (4-10)", "Лояльный (11+)"], datasets:[{data:[486, 6302, 3751, 3877, 2534], backgroundColor:COLORS, borderWidth:0}]},
+  options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'right',labels:{font:{size:10}}}}, cutout:'50%'}
+});
+new Chart(document.getElementById('c_seg_rev'), {
+  type:'doughnut',
+  data:{labels:["Без визитов", "Одноразовый", "Редкий (2-3)", "Регулярный (4-10)", "Лояльный (11+)"], datasets:[{data:[2715, 247031, 484369, 1479947, 5183898], backgroundColor:COLORS, borderWidth:0}]},
+  options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'right',labels:{font:{size:10}}}}, cutout:'50%'}
+});
+
+// Churn
+new Chart(document.getElementById('c_churn'), {
+  type:'bar',
+  data:{labels:["Активный", "Под угрозой", "Уходящий", "Ушёл", "Нет визитов"], datasets:[{data:[1254, 806, 1390, 13014, 486], backgroundColor:['#22c55e','#f59e0b','#ef4444','#64748b','#374151'], borderRadius:4}]},
+  options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}}}
+});
+new Chart(document.getElementById('c_churn_visits'), {
+  type:'bar',
+  data:{labels:["Активный", "Под угрозой", "Уходящий", "Ушёл", "Нет визитов"], datasets:[{data:[23.4, 14.3, 9.7, 4.1, 0.0], backgroundColor:['#22c55e','#f59e0b','#ef4444','#64748b','#374151'], borderRadius:4}]},
+  options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}}}
+});
+
+// Loyal diags
+var ld = {"Дерматология": 196, "Офтальмо": 115, "ЛОР": 110, "ЖКТ": 47, "Аллергия": 22, "Ортопедия": 18, "Урология": 11};
+new Chart(document.getElementById('c_loyal_diags'), {
+  type:'bar',
+  data:{labels:Object.keys(ld), datasets:[{data:Object.values(ld), backgroundColor:COLORS, borderRadius:4}]},
+  options:{responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{beginAtZero:true}}}
+});
+
+// One-timer diags
+var od = {"Дерматология": 25, "Офтальмо": 19, "ЖКТ": 13, "ЛОР": 12, "Ортопедия": 5, "Аллергия": 3, "Урология": 1};
+new Chart(document.getElementById('c_ot_diags'), {
+  type:'bar',
+  data:{labels:Object.keys(od), datasets:[{data:Object.values(od), backgroundColor:COLORS, borderRadius:4}]},
+  options:{responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{beginAtZero:true}}}
+});
+
+// Cities
+new Chart(document.getElementById('c_cities'), {
+  type:'bar',
+  data:{labels:["Baku", "Сумгаит", "Baku, Wellington Heights", "Ваш город", "Баку, Мардакяны", "Шувеляны", "Бузовны", "Баку, Хырдалан", "Ширван", "Nakhchivan"], datasets:[{data:[16925, 6, 3, 2, 2, 1, 1, 1, 1, 1], backgroundColor:'#8b5cf6', borderRadius:4}]},
+  options:{responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{beginAtZero:true}}}
+});
+
+// Revenue compare
+new Chart(document.getElementById('c_rev_compare'), {
+  type:'bar',
+  data:{labels:["Без визитов", "Одноразовый", "Редкий (2-3)", "Регулярный (4-10)", "Лояльный (11+)"], datasets:[{label:'Ср. LTV ₼', data:[6, 39, 129, 382, 2046], backgroundColor:COLORS, borderRadius:4}]},
+  options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}}}
+});
+</script>
+</body>
+</html>
